@@ -3,9 +3,7 @@
     "chai": "registry:npm/chai#3.5.0+20160415060238",
     "enzyme": "registry:npm/enzyme#2.2.0+20160322031343"
   },
-  "dependencies": {
-    "react": "registry:npm/react#15.0.1+20160601175240"
-  },
+  "dependencies": {},
   "globalDevDependencies": {
     "mocha": "registry:dt/mocha#2.2.5+20160619032855"
   },

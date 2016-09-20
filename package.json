@@ -8,7 +8,8 @@
     "react-dom": "^15.1.0",
     "require": "^2.4.20",
     "ts-loader": "^0.8.2",
-    "typescript": "^2.0.0"
+    "typescript": "^2.0.0",
+    "webpack": "^1.13.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",

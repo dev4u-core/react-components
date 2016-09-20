@@ -1,13 +1,13 @@
 'use strict';
 
 var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
+    //devtool: 'source-map',
     entry: {
         'data-source.test': ['./test/data-source'],
-        'grid.example': ['./example/grid'],
         'grid.test': ['./test/grid'],
-        'panel-container.example': ['./example/panel-container'],
         'panel-container.test': ['./test/panel-container']
     },
     externals: {
@@ -21,14 +21,16 @@ module.exports = {
     frameworks: ['chai', 'mocha'],
     module: {
         loaders: [
-            { test: /\.tsx?$/, loader: 'ts-loader' }
-        ],
-        noParse: [/node_modules\/sinon\//]
+            { loader: 'ts-loader', test: /\.tsx?$/ }
+        ]
     },
     output: {
         filename: '[name].js',
         path: './dist'
     },
+    plugins: [
+        new webpack.NoErrorsPlugin(),
+        new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' })],
     resolve: {
         alias: {
             'react$': path.resolve(__dirname, './node_modules/react/dist/react-with-addons'),
