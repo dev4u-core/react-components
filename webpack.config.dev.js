@@ -4,21 +4,13 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
+    cache: true,
     //devtool: 'source-map',
     entry: {
         'data-source.test': ['./test/data-source'],
         'grid.test': ['./test/grid'],
         'panel-container.test': ['./test/panel-container']
     },
-    externals: {
-        // 'react': 'React',
-        // 'react-dom': 'ReactDOM'
-        'cheerio': 'window',
-        'react/addons': true,
-        'react/lib/ExecutionEnvironment': true,
-        'react/lib/ReactContext': true
-    },
-    frameworks: ['chai', 'mocha'],
     module: {
         loaders: [
             { loader: 'ts-loader', test: /\.tsx?$/ }
@@ -30,7 +22,13 @@ module.exports = {
     },
     plugins: [
         new webpack.NoErrorsPlugin(),
-        new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' })],
+        new webpack.DefinePlugin({
+            'NODE_ENV': JSON.stringify('production')
+        }),
+        new webpack.DllReferencePlugin({
+            context: '.',
+            manifest: require("./dist/vendors-manifest.json")
+        })],
     resolve: {
         alias: {
             'react$': path.resolve(__dirname, './node_modules/react/dist/react-with-addons'),
