@@ -63,7 +63,7 @@ abstract class GridBase<TProps extends IProps> extends React.Component<IProps, a
     }
 
     protected get style(): Style {
-        return this._style = this._style || StyleProvider.Instance.get<Style>();
+        return this._style = this._style || StyleProvider.Instance.getGridStyle();
     }
 } 
 

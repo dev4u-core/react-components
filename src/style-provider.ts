@@ -1,12 +1,29 @@
+import { GridStyle } from 'grid';
+
 export interface IStyleProvider {
-    get<T>(): T;
+    getGridStyle(): GridStyle;
 }
 
 export class StyleProvider implements IStyleProvider {
-    public static Instance: IStyleProvider = new StyleProvider();
+    public static readonly Instance: IStyleProvider = new StyleProvider();
 
-    // IStyleProvider<T> Members
-    public get<T>(): T {
-        return null;
+    // IStyleProvider Members
+    public getGridStyle(): GridStyle {
+        return {
+            class: null,
+            headerRow: {
+                class: null,
+                cell: {
+                    class: null,
+                    classBySorting: (direction?: number) => null
+                }
+            },
+            row: {
+                class: null,
+                cell: {
+                    class: null
+                }
+            }
+        };
     }
 }

@@ -35,7 +35,7 @@
   "scripts": {
     "mocha": "mocha ./dist/*.test.js",
     "karma": "karma start karma.config.js",
-    "webpack": "webpack --display-error-details --display-modules"
+    "webpack": "webpack --config webpack.config.dev.js --display-error-details --display-modules"
   },
   "version": "1.0.0"
 }
