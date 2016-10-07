@@ -4,16 +4,10 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-    cache: true,
-    //devtool: 'source-map',
-    entry: {
-        'data-source.test': ['./test/data-source'],
-        'grid.test': ['./test/grid'],
-        'panel-container.test': ['./test/panel-container']
-    },
+    entry: ['./src/grid', './src/panel-container'],
     externals: {
-        // 'react': 'React',
-        // 'react-dom': 'ReactDOM'
+        'react': 'React',
+        'react-dom': 'ReactDOM',
         'cheerio': 'window',
         'react/addons': true,
         'react/lib/ExecutionEnvironment': true,
@@ -26,16 +20,11 @@ module.exports = {
         ]
     },
     output: {
-        filename: '[name].js',
+        filename: 'index.js',
         path: './dist'
     },
     plugins: [
         new webpack.NoErrorsPlugin(),
-        new webpack.optimize.CommonsChunkPlugin({
-            children: false,
-            minChunks: 2,
-            name: 'vendors'
-        }),
         new webpack.optimize.DedupePlugin(),
         new webpack.DefinePlugin({
             'NODE_ENV': JSON.stringify('production')
@@ -51,5 +40,10 @@ module.exports = {
     },
     resolveLoader: {
         modulesDirectories: ['./node_modules']
+    },
+    ts: {
+        // 'compilerOptions': {
+        //     'declaration': true
+        // }
     }
 }

@@ -1,10 +1,10 @@
 {
     "compilerOptions": {
         "jsx": "react",
-        "module": "none",
+        "module": "commonjs",
         "noImplicitAny": false,
         "sourceMap": false,
-        "target": "es6"
+        "target": "es5"
     },
     "exclude": ["node_modules"]
 }

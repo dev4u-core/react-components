@@ -1,11 +1,11 @@
-import { GridStyle } from 'grid';
+import { GridStyle } from './grid';
 
 export interface IStyleProvider {
     getGridStyle(): GridStyle;
 }
 
 export class StyleProvider implements IStyleProvider {
-    public static readonly Instance: IStyleProvider = new StyleProvider();
+    public static Instance: IStyleProvider = new StyleProvider();
 
     // IStyleProvider Members
     public getGridStyle(): GridStyle {

@@ -1,12 +1,9 @@
 {
   "author": "Dev4U",
   "dependencies": {
-    "gulp": "^3.9.1",
-    "gulp-typescript": "^2.13.5",
     "react": "^15.1.0",
     "react-addons-test-utils": "^15.1.0",
     "react-dom": "^15.1.0",
-    "require": "^2.4.20",
     "ts-loader": "^0.8.2",
     "typescript": "^2.0.0",
     "webpack": "^1.13.2"
@@ -15,16 +12,12 @@
     "chai": "^3.5.0",
     "chrome": "^0.1.0",
     "enzyme": "^2.3.0",
-    "gulp-mocha": "^2.2.0",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^1.0.1",
     "karma-cli": "^1.0.0",
     "karma-mocha": "^1.0.1",
     "karma-mocha-reporter": "^2.0.4",
-    "karma-phantomjs-launcher": "^1.0.0",
-    "mocha": "^2.5.3",
-    "phantomjs": "^2.1.7",
-    "phantomjs-prebuilt": "^2.1.7"
+    "mocha": "^2.5.3"
   },
   "directories": {
     "test": "test"

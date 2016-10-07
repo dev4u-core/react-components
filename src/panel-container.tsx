@@ -1,38 +1,38 @@
 import * as React from 'react';
 import { IPanelProps, Panel } from './panel';
 
-enum Mode {
+export enum PanelContainerMode {
     DynamicAndStatic = 1 << 0,
     StaticAndDynamic = 1 << 1
 }
 
-enum Orientation
+export enum PanelContainerOrientation
 {
     Horizontal = 1 << 0,
     Vertical = 1 << 1
 }
 
-interface IProps {
+export interface IPanelContainerProps {
     dynamicPanels?: IPanelProps[];
-    mode?: Mode;
-    orientation?: Orientation;
+    mode?: PanelContainerMode;
+    orientation?: PanelContainerOrientation;
 
     onPanelClosed?: (panel: Panel) => void;
     onPanelClosing?: (panel: Panel) => boolean;
 }
 
-interface IRenderContext {
+export interface IPanelContainerRenderContext {
     defaultColumnCount: number;
-    orientation: Orientation;
+    orientation: PanelContainerOrientation;
 }
 
-interface IState {
+export interface IPanelContainerState {
     dynamicPanels: IPanelProps[];
     staticPanels: IPanelProps[];
 }
 
-export class PanelContainer extends React.Component<IProps, IState> {
-    constructor(props: IProps) {
+export class PanelContainer extends React.Component<IPanelContainerProps, IPanelContainerState> {
+    constructor(props: IPanelContainerProps) {
         super(props);
 
         this.handleDynamicPanelClosed = this.handleDynamicPanelClosed.bind(this);
@@ -64,7 +64,7 @@ export class PanelContainer extends React.Component<IProps, IState> {
 
         this.forceUpdate();
     }
-    protected renderDynamicPanel(renderContext: IRenderContext, panel: IPanelProps, index: number): JSX.Element {
+    protected renderDynamicPanel(renderContext: IPanelContainerRenderContext, panel: IPanelProps, index: number): JSX.Element {
         let columnCount = panel.columnCount || renderContext.defaultColumnCount;
         return <Panel columnCount={columnCount}
             key={`dynamic_panel_${index}`}
@@ -72,10 +72,10 @@ export class PanelContainer extends React.Component<IProps, IState> {
             onClosed={this.handleDynamicPanelClosed}
             onClosing={this.handlePanelClosing} />;
     }
-    protected renderDynamicPanels(renderContext: IRenderContext): JSX.Element[] {
+    protected renderDynamicPanels(renderContext: IPanelContainerRenderContext): JSX.Element[] {
         return this.state.dynamicPanels.map((x, i) => this.renderDynamicPanel(renderContext, x, i));
     }
-    protected renderStaticPanel(renderContext: IRenderContext, panel: IPanelProps, index: number): JSX.Element {
+    protected renderStaticPanel(renderContext: IPanelContainerRenderContext, panel: IPanelProps, index: number): JSX.Element {
         return React.cloneElement(
             panel as any,
             {
@@ -85,7 +85,7 @@ export class PanelContainer extends React.Component<IProps, IState> {
                 onClosing: this.handlePanelClosing
             });
     }
-    protected renderStaticPanels(renderContext: IRenderContext): JSX.Element[] {
+    protected renderStaticPanels(renderContext: IPanelContainerRenderContext): JSX.Element[] {
         var result = React.Children.map(
             this.props.children,
             (x, i) => (this.state.staticPanels.indexOf((x as any).props) !== -1) ? this.renderStaticPanel(renderContext, x as any, i) : null);
@@ -93,11 +93,11 @@ export class PanelContainer extends React.Component<IProps, IState> {
     }
 
     public render() {
-        let mode = this.props.mode || Mode.DynamicAndStatic;
-        let orientation = this.props.orientation || Orientation.Horizontal;
-        let containerClassName = (orientation == Orientation.Horizontal) ? 'row' : 'panel-group';
+        let mode = this.props.mode || PanelContainerMode.DynamicAndStatic;
+        let orientation = this.props.orientation || PanelContainerOrientation.Horizontal;
+        let containerClassName = (orientation == PanelContainerOrientation.Horizontal) ? 'row' : 'panel-group';
         let renderContext = {
-            defaultColumnCount: (orientation == Orientation.Horizontal)
+            defaultColumnCount: (orientation == PanelContainerOrientation.Horizontal)
                 ? Math.floor(12 / this.state.dynamicPanels.concat(this.state.staticPanels).length)
                 : null,
             orientation: orientation
@@ -105,16 +105,10 @@ export class PanelContainer extends React.Component<IProps, IState> {
 
         return (
             <div className={containerClassName}>
-                {(mode == Mode.StaticAndDynamic) ? this.renderStaticPanels(renderContext) : null}
+                {(mode == PanelContainerMode.StaticAndDynamic) ? this.renderStaticPanels(renderContext) : null}
                 {this.renderDynamicPanels(renderContext)}
-                {(mode == Mode.DynamicAndStatic) ? this.renderStaticPanels(renderContext) : null}
+                {(mode == PanelContainerMode.DynamicAndStatic) ? this.renderStaticPanels(renderContext) : null}
             </div>
         );
     }
 }
-
-export {
-    Mode as PanelContainerMode,
-    Orientation as PanelContainerOrientation,
-    IRenderContext as IPanelContainerRenderContext
-};

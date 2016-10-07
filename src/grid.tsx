@@ -2,17 +2,17 @@ import * as React from 'react';
 import { IDataSource, SortDirection } from '../src/data-source';
 import { StyleProvider } from '../src/style-provider';
 
-interface IColumn {
+export interface IGridColumn {
     propertyName: string;
     title?: string;
 }
 
-interface IProps {
-    columns: IColumn[];
+export interface IGridProps {
+    columns: IGridColumn[];
     dataSource?: IDataSource<any>;
 }
 
-type Style = {
+export type GridStyle = {
     class: string;
     headerRow: {
         class: string;
@@ -29,17 +29,17 @@ type Style = {
     };
 };
 
-abstract class GridBase<TProps extends IProps> extends React.Component<IProps, any> {
-    private _style: Style;
+export abstract class GridBase<TProps extends IGridProps> extends React.Component<IGridProps, any> {
+    private _style: GridStyle;
 
-    constructor(props: IProps) {
+    constructor(props: IGridProps) {
         super(props);
     }
 
     protected componentDidMount() {
         this.props.dataSource.onDataBound = () => this.forceUpdate();
     }
-    protected getColumnDirection(column: IColumn) {
+    protected getColumnDirection(column: IGridColumn) {
         let sortedBy = (this.props.dataSource.view.sortedBy != null)
             ? this.props.dataSource.view.sortedBy.filter(x => x.propertyName == column.propertyName)
             : null;
@@ -49,7 +49,7 @@ abstract class GridBase<TProps extends IProps> extends React.Component<IProps, a
             ? sortedBy[0].direction
             : null;
     }
-    protected handleSortClick(column: IColumn) {
+    protected handleSortClick(column: IGridColumn) {
         let sortedBy = this.props.dataSource.view.sortedBy;
         let direction = (sortedBy != null)
                 && (sortedBy.length == 1)
@@ -62,13 +62,13 @@ abstract class GridBase<TProps extends IProps> extends React.Component<IProps, a
         this.props.dataSource.dataBind();
     }
 
-    protected get style(): Style {
+    protected get style(): GridStyle {
         return this._style = this._style || StyleProvider.Instance.getGridStyle();
     }
 } 
 
-class Grid extends GridBase<IProps> {
-    protected renderHeaderCell(column: IColumn, index: number): JSX.Element {
+export class Grid extends GridBase<IGridProps> {
+    protected renderHeaderCell(column: IGridColumn, index: number): JSX.Element {
         let direction = this.getColumnDirection(column); 
         let className = this.style.headerRow.cell.classBySorting[direction];
         return (
@@ -84,7 +84,7 @@ class Grid extends GridBase<IProps> {
             </tr>
         );
     }
-    protected renderRowCell(dataItem: any, column: IColumn, index: number): JSX.Element {
+    protected renderRowCell(dataItem: any, column: IGridColumn, index: number): JSX.Element {
         return (
             <td key={"grid-cell-" + index}>{dataItem[column.propertyName]}</td>
         );
@@ -102,12 +102,4 @@ class Grid extends GridBase<IProps> {
             </table>
         );
     }
-}
-
-export {
-    IColumn as IGridColumn,
-    IProps as IGridProps,
-    Grid,
-    GridBase,
-    Style as GridStyle
 }
