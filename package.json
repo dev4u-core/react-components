@@ -23,8 +23,9 @@
     "test": "test"
   },
   "license": "ISC",
-  "name": "components",
-  "main": "gulpfile.js",
+  "name": "react-components",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "mocha": "mocha ./dist/*.test.js",
     "karma": "karma start karma.config.js",

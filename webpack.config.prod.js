@@ -42,8 +42,8 @@ module.exports = {
         modulesDirectories: ['./node_modules']
     },
     ts: {
-        // 'compilerOptions': {
-        //     'declaration': true
-        // }
+        'compilerOptions': {
+            'declaration': true
+        }
     }
 }
