@@ -23,13 +23,16 @@
     "test": "test"
   },
   "license": "ISC",
-  "name": "react-components",
+  "name": "dev4u.react-components",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "typescript": {
+    "definition": "./dist/index.d.ts"
+  },
   "scripts": {
     "mocha": "mocha ./dist/*.test.js",
     "karma": "karma start karma.config.js",
     "webpack": "webpack --config webpack.config.dev.js --display-error-details --display-modules"
   },
-  "version": "1.0.0"
+  "version": "1.0.4"
 }

@@ -24,11 +24,12 @@ module.exports = {
         path: './dist'
     },
     plugins: [
-        new webpack.NoErrorsPlugin(),
-        new webpack.optimize.DedupePlugin(),
         new webpack.DefinePlugin({
             'NODE_ENV': JSON.stringify('production')
-        })],
+        }),
+        new webpack.NoErrorsPlugin(),
+        new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.UglifyJsPlugin()],
     resolve: {
         alias: {
             'react$': path.resolve(__dirname, './node_modules/react/dist/react-with-addons'),
