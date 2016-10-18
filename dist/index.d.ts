@@ -21,6 +21,10 @@ declare module 'dev4u.react-components' {
         sortedBy?: ISortExpression[];
     }
     export declare class ClientDataSource<T> implements IDataSource<T> {
+        private _data;
+        private _onDataBound;
+        private _sort;
+        private _view;
         constructor(data: T[]);
         private getComparer(expressions);
         dataBind(): void;
@@ -64,10 +68,10 @@ declare module 'dev4u.react-components' {
         protected readonly style: GridStyle;
     }
     export declare class Grid extends GridBase<IGridProps> {
-        protected renderHeaderCell(column: IGridColumn, index: number): JSX.Element;
-        protected renderRow(dataItem: any, index: number): JSX.Element;
-        protected renderRowCell(dataItem: any, column: IGridColumn, index: number): JSX.Element;
-        render(): JSX.Element;
+        protected renderHeaderCell(column: IGridColumn, index: number): any;
+        protected renderRow(dataItem: any, index: number): any;
+        protected renderRowCell(dataItem: any, column: IGridColumn, index: number): any;
+        render(): any;
     }
 
 
@@ -110,19 +114,18 @@ declare module 'dev4u.react-components' {
 
 
     //panel.ts
-    export interface IProps {
+    export interface IPanelProps {
         columnCount?: number;
         title?: string;
         onClosed?: (panel: Panel) => void;
         onClosing?: (panel: Panel) => boolean;
     }
-    export declare class Panel extends React.Component<IProps, any> {
-        constructor(props: IProps);
+    export declare class Panel extends React.Component<IPanelProps, any> {
+        constructor(props: IPanelProps);
         protected handleClose(): void;
         protected renderBody(): any;
         render(): JSX.Element;
     }
-    export { IProps as IPanelProps };
 
 
     //style-provider.ts
