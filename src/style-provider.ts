@@ -1,15 +1,14 @@
 import { GridStyle } from './grid';
 
-export interface IStyleProvider {
-    getGridStyle(): GridStyle;
+enum StyleType {
+    GridStyle
 }
 
-export class StyleProvider implements IStyleProvider {
-    public static Instance: IStyleProvider = new StyleProvider();
+export class StyleProvider {
+    private readonly _styles: any = {};
 
-    // IStyleProvider Members
-    public getGridStyle(): GridStyle {
-        return {
+    public static readonly Instance: StyleProvider = new StyleProvider()
+        .setGridStyle({
             class: null,
             headerRow: {
                 class: null,
@@ -24,6 +23,13 @@ export class StyleProvider implements IStyleProvider {
                     class: null
                 }
             }
-        };
+        });
+
+    public getGridStyle(): GridStyle {
+        return this._styles[StyleType.GridStyle];
+    }
+    public setGridStyle(value: GridStyle): StyleProvider {
+        this._styles[StyleType.GridStyle] = value;
+        return this;
     }
 }

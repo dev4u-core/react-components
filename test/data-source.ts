@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import * as Mocha from 'mocha';
 import { SortDirection, ClientDataSource } from '../src/data-source';
 
 describe('ClientDataSource', () => {

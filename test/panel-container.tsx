@@ -1,5 +1,5 @@
-import { expect,  } from 'chai';
-import { IPanelProps, Panel } from '../src/panel';
+import { expect } from 'chai';
+import { Panel, PanelProps } from '../src/panel';
 import { PanelContainer, PanelContainerMode, PanelContainerOrientation } from '../src/panel-container';
 import * as Enzyme from 'enzyme';
 import * as React from 'react';
@@ -77,8 +77,8 @@ describe('<PanelContainer />', () => {
                 );
 
                 let panels = panelContainer.find(Panel);
-                expect((panels.at(0).props() as IPanelProps).title).to.equal('dynamicPanel');
-                expect((panels.at(1).props() as IPanelProps).title).to.equal('staticPanel');
+                expect((panels.at(0).props() as PanelProps).title).to.equal('dynamicPanel');
+                expect((panels.at(1).props() as PanelProps).title).to.equal('staticPanel');
             });
             it('mode == StaticAndDynamic', () => {
                 let dynamicPanels = [{ title: 'dynamicPanel' }];
@@ -89,8 +89,8 @@ describe('<PanelContainer />', () => {
                 );
 
                 let panels = panelContainer.find(Panel);
-                expect((panels.at(0).props() as IPanelProps).title).to.equal('staticPanel');
-                expect((panels.at(1).props() as IPanelProps).title).to.equal('dynamicPanel');
+                expect((panels.at(0).props() as PanelProps).title).to.equal('staticPanel');
+                expect((panels.at(1).props() as PanelProps).title).to.equal('dynamicPanel');
             });
         });
         describe('orientation', () => {
@@ -111,7 +111,7 @@ describe('<PanelContainer />', () => {
                     var panels = panelContainer.find(Panel);
 
                     for (let i = 0; i < columnCounts.length; i++) {
-                        expect((panels.at(i).props() as IPanelProps).columnCount).to.equal(columnCounts[i], `panels.length = ${panels.length}`);
+                        expect((panels.at(i).props() as PanelProps).columnCount).to.equal(columnCounts[i], `panels.length = ${panels.length}`);
                     }
                 });
             });
@@ -121,7 +121,7 @@ describe('<PanelContainer />', () => {
                     var panels = panelContainer.find(Panel);
 
                     for (let i = 0; i < columnCounts.length; i++) {
-                        expect((panels.at(i).props() as IPanelProps).columnCount).is.null;
+                        expect((panels.at(i).props() as PanelProps).columnCount).is.null;
                     }
                 });
             });

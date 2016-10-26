@@ -1,6 +1,8 @@
 {
   "author": "Dev4U",
   "dependencies": {
+    "@types/react": "^0.14.42",
+    "@types/react-dom": "^0.14.18",
     "react": "^15.1.0",
     "react-addons-test-utils": "^15.1.0",
     "react-dom": "^15.1.0",
@@ -9,6 +11,9 @@
     "webpack": "^1.13.2"
   },
   "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/enzyme": "^2.4.36",
+    "@types/mocha": "^2.2.32",
     "chai": "^3.5.0",
     "chrome": "^0.1.0",
     "enzyme": "^2.3.0",

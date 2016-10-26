@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export interface IPanelProps {
+export interface PanelProps {
     columnCount?: number;
     title?: string;
 
@@ -8,8 +8,8 @@ export interface IPanelProps {
     onClosing?: (panel: Panel) => boolean;
 }
 
-export class Panel extends React.Component<IPanelProps, any> {
-    constructor(props: IPanelProps) {
+export class Panel extends React.Component<PanelProps, any> {
+    constructor(props: PanelProps) {
         super();
         this.handleClose = this.handleClose.bind(this);
     }

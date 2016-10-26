@@ -1,7 +1,7 @@
 import * as Enzyme from 'enzyme';
 import { expect } from 'chai';
 import * as React from 'react';
-import { ClientDataSource, IDataSource, SortDirection } from '../src/data-source';
+import { ClientDataSource, DataSource, SortDirection } from '../src/data-source';
 import { Grid } from '../src/grid';
 
 describe('<Grid />', () => {
@@ -11,7 +11,7 @@ describe('<Grid />', () => {
                 { title: 'Title', propertyName: 'title' },
                 { title: 'Description', propertyName: 'description' }
             ];
-            let dataSource: IDataSource<any>;
+            let dataSource: DataSource<any>;
             let grid;
 
             beforeEach(() => {

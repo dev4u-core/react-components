@@ -3,37 +3,37 @@ export enum SortDirection {
     Descending = 1 << 1
 }
 
-export interface ISortExpression {
+export interface SortExpression {
     direction: SortDirection;
     propertyName: string;
 }
 
-export interface IDataSource<T> {
-    dataBind();
-    sort(...expressions: ISortExpression[]);
-
-    view: IDataView<T>;
-
-    onDataBound?: (view: IDataView<T>) => void;
-}
-
-export interface IDataView<T> {
+export interface DataView<T> {
     data?: T[];
-    sortedBy?: ISortExpression[];
+    sortedBy?: SortExpression[];
 }
 
-export class ClientDataSource<T> implements IDataSource<T> {
+export interface DataSource<T> {
+    dataBind();
+    sort(...expressions: SortExpression[]);
+
+    view: DataView<T>;
+
+    onDataBound?: (view: DataView<T>) => void;
+}
+
+export class ClientDataSource<T> {
     private _data: T[];
-    private _onDataBound: (view: IDataView<T>) => void;
-    private _sort: ((view: IDataView<T>) => void);
-    private _view: IDataView<T>;
+    private _onDataBound: (view: DataView<T>) => void;
+    private _sort: ((view: DataView<T>) => void);
+    private _view: DataView<T>;
 
     constructor(data: T[]) {
         this._data = data;
         this._view = null;
     }
 
-    private getComparer(expressions: ISortExpression[]): (x: T, y: T) => number {
+    private getComparer(expressions: SortExpression[]): (x: T, y: T) => number {
         let result = null;
         for (let i = 0; i < expressions.length; i++) {
             var comparer = ((direction, propertyName) =>
@@ -66,18 +66,18 @@ export class ClientDataSource<T> implements IDataSource<T> {
             this._onDataBound(this._view);
         }
     }
-    public sort(...expressions: ISortExpression[]) {
+    public sort(...expressions: SortExpression[]) {
         this._sort =x => {
             x.sortedBy = expressions;
             x.data = x.data.sort(this.getComparer(expressions));
         };
     }
 
-    public get view(): IDataView<T> {
+    public get view(): DataView<T> {
         return this._view;
     }
 
-    public set onDataBound(value: (view: IDataView<T>) => void) {
+    public set onDataBound(value: (view: DataView<T>) => void) {
         this._onDataBound = value;
     }
 }
