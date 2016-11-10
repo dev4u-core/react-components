@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
-    "@types/enzyme": "^2.4.36",
+    "@types/enzyme": "^2.5.37",
     "@types/mocha": "^2.2.32",
     "chai": "^3.5.0",
     "chrome": "^0.1.0",
@@ -39,5 +39,5 @@
     "karma": "karma start karma.config.js",
     "webpack": "webpack --config webpack.config.dev.js --display-error-details --display-modules"
   },
-  "version": "1.0.4"
+  "version": "1.0.5"
 }

@@ -45,7 +45,9 @@ declare module 'dev4u.react-components' {
             class: string;
             cell: {
                 class: string;
-                classBySorting: (direction?: number) => string;
+                classBySorting: {
+                    [direction: number]: string;
+                };
             };
         };
         row: {

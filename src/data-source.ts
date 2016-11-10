@@ -5,7 +5,7 @@ export enum SortDirection {
 
 export interface SortExpression {
     direction: SortDirection;
-    propertyName: string;
+    field: string;
 }
 
 export interface DataView<T> {
@@ -36,14 +36,14 @@ export class ClientDataSource<T> {
     private getComparer(expressions: SortExpression[]): (x: T, y: T) => number {
         let result = null;
         for (let i = 0; i < expressions.length; i++) {
-            var comparer = ((direction, propertyName) =>
+            var comparer = ((direction, field) =>
                 (x, y) => {
-                    let xValue = x[propertyName];
-                    let yValue = y[propertyName];
+                    let xValue = x[field];
+                    let yValue = y[field];
                     if (xValue > yValue) return (direction == SortDirection.Ascending) ? 1 : -1;
                     if (xValue < yValue) return (direction == SortDirection.Ascending) ? -1 : 1;
                     return 0;
-                })(expressions[i].direction, expressions[i].propertyName);
+                })(expressions[i].direction, expressions[i].field);
             result = (result != null)
                 ? ((prevComparer) => (x, y) => prevComparer(x, y))(result)
                 : comparer;

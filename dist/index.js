@@ -218,10 +218,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Grid.prototype.render = function () {
 	        var _this = this;
 	        return (React.createElement("table", {cellSpacing: "0", className: this.style.class, width: "100%"}, 
-	            React.createElement("tbody", null, 
-	                React.createElement("tr", null, this.props.columns.map(function (x, i) { return _this.renderHeaderCell(x, i); })), 
-	                this.props.dataSource.view.data.map(function (x, i) { return _this.renderRow(x, i); }))
-	        ));
+	            React.createElement("thead", null, 
+	                React.createElement("tr", null, this.props.columns.map(function (x, i) { return _this.renderHeaderCell(x, i); }))
+	            ), 
+	            React.createElement("tbody", null, this.props.dataSource.view.data.map(function (x, i) { return _this.renderRow(x, i); }))));
 	    };
 	    return Grid;
 	}(GridBase));
@@ -261,7 +261,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            class: null,
 	            cell: {
 	                class: null,
-	                classBySorting: function (direction) { return null; }
+	                classBySorting: {}
 	            }
 	        },
 	        row: {

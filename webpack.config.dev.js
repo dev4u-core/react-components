@@ -5,9 +5,9 @@ var webpack = require('webpack');
 
 module.exports = {
     cache: true,
-    //devtool: 'source-map',
     entry: {
         'data-source.test': ['./test/data-source'],
+        'grid.example': ['./examples/grid'],
         'grid.test': ['./test/grid'],
         'panel-container.test': ['./test/panel-container']
     },

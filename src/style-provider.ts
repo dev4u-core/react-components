@@ -14,7 +14,7 @@ export class StyleProvider {
                 class: null,
                 cell: {
                     class: null,
-                    classBySorting: (direction?: number) => null
+                    classBySorting: {}
                 }
             },
             row: {

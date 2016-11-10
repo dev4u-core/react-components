@@ -22,11 +22,11 @@ describe('ClientDataSource', () => {
             [{ title: 'title2' }, { title: 'title1' }, { title: 'title0' }]
         ];
 
-        it ('"SortDirection.Ascending" by one property', () => {
+        it ('"SortDirection.Ascending" by one field', () => {
             dataByCases.forEach(x => {
                 let dataSource = new ClientDataSource(x);
 
-                dataSource.sort({ direction: SortDirection.Ascending, propertyName: 'title' });
+                dataSource.sort({ direction: SortDirection.Ascending, field: 'title' });
                 dataSource.dataBind();
 
                 expect(dataSource.view.data[0].title).to.equal('title0');
@@ -35,14 +35,14 @@ describe('ClientDataSource', () => {
 
                 expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
                 expect(dataSource.view.sortedBy[0].direction).to.equal(SortDirection.Ascending, 'sortedBy[0].direction');
-                expect(dataSource.view.sortedBy[0].propertyName).to.equal('title', 'sortedBy[0].propertyName');
+                expect(dataSource.view.sortedBy[0].field).to.equal('title', 'sortedBy[0].field');
             });
         });
-        it ('"SortDirection.Descending" by one property', () => {
+        it ('"SortDirection.Descending" by one field', () => {
             dataByCases.forEach(x => {
                 let dataSource = new ClientDataSource(x);
 
-                dataSource.sort({ direction: SortDirection.Descending, propertyName: 'title'});
+                dataSource.sort({ direction: SortDirection.Descending, field: 'title'});
                 dataSource.dataBind();
 
                 expect(dataSource.view.data[0].title).to.equal('title2');
@@ -51,7 +51,7 @@ describe('ClientDataSource', () => {
 
                 expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
                 expect(dataSource.view.sortedBy[0].direction).to.equal(SortDirection.Descending, 'sortedBy[0].direction');
-                expect(dataSource.view.sortedBy[0].propertyName).to.equal('title', 'sortedBy[0].propertyName');
+                expect(dataSource.view.sortedBy[0].field).to.equal('title', 'sortedBy[0].field');
             });
         });
     });
