@@ -1,26 +1,33 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { ClientDataSource } from './../src/data-source';
-import { Grid, GridColumn } from './../src/grid';
+import { Grid } from './../src/grid';
+import { DetailGridColumn, GridColumn } from './../src/grid-column';
 
-function getData(): any[] {
+function getData(index): any[] {
     let result = [];
     for (let i = 0; i < 10; i++) {
-        result.push({ description: `description${i}`, title: `title${i}` })
+        let items = (index == 0) ? getData(1) : null;
+        result.push({ description: `description${index}${i}`, items: items, title: `title${index}${i}` })
     }
     return result;
 }
 
-let dataSource = new ClientDataSource(getData());
-dataSource.dataBind();
+let dataSource = new ClientDataSource(getData(0));
 
 ReactDom.render(
-    <Grid dataSource={dataSource}>
+    <Grid autoBind={true} dataSource={dataSource}>
+        <DetailGridColumn detailRowTemplate={(column, model, rowIndex) =>
+            <Grid autoBind={true} dataSource={new ClientDataSource(model.items)}>
+                <GridColumn field="title" title="Title" />
+                <GridColumn field="description" title="Description" />
+            </Grid>
+        } />
         <GridColumn field="title" title="Title" />
         <GridColumn field="description" title="Description" />
         <GridColumn
             isSortable={false}
-            onCellDataBinding={(sender, x) => (<a href="javascript:">{x.title}</a>)}
+            bodyTemplate={(sender, x) => (<a href="javascript:">{x.title}</a>)}
             title="Link" />
     </Grid>,
     document.getElementById('grid')

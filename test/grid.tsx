@@ -2,7 +2,8 @@ import * as Enzyme from 'enzyme';
 import { expect } from 'chai';
 import * as React from 'react';
 import { ClientDataSource, DataSource, SortDirection } from '../src/data-source';
-import { Grid, GridColumn } from '../src/grid';
+import { Grid } from '../src/grid';
+import { GridColumn } from '../src/grid-column';
 
 describe('<Grid />', () => {
     describe('behaviour', () => {

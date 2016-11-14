@@ -1,27 +1,7 @@
 import * as React from 'react';
 import { DataSource, SortDirection } from '../src/data-source';
+import { DetailGridColumn, GridColumnBase  } from '../src/grid-column';
 import { StyleProvider } from '../src/style-provider';
-
-export interface GridColumnProps {
-    className?: string;
-    field?: string;
-    isSortable?: boolean;
-    title?: string;
-
-    onCellDataBinding?: (sender: any, model: any) => JSX.Element | void;
-}
-
-export class GridColumn extends React.Component<GridColumnProps, any> {
-    public render(): JSX.Element {
-        return this.props.children ? React.Children.only(this.props.children) : null;
-    }
-}
-
-export interface GridProps {
-    dataSource?: DataSource<any>;
-
-    onRowDetailsLoading?: (model: any) => JSX.Element | void;
-}
 
 export type GridStyle = {
     class: string;
@@ -40,73 +20,98 @@ export type GridStyle = {
     };
 };
 
-export abstract class GridBase<TProps extends GridProps> extends React.Component<GridProps, any> {
-    private _columns: GridColumn[];
+export interface GridBaseProps {
+    autoBind?: boolean;
+    dataSource?: DataSource<any>;
+    style?: GridStyle;
+}
+
+export interface GridBaseState {
+    expandedDetailRows: any[];
+}
+
+export abstract class GridBase<TProps extends GridBaseProps> extends React.Component<GridBaseProps, any> {
+    private _columns: GridColumnBase<any>[];
+    private _detailColumn: DetailGridColumn;
     private _style: GridStyle;
 
-    constructor(props: GridProps) {
+    constructor(props: GridBaseProps) {
         super(props);
-    }
-
-    protected componentDidMount() {
-        this.props.dataSource.onDataBound = () => this.forceUpdate();
-    }
-    protected getSortDirection(column: GridColumn): SortDirection {
-        let sortedBy = (this.props.dataSource.view.sortedBy != null)
-            ? this.props.dataSource.view.sortedBy.filter(x => x.field == column.props.field)
-            : null;
-        return (sortedBy != null)
-                && (sortedBy.length == 1)
-                && (sortedBy[0].field == column.props.field)
-            ? sortedBy[0].direction
-            : null;
-    }
-    protected handleClickToSort(column: GridColumn) {
-        let sortedBy = this.props.dataSource.view.sortedBy;
-        let direction = (sortedBy != null)
-                && (sortedBy.length == 1)
-                && (sortedBy[0].field == column.props.field)
-                && (sortedBy[0].direction == SortDirection.Ascending)
-            ? SortDirection.Descending
-            : SortDirection.Ascending;
-
-        this.props.dataSource.sort({ direction: direction, field: column.props.field });
-        this.props.dataSource.dataBind();
-    }
-    protected renderBodyCell(column: GridColumn, model: any, index: number): JSX.Element {
-        let result;
-        if (column.props.onCellDataBinding) {
-            result = column.props.onCellDataBinding(this, model);
+        if (this.props.dataSource) {
+            this.props.dataSource.onDataBound = () => this.forceUpdate();
         }
-        return result;
+        this.state = { expandedDetailRows: [] };
     }
 
-    protected get columns(): GridColumn[] {
-        return this._columns = this._columns
-            || React.Children.toArray(this.props.children).filter(x => (x as any).type == GridColumn) as any;
+    protected componentDidUpdate() {
+        if (this.props.autoBind && !this.props.dataSource.view) {
+            this.props.dataSource.dataBind();
+        }
     }
+    protected componentWillMount() {
+        if (this.props.autoBind && !this.props.dataSource.view) {
+            this.props.dataSource.dataBind();
+        }
+    }
+    protected renderDetailRow(model: any, rowIndex: number): JSX.Element {
+        return this.detailColumn ? this.detailColumn.renderDetailRow(model, rowIndex) : null;
+    }
+    protected renderBodyCell(column: GridColumnBase<any>, model: any, columnIndex: number, rowIndex: number): JSX.Element {
+        return column.renderBody(model, rowIndex);
+    }
+    protected renderHeaderCell(column: GridColumnBase<any>, columnIndex: number): JSX.Element {
+        return column.renderHeader();
+    }
+
+    protected get columns(): GridColumnBase<any>[] {
+        return this._columns = this._columns
+            || React.Children.toArray(this.props.children)
+                .map(x => new (x as any).type((x as any).props, this))
+                .filter(x => x instanceof GridColumnBase) as any;
+    }
+    protected get detailColumn(): DetailGridColumn {
+        return this._detailColumn = this._detailColumn
+            || (this.columns as any).find(x => x instanceof DetailGridColumn);
+    }
+
     protected get style(): GridStyle {
-        return this._style = this._style || StyleProvider.Instance.getGridStyle();
+        return this._style = this._style || this.props.style || StyleProvider.Instance.getGridStyle();
     }
 }
 
-export class Grid extends GridBase<GridProps> {
+export class Grid extends GridBase<GridBaseProps> {
     protected renderBody(): JSX.Element {
         return (
             <tbody>
-                {this.props.dataSource.view.data.map((x, i) => this.renderBodyRow(x, i))}
+                {this.props.dataSource.view
+                    ? this.props.dataSource.view.data.map((x, i) =>
+                        (this.state.expandedDetailRows.indexOf(x) != -1)
+                            ? [this.renderBodyRow(x, i), this.renderDetailRow(x, i)]
+                            : [this.renderBodyRow(x, i)])
+                    : null}
             </tbody>
         );
     }
-    protected renderBodyCell(column: GridColumn, model: any, index: number): JSX.Element {
+    protected renderBodyCell(column: GridColumnBase<any>, model: any, columnIndex: number, rowIndex: number): JSX.Element {
         return (
-            <td key={index}>{super.renderBodyCell(column, model, index) || model[column.props.field]}</td>
+            <td key={`${rowIndex}_${columnIndex}`}>
+                {super.renderBodyCell(column, model, columnIndex, rowIndex)}
+            </td>
         );
     }
-    protected renderBodyRow(model: any, index: number): JSX.Element {
+    protected renderBodyRow(model: any, rowIndex: number): JSX.Element {
         return (
-            <tr key={index}>
-                {this.columns.map((x, i) => this.renderBodyCell(x, model, i))}
+            <tr key={rowIndex}>
+                {this.columns.map((x, i) => this.renderBodyCell(x, model, i, rowIndex))}
+            </tr>
+        );
+    }
+    protected renderDetailRow(model: any, rowIndex: number): JSX.Element {
+        return (
+            <tr>
+                <td colSpan={this.columns.length}>
+                    {super.renderDetailRow(model, rowIndex)}
+                </td>
             </tr>
         );
     }
@@ -117,15 +122,10 @@ export class Grid extends GridBase<GridProps> {
             </thead>
         );
     }
-    protected renderHeaderCell(column: GridColumn, index: number): JSX.Element {
-        let direction = this.getSortDirection(column); 
-        let className = this.style.headerRow.cell.classBySorting[direction];
+    protected renderHeaderCell(column: GridColumnBase<any>, columnIndex: number): JSX.Element {
         return (
-            <th className={className} key={index}>
-                {(() => (column.props.isSortable != false)
-                    ? <a href="javascript:" onClick={() => this.handleClickToSort(column)}>{column.props.title}</a>
-                    : column.props.title
-                )()}
+            <th key={columnIndex}>
+                {super.renderHeaderCell(column, columnIndex)}
             </th>
         );
     }
@@ -139,7 +139,7 @@ export class Grid extends GridBase<GridProps> {
 
     public render(): JSX.Element {
         return (
-            <table className={this.style.class} width="100%">
+            <table className={this.style.class}>
                 {this.renderHeader()}
                 {this.renderBody()}
             </table>
