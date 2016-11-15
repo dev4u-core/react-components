@@ -22,7 +22,7 @@ export interface DataSource<T> {
     onDataBound?: (view: DataView<T>) => void;
 }
 
-export class ClientDataSource<T> {
+export class ClientDataSource<T> implements DataSource<T> {
     private _data: T[];
     private _onDataBound: (view: DataView<T>) => void;
     private _sort: ((view: DataView<T>) => void);

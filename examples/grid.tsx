@@ -20,7 +20,6 @@ ReactDom.render(
         <DetailGridColumn detailRowTemplate={(column, model, rowIndex) =>
             <Grid autoBind={true} dataSource={new ClientDataSource(model.items)}>
                 <GridColumn field="title" title="Title" />
-                <GridColumn field="description" title="Description" />
             </Grid>
         } />
         <GridColumn field="title" title="Title" />

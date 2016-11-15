@@ -37,21 +37,22 @@ export abstract class GridBase<TProps extends GridBaseProps> extends React.Compo
 
     constructor(props: GridBaseProps) {
         super(props);
-        if (this.props.dataSource) {
-            this.props.dataSource.onDataBound = () => this.forceUpdate();
-        }
         this.state = { expandedDetailRows: [] };
     }
 
-    protected componentDidUpdate() {
+    protected dataBind() {
+        if (this.props.dataSource) {
+            this.props.dataSource.onDataBound = () => this.forceUpdate();
+        }
         if (this.props.autoBind && !this.props.dataSource.view) {
             this.props.dataSource.dataBind();
         }
     }
-    protected componentWillMount() {
-        if (this.props.autoBind && !this.props.dataSource.view) {
-            this.props.dataSource.dataBind();
-        }
+    protected componentDidUpdate() {
+        this.dataBind();
+    }
+    protected componentDidMount() {
+        this.dataBind();
     }
     protected renderDetailRow(model: any, rowIndex: number): JSX.Element {
         return this.detailColumn ? this.detailColumn.renderDetailRow(model, rowIndex) : null;
