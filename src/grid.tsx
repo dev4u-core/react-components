@@ -30,12 +30,12 @@ export interface GridBaseState {
     expandedDetailRows: any[];
 }
 
-export abstract class GridBase<TProps extends GridBaseProps> extends React.Component<GridBaseProps, any> {
+export abstract class GridBase<P extends GridBaseProps> extends React.Component<P, any> {
     private _columns: GridColumnBase<any>[];
     private _detailColumn: DetailGridColumn;
     private _style: GridStyle;
 
-    constructor(props: GridBaseProps) {
+    constructor(props: P) {
         super(props);
         this.state = { expandedDetailRows: [] };
     }
@@ -44,7 +44,7 @@ export abstract class GridBase<TProps extends GridBaseProps> extends React.Compo
         if (this.props.dataSource) {
             this.props.dataSource.onDataBound = () => this.forceUpdate();
         }
-        if (this.props.autoBind && !this.props.dataSource.view) {
+        if ((this.props.autoBind != false) && !this.props.dataSource.view) {
             this.props.dataSource.dataBind();
         }
     }
