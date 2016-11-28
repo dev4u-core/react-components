@@ -13,22 +13,32 @@ export interface DataView<T> {
     sortedBy?: SortExpression[];
 }
 
-export interface DataSource<T> {
-    dataBind();
-    sort(...expressions: SortExpression[]);
+export abstract class DataSource<T> {
+    public abstract dataBind();
+    public getValue(model: any, compositeField: string): any {
+        let result = model;
+        var fields = compositeField.split('.');
+        for (let i = 0; i < fields.length; i++) {
+            result = result[fields[i]];
+            if (!result) break;
+        }
+        return result;
+    }
+    public abstract sort(...expressions: SortExpression[]);
 
-    view: DataView<T>;
+    public abstract get view(): DataView<T>;
 
-    onDataBound?: (view: DataView<T>) => void;
+    public abstract onDataBound?: (view: DataView<T>) => void;
 }
 
-export class ClientDataSource<T> implements DataSource<T> {
+export class ClientDataSource<T> extends DataSource<T> {
     private _data: T[];
     private _onDataBound: (view: DataView<T>) => void;
     private _sort: ((view: DataView<T>) => void);
     private _view: DataView<T>;
 
-    constructor(data: T[]) {
+    public constructor(data: T[]) {
+        super();
         this._data = data;
         this._view = null;
     }
@@ -38,8 +48,8 @@ export class ClientDataSource<T> implements DataSource<T> {
         for (let i = 0; i < expressions.length; i++) {
             var comparer = ((direction, field) =>
                 (x, y) => {
-                    let xValue = x[field];
-                    let yValue = y[field];
+                    let xValue = this.getValue(x, field);
+                    let yValue = this.getValue(y, field);
                     if (xValue > yValue) return (direction == SortDirection.Ascending) ? 1 : -1;
                     if (xValue < yValue) return (direction == SortDirection.Ascending) ? -1 : 1;
                     return 0;
