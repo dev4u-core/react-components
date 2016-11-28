@@ -67,9 +67,9 @@ export class ClientDataSource<T> implements DataSource<T> {
         }
     }
     public sort(...expressions: SortExpression[]) {
-        this._sort =x => {
+        this._sort = x => {
             x.sortedBy = expressions;
-            x.data = x.data.sort(this.getComparer(expressions));
+            x.data = expressions ? x.data.sort(this.getComparer(expressions)) : x.data;
         };
     }
 

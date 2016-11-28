@@ -47,6 +47,14 @@ describe('<Grid />', () => {
                 expect(dataSource.view.sortedBy[0].direction).to.equal(SortDirection.Descending, 'sortedBy[0].direction');
                 expect(dataSource.view.sortedBy[0].field).to.equal('title', 'sortedBy[0].field');
             });
+            it('three click on first column', () => {
+                grid.find('th a').first()
+                    .simulate('click')
+                    .simulate('click')
+                    .simulate('click');
+
+                expect(dataSource.view.sortedBy.length).to.equal(0, 'sortedBy.length');
+            });
             it('two click on first column and one click on last column', () => {
                 grid.find('th a').first()
                     .simulate('click')
@@ -57,11 +65,6 @@ describe('<Grid />', () => {
                 expect(dataSource.view.sortedBy[0].direction).to.equal(SortDirection.Ascending, 'sortedBy[0].direction');
                 expect(dataSource.view.sortedBy[0].field).to.equal('description', 'sortedBy[0].field');
             });
-        });
-    });
-    describe('events', () => {
-        it('onCellDataBinding', () => {
-            expect(0).to.equal(1);
         });
     });
 });

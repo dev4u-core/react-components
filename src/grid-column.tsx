@@ -16,7 +16,7 @@ export interface GridColumnBaseProps {
 export abstract class GridColumnBase<P extends GridColumnBaseProps> extends React.Component<P, any> {
     private _grid: Grid;
 
-    public constructor(props: DetailGridColumnProps, grid: Grid) {
+    public constructor(props: P, grid: Grid) {
         super(props);
         this._grid = grid;
         this.handleClickToSort = this.handleClickToSort.bind(this);
@@ -35,14 +35,19 @@ export abstract class GridColumnBase<P extends GridColumnBaseProps> extends Reac
 
     public handleClickToSort() {
         let dataSource = this.grid.props.dataSource;
-        let sortedBy = dataSource.view ? dataSource.view.sortedBy : null;
+        let sortedBy = null;
+        if (dataSource.view && dataSource.view.sortedBy) {
+            sortedBy = dataSource.view.sortedBy.filter(x => x.field == this.props.field);
+            sortedBy = (sortedBy.length == 1) ? sortedBy[0] : null;
+        }
         let direction = (sortedBy != null)
-                && (sortedBy.length == 1)
-                && (sortedBy[0].field == this.props.field)
-                && (sortedBy[0].direction == SortDirection.Ascending)
-            ? SortDirection.Descending
+            ? ((sortedBy.direction == SortDirection.Ascending) ? SortDirection.Descending : null)
             : SortDirection.Ascending;
-        dataSource.sort({ direction: direction, field: this.props.field });
+        if (direction) {
+            dataSource.sort({ direction: direction, field: this.props.field });
+        } else {
+            dataSource.sort();
+        }
         dataSource.dataBind();
     }
     public renderBody(model: any, index: number): JSX.Element {
