@@ -35,9 +35,9 @@
     "definition": "./dist/index.d.ts"
   },
   "scripts": {
-    "mocha": "mocha ./dist/*.test.js",
-    "karma": "karma start karma.config.js",
-    "webpack": "webpack --config webpack.config.dev.js --display-error-details --display-modules"
+    "integration-tests": "karma start karma.config.js --watch",
+    "tests": "mocha ./dist/tests/*.js",
+    "build": "webpack --config webpack.config.dev.js --display-error-details --display-modules"
   },
   "version": "1.0.5"
 }

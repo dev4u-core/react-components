@@ -4,7 +4,7 @@
         "module": "commonjs",
         "noImplicitAny": false,
         "sourceMap": false,
-        "target": "es6"
+        "target": "es5"
     },
-    "exclude": ["dist", "node_modules", "test"]
+    "exclude": ["dist", "node_modules", "tests"]
 }

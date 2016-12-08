@@ -6,10 +6,9 @@ var webpack = require('webpack');
 module.exports = {
     cache: true,
     entry: {
-        'data-source.test': ['./test/data-source'],
-        'grid.example': ['./examples/grid'],
-        'grid.test': ['./test/grid'],
-        'panel-container.test': ['./test/panel-container']
+        'data-source.test': ['./tests/data-source'],
+        'grid.integration-test': ['./tests/grid'],
+        'panel-container.integration-test': ['./tests/panel-container']
     },
     module: {
         loaders: [
@@ -18,7 +17,7 @@ module.exports = {
     },
     output: {
         filename: '[name].js',
-        path: './dist'
+        path: './dist/tests'
     },
     plugins: [
         new webpack.NoErrorsPlugin(),

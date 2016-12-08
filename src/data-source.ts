@@ -48,8 +48,8 @@ export class ClientDataSource<T> extends DataSource<T> {
         for (let i = 0; i < expressions.length; i++) {
             var comparer = ((direction, field) =>
                 (x, y) => {
-                    let xValue = this.getValue(x, field);
-                    let yValue = this.getValue(y, field);
+                    let xValue = this.toComparedValue(this.getValue(x, field));
+                    let yValue = this.toComparedValue(this.getValue(y, field));
                     if (xValue > yValue) return (direction == SortDirection.Ascending) ? 1 : -1;
                     if (xValue < yValue) return (direction == SortDirection.Ascending) ? -1 : 1;
                     return 0;
@@ -59,6 +59,9 @@ export class ClientDataSource<T> extends DataSource<T> {
                 : comparer;
         }
         return result;
+    }
+    private toComparedValue(value: any): any {
+        return (value == false) ? 1 : ((value == true) ? 2 : value);
     }
 
     // IDataSource<T> Members

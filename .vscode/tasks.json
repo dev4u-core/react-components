@@ -13,13 +13,13 @@
     "isShellCommand": true,
     "tasks": [
         {
-            "args": ["webpack"],
+            "args": ["build"],
             "isBuildCommand": true,
             "suppressTaskName": true,
             "taskName": "build"
         },
         {   
-            "args": ["karma"],
+            "args": ["integration-tests"],
             "isTestCommand": true,
             "isWatching": false,
             "suppressTaskName": true,
