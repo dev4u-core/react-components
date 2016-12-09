@@ -16,14 +16,14 @@ describe('ClientDataSource', () => {
         expect(dataSource.view.data[2].field).to.equal('value2');
     });
     describe('sort', () => {
-        let dataByCases = [
+        let testCases = [
             [{ booleanField: true, stringField: 'value0' }, { booleanField: false, stringField: 'value1' }, { booleanField: null, stringField: 'value2' }],
             [{ booleanField: null, stringField: 'value2' }, { booleanField: true, stringField: 'value0' }, { booleanField: false, stringField: 'value1' }],
             [{ booleanField: null, stringField: 'value2' }, { booleanField: false, stringField: 'value1' }, { booleanField: true, stringField: 'value0' }]
         ];
 
         it ('"SortDirection.Ascending" by one field', () => {
-            dataByCases.forEach(x => {
+            testCases.forEach(x => {
                 let dataSource = new ClientDataSource(x);
 
                 dataSource.sort({ direction: SortDirection.Ascending, field: 'stringField' });
@@ -35,7 +35,7 @@ describe('ClientDataSource', () => {
             });
         });
         it ('"SortDirection.Descending" by one field', () => {
-            dataByCases.forEach(x => {
+            testCases.forEach(x => {
                 let dataSource = new ClientDataSource(x);
 
                 dataSource.sort({ direction: SortDirection.Descending, field: 'stringField' });
@@ -47,8 +47,7 @@ describe('ClientDataSource', () => {
             });
         });
         it ('"SortDirection.Ascending" by one "boolean" field', () => {
-
-            dataByCases.forEach(x => {
+            testCases.forEach(x => {
                 let dataSource = new ClientDataSource(x);
 
                 dataSource.sort({ direction: SortDirection.Ascending, field: 'booleanField' });
@@ -60,7 +59,7 @@ describe('ClientDataSource', () => {
             });
         });
         it ('"SortDirection.Descending" by one "boolean" field', () => {
-            dataByCases.forEach(x => {
+            testCases.forEach(x => {
                 let dataSource = new ClientDataSource(x);
 
                 dataSource.sort({ direction: SortDirection.Descending, field: 'booleanField' });
@@ -72,7 +71,7 @@ describe('ClientDataSource', () => {
             });
         });
         it ('"SortDirection.Ascending" by one "string" field', () => {
-            dataByCases.forEach(x => {
+            testCases.forEach(x => {
                 let dataSource = new ClientDataSource(x);
 
                 dataSource.sort({ direction: SortDirection.Ascending, field: 'stringField' });
@@ -84,7 +83,7 @@ describe('ClientDataSource', () => {
             });
         });
         it ('"SortDirection.Descending" by one "string" field', () => {
-            dataByCases.forEach(x => {
+            testCases.forEach(x => {
                 let dataSource = new ClientDataSource(x);
 
                 dataSource.sort({ direction: SortDirection.Descending, field: 'stringField'});

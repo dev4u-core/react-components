@@ -9,8 +9,6 @@ module.exports = {
         'vendors': ['chai', 'enzyme', 'react'],
     },
     externals: {
-        // 'react': 'React',
-        // 'react-dom': 'ReactDOM'
         'cheerio': 'window',
         'react/addons': true,
         'react/lib/ExecutionEnvironment': true,

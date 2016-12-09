@@ -1,3 +1,5 @@
+import { Comparer } from './comparer';
+
 export enum SortDirection {
     Ascending = 1 << 0,
     Descending = 1 << 1
@@ -48,20 +50,17 @@ export class ClientDataSource<T> extends DataSource<T> {
         for (let i = 0; i < expressions.length; i++) {
             var comparer = ((direction, field) =>
                 (x, y) => {
-                    let xValue = this.toComparedValue(this.getValue(x, field));
-                    let yValue = this.toComparedValue(this.getValue(y, field));
-                    if (xValue > yValue) return (direction == SortDirection.Ascending) ? 1 : -1;
-                    if (xValue < yValue) return (direction == SortDirection.Ascending) ? -1 : 1;
-                    return 0;
+                    let xValue = this.getValue(x, field);
+                    let yValue = this.getValue(y, field);
+                    return (direction == SortDirection.Ascending)
+                        ? Comparer.Instance.compare(xValue, yValue)
+                        : Comparer.Instance.compare(yValue, xValue);
                 })(expressions[i].direction, expressions[i].field);
             result = (result != null)
                 ? ((prevComparer) => (x, y) => prevComparer(x, y))(result)
                 : comparer;
         }
         return result;
-    }
-    private toComparedValue(value: any): any {
-        return (value == false) ? 1 : ((value == true) ? 2 : value);
     }
 
     // IDataSource<T> Members

@@ -13,13 +13,13 @@
     "isShellCommand": true,
     "tasks": [
         {
-            "args": ["build"],
+            "args": ["build:dev"],
             "isBuildCommand": true,
             "suppressTaskName": true,
             "taskName": "build"
         },
         {   
-            "args": ["integration-tests"],
+            "args": ["test:dev"],
             "isTestCommand": true,
             "isWatching": false,
             "suppressTaskName": true,

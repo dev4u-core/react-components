@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(11);
+	module.exports = __webpack_require__(13);
 
 
 /***/ },
@@ -63,30 +63,32 @@
 /***/ },
 /* 4 */,
 /* 5 */,
-/* 6 */
+/* 6 */,
+/* 7 */,
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = (__webpack_require__(3))(41);
 
 /***/ },
-/* 7 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = (__webpack_require__(3))(43);
 
 /***/ },
-/* 8 */,
-/* 9 */,
 /* 10 */,
-/* 11 */
+/* 11 */,
+/* 12 */,
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var chai_1 = __webpack_require__(2);
-	var panel_1 = __webpack_require__(12);
-	var panel_container_1 = __webpack_require__(13);
-	var Enzyme = __webpack_require__(6);
-	var React = __webpack_require__(7);
+	var panel_1 = __webpack_require__(14);
+	var panel_container_1 = __webpack_require__(15);
+	var Enzyme = __webpack_require__(8);
+	var React = __webpack_require__(9);
 	describe('<PanelContainer />', function () {
 	    describe('initialization', function () {
 	        it('"staticPanels" property should be initialized', function () {
@@ -201,7 +203,7 @@
 
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -210,7 +212,7 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var React = __webpack_require__(7);
+	var React = __webpack_require__(9);
 	var Panel = (function (_super) {
 	    __extends(Panel, _super);
 	    function Panel(props) {
@@ -247,7 +249,7 @@
 
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -256,8 +258,8 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var React = __webpack_require__(7);
-	var panel_1 = __webpack_require__(12);
+	var React = __webpack_require__(9);
+	var panel_1 = __webpack_require__(14);
 	(function (PanelContainerMode) {
 	    PanelContainerMode[PanelContainerMode["DynamicAndStatic"] = 1] = "DynamicAndStatic";
 	    PanelContainerMode[PanelContainerMode["StaticAndDynamic"] = 2] = "StaticAndDynamic";

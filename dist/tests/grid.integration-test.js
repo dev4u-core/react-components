@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(5);
+	module.exports = __webpack_require__(7);
 
 
 /***/ },
@@ -65,11 +65,42 @@
 /***/ function(module, exports) {
 
 	"use strict";
+	var Comparer = (function () {
+	    function Comparer() {
+	    }
+	    Comparer.toComparedValue = function (value) {
+	        if (typeof value == 'string') {
+	            return value.toLowerCase();
+	        }
+	        return (value == false) ? 1 : ((value == true) ? 2 : value);
+	    };
+	    Comparer.prototype.compare = function (x, y) {
+	        var xValue = Comparer.toComparedValue(x);
+	        var yValue = Comparer.toComparedValue(y);
+	        if (xValue > yValue)
+	            return 1;
+	        if (xValue < yValue)
+	            return -1;
+	        return 0;
+	    };
+	    Comparer.Instance = new Comparer();
+	    return Comparer;
+	}());
+	exports.Comparer = Comparer;
+
+
+/***/ },
+/* 5 */,
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
+	var comparer_1 = __webpack_require__(4);
 	(function (SortDirection) {
 	    SortDirection[SortDirection["Ascending"] = 1] = "Ascending";
 	    SortDirection[SortDirection["Descending"] = 2] = "Descending";
@@ -109,13 +140,11 @@
 	        for (var i = 0; i < expressions.length; i++) {
 	            var comparer = (function (direction, field) {
 	                return function (x, y) {
-	                    var xValue = _this.toComparedValue(_this.getValue(x, field));
-	                    var yValue = _this.toComparedValue(_this.getValue(y, field));
-	                    if (xValue > yValue)
-	                        return (direction == SortDirection.Ascending) ? 1 : -1;
-	                    if (xValue < yValue)
-	                        return (direction == SortDirection.Ascending) ? -1 : 1;
-	                    return 0;
+	                    var xValue = _this.getValue(x, field);
+	                    var yValue = _this.getValue(y, field);
+	                    return (direction == SortDirection.Ascending)
+	                        ? comparer_1.Comparer.Instance.compare(xValue, yValue)
+	                        : comparer_1.Comparer.Instance.compare(yValue, xValue);
 	                };
 	            })(expressions[i].direction, expressions[i].field);
 	            result = (result != null)
@@ -123,9 +152,6 @@
 	                : comparer;
 	        }
 	        return result;
-	    };
-	    ClientDataSource.prototype.toComparedValue = function (value) {
-	        return (value == true) ? 1 : ((value == true) ? 0 : value);
 	    };
 	    // IDataSource<T> Members
 	    ClientDataSource.prototype.dataBind = function () {
@@ -170,16 +196,16 @@
 
 
 /***/ },
-/* 5 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Enzyme = __webpack_require__(6);
+	var Enzyme = __webpack_require__(8);
 	var chai_1 = __webpack_require__(2);
-	var React = __webpack_require__(7);
-	var data_source_1 = __webpack_require__(4);
-	var grid_1 = __webpack_require__(8);
-	var grid_column_1 = __webpack_require__(9);
+	var React = __webpack_require__(9);
+	var data_source_1 = __webpack_require__(6);
+	var grid_1 = __webpack_require__(10);
+	var grid_column_1 = __webpack_require__(11);
 	describe('<Grid />', function () {
 	    describe('behaviour', function () {
 	        describe('sorting', function () {
@@ -235,19 +261,19 @@
 
 
 /***/ },
-/* 6 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = (__webpack_require__(3))(41);
 
 /***/ },
-/* 7 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = (__webpack_require__(3))(43);
 
 /***/ },
-/* 8 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -256,9 +282,9 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var React = __webpack_require__(7);
-	var grid_column_1 = __webpack_require__(9);
-	var style_provider_1 = __webpack_require__(10);
+	var React = __webpack_require__(9);
+	var grid_column_1 = __webpack_require__(11);
+	var style_provider_1 = __webpack_require__(12);
 	var GridBase = (function (_super) {
 	    __extends(GridBase, _super);
 	    function GridBase(props) {
@@ -366,7 +392,7 @@
 
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -375,8 +401,8 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var React = __webpack_require__(7);
-	var data_source_1 = __webpack_require__(4);
+	var React = __webpack_require__(9);
+	var data_source_1 = __webpack_require__(6);
 	var GridColumnBase = (function (_super) {
 	    __extends(GridColumnBase, _super);
 	    function GridColumnBase(props, grid) {
@@ -491,7 +517,7 @@
 
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";

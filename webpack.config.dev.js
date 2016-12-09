@@ -6,6 +6,7 @@ var webpack = require('webpack');
 module.exports = {
     cache: true,
     entry: {
+        'comparer.test': ['./tests/comparer'],
         'data-source.test': ['./tests/data-source'],
         'grid.integration-test': ['./tests/grid'],
         'panel-container.integration-test': ['./tests/panel-container']
