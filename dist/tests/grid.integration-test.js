@@ -95,23 +95,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
 	var comparer_1 = __webpack_require__(4);
-	(function (SortDirection) {
-	    SortDirection[SortDirection["Ascending"] = 1] = "Ascending";
-	    SortDirection[SortDirection["Descending"] = 2] = "Descending";
-	})(exports.SortDirection || (exports.SortDirection = {}));
-	var SortDirection = exports.SortDirection;
-	var DataSource = (function () {
-	    function DataSource() {
+	var FieldAccessor = (function () {
+	    function FieldAccessor() {
 	    }
-	    DataSource.prototype.getValue = function (model, compositeField) {
+	    FieldAccessor.prototype.getValue = function (model, compositeField) {
 	        var result = model;
-	        var fields = compositeField.split('.');
+	        var fields = compositeField.split(FieldAccessor.Separator);
 	        for (var i = 0; i < fields.length; i++) {
 	            result = result[fields[i]];
 	            if (!result)
@@ -119,18 +109,21 @@
 	        }
 	        return result;
 	    };
-	    Object.defineProperty(DataSource.prototype, "view", {
-	        get: function () { },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    return DataSource;
+	    FieldAccessor.Separator = '.';
+	    return FieldAccessor;
 	}());
-	exports.DataSource = DataSource;
-	var ClientDataSource = (function (_super) {
-	    __extends(ClientDataSource, _super);
-	    function ClientDataSource(data) {
-	        _super.call(this);
+	exports.FieldAccessor = FieldAccessor;
+	(function (SortDirection) {
+	    SortDirection[SortDirection["Ascending"] = 1] = "Ascending";
+	    SortDirection[SortDirection["Descending"] = 2] = "Descending";
+	})(exports.SortDirection || (exports.SortDirection = {}));
+	var SortDirection = exports.SortDirection;
+	var ClientDataSource = (function () {
+	    function ClientDataSource(data, props) {
+	        if (props && props.pageSize) {
+	            this.pageSize = props.pageSize;
+	            this.setPageIndex(0);
+	        }
 	        this._data = data;
 	        this._view = null;
 	    }
@@ -140,8 +133,8 @@
 	        for (var i = 0; i < expressions.length; i++) {
 	            var comparer = (function (direction, field) {
 	                return function (x, y) {
-	                    var xValue = _this.getValue(x, field);
-	                    var yValue = _this.getValue(y, field);
+	                    var xValue = _this.fieldAccessor.getValue(x, field);
+	                    var yValue = _this.fieldAccessor.getValue(y, field);
 	                    return (direction == SortDirection.Ascending)
 	                        ? comparer_1.Comparer.Instance.compare(xValue, yValue)
 	                        : comparer_1.Comparer.Instance.compare(yValue, xValue);
@@ -157,13 +150,23 @@
 	    ClientDataSource.prototype.dataBind = function () {
 	        this._view = this._view || {};
 	        this._view.data = this._data;
-	        if (this._sort != null) {
+	        if (this._sort) {
 	            this._sort(this._view);
-	            this._sort = null;
+	        }
+	        if (this._setPageIndex) {
+	            this._setPageIndex(this._view);
 	        }
 	        if (this._onDataBound != null) {
-	            this._onDataBound(this._view);
+	            this._onDataBound(this);
 	        }
+	    };
+	    ClientDataSource.prototype.setPageIndex = function (value) {
+	        var _this = this;
+	        this._setPageIndex = function (x) {
+	            x.pageIndex = value;
+	            x.data = x.data.slice(_this.pageSize * value, _this.pageSize * (value + 1));
+	        };
+	        return this;
 	    };
 	    ClientDataSource.prototype.sort = function () {
 	        var _this = this;
@@ -175,7 +178,15 @@
 	            x.sortedBy = expressions;
 	            x.data = expressions ? x.data.sort(_this.getComparer(expressions)) : x.data;
 	        };
+	        return this;
 	    };
+	    Object.defineProperty(ClientDataSource.prototype, "fieldAccessor", {
+	        get: function () {
+	            return this._fieldAccessor = this._fieldAccessor || new FieldAccessor();
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
 	    Object.defineProperty(ClientDataSource.prototype, "view", {
 	        get: function () {
 	            return this._view;
@@ -191,7 +202,7 @@
 	        configurable: true
 	    });
 	    return ClientDataSource;
-	}(DataSource));
+	}());
 	exports.ClientDataSource = ClientDataSource;
 
 
