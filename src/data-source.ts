@@ -1,3 +1,4 @@
+import { } from 'es6-shim';
 import { Comparer } from './comparer';
 
 export class FieldAccessor {
@@ -30,15 +31,24 @@ export interface DataView<T> {
     sortedBy?: SortExpression[];
 }
 
+export enum DataSourceState {
+    Empty,
+    Binding,
+    Bound
+}
+
 export interface DataSource<T> {
     dataBind();
     setPageIndex(value: number): DataSource<T>;
     sort(...expressions: SortExpression[]): DataSource<T>;
 
     readonly fieldAccessor: FieldAccessor;
-    pageSize?: number;
+    readonly pageSize?: number;
+    readonly state: DataSourceState;
+    readonly totalCount: number;
     readonly view: DataView<T>;
 
+    onDataBinding?: (sender: DataSource<T>) => void;
     onDataBound?: (sender: DataSource<T>) => void;
 }
 
@@ -47,19 +57,22 @@ export interface ClientDataSourceProps {
 }
 
 export class ClientDataSource<T> implements DataSource<T> {
-    private _data: T[];
+    private _data: (() => Promise<T[]>) | T[];
     private _fieldAccessor: FieldAccessor;
+    private _onDataBinging: (sender: DataSource<T>) => void;
     private _onDataBound: (sender: DataSource<T>) => void;
     private _setPageIndex: ((view: DataView<T>) => void);
     private _sort: ((view: DataView<T>) => void);
+    private _state: DataSourceState;
     private _view: DataView<T>;
 
     public constructor(data: T[], props?: ClientDataSourceProps) {
         if (props && props.pageSize) {
             this.pageSize = props.pageSize;
-            this.setPageIndex(0);
+            this.setPageIndex(1);
         }
         this._data = data;
+        this._state = DataSourceState.Empty;
         this._view = null;
     }
 
@@ -81,10 +94,21 @@ export class ClientDataSource<T> implements DataSource<T> {
         return result;
     }
 
-    // IDataSource<T> Members
-    public dataBind() {
+    protected handleDataBinding() {
+        this._state = DataSourceState.Binding;
+        if (this._onDataBinging != null) {
+            this._onDataBinging(this as any);
+        }
+    }
+    protected handleDataBound() {
+        this._state = DataSourceState.Bound;
+        if (this._onDataBound != null) {
+            this._onDataBound(this as any);
+        }
+    }
+    protected internalDataBind(data: T[]) {
         this._view = this._view || {};
-        this._view.data = this._data;
+        this._view.data = data;
 
         if (this._sort)
         {
@@ -94,15 +118,28 @@ export class ClientDataSource<T> implements DataSource<T> {
         if (this._setPageIndex) {
             this._setPageIndex(this._view);
         }
+    }
 
-        if (this._onDataBound != null) {
-            this._onDataBound(this);
+    public dataBind() {
+        this.handleDataBinding();
+        if (this._data != null) {
+            let data = this._data as T[];
+            if (data) {
+                this.internalDataBind(data);
+                this.handleDataBound();
+            } else {
+                (this._data as (() => Promise<T[]>))().then(x => {
+                    this._data = x;
+                    this.internalDataBind(x);
+                    this.handleDataBound();
+                });
+            }
         }
     }
     public setPageIndex(value: number): DataSource<T> {
         this._setPageIndex = x => {
             x.pageIndex = value;
-            x.data = x.data.slice(this.pageSize * value, this.pageSize * (value + 1));
+            x.data = x.data.slice(this.pageSize * (value - 1), this.pageSize * value);
         };
         return this;
     }
@@ -118,10 +155,19 @@ export class ClientDataSource<T> implements DataSource<T> {
         return this._fieldAccessor = this._fieldAccessor || new FieldAccessor();
     }
     public pageSize: number;
+    public get state(): DataSourceState {
+        return this._state;
+    }
+    public get totalCount(): number {
+        return this._data.length;
+    }
     public get view(): DataView<T> {
         return this._view;
     }
 
+    public set onDataBinding(value: (sender: DataSource<T>) => void) {
+        this._onDataBinging = value;
+    }
     public set onDataBound(value: (sender: DataSource<T>) => void) {
         this._onDataBound = value;
     }

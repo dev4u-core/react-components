@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(7);
+	module.exports = __webpack_require__(9);
 
 
 /***/ },
@@ -118,13 +118,20 @@
 	    SortDirection[SortDirection["Descending"] = 2] = "Descending";
 	})(exports.SortDirection || (exports.SortDirection = {}));
 	var SortDirection = exports.SortDirection;
+	(function (DataSourceState) {
+	    DataSourceState[DataSourceState["Empty"] = 0] = "Empty";
+	    DataSourceState[DataSourceState["Binding"] = 1] = "Binding";
+	    DataSourceState[DataSourceState["Bound"] = 2] = "Bound";
+	})(exports.DataSourceState || (exports.DataSourceState = {}));
+	var DataSourceState = exports.DataSourceState;
 	var ClientDataSource = (function () {
 	    function ClientDataSource(data, props) {
 	        if (props && props.pageSize) {
 	            this.pageSize = props.pageSize;
-	            this.setPageIndex(0);
+	            this.setPageIndex(1);
 	        }
 	        this._data = data;
+	        this._state = DataSourceState.Empty;
 	        this._view = null;
 	    }
 	    ClientDataSource.prototype.getComparer = function (expressions) {
@@ -146,25 +153,51 @@
 	        }
 	        return result;
 	    };
-	    // IDataSource<T> Members
-	    ClientDataSource.prototype.dataBind = function () {
+	    ClientDataSource.prototype.handleDataBinding = function () {
+	        this._state = DataSourceState.Binding;
+	        if (this._onDataBinging != null) {
+	            this._onDataBinging(this);
+	        }
+	    };
+	    ClientDataSource.prototype.handleDataBound = function () {
+	        this._state = DataSourceState.Bound;
+	        if (this._onDataBound != null) {
+	            this._onDataBound(this);
+	        }
+	    };
+	    ClientDataSource.prototype.internalDataBind = function (data) {
 	        this._view = this._view || {};
-	        this._view.data = this._data;
+	        this._view.data = data;
 	        if (this._sort) {
 	            this._sort(this._view);
 	        }
 	        if (this._setPageIndex) {
 	            this._setPageIndex(this._view);
 	        }
-	        if (this._onDataBound != null) {
-	            this._onDataBound(this);
+	    };
+	    ClientDataSource.prototype.dataBind = function () {
+	        var _this = this;
+	        this.handleDataBinding();
+	        if (this._data != null) {
+	            var data = this._data;
+	            if (data) {
+	                this.internalDataBind(data);
+	                this.handleDataBound();
+	            }
+	            else {
+	                this._data().then(function (x) {
+	                    _this._data = x;
+	                    _this.internalDataBind(x);
+	                    _this.handleDataBound();
+	                });
+	            }
 	        }
 	    };
 	    ClientDataSource.prototype.setPageIndex = function (value) {
 	        var _this = this;
 	        this._setPageIndex = function (x) {
 	            x.pageIndex = value;
-	            x.data = x.data.slice(_this.pageSize * value, _this.pageSize * (value + 1));
+	            x.data = x.data.slice(_this.pageSize * (value - 1), _this.pageSize * value);
 	        };
 	        return this;
 	    };
@@ -187,9 +220,30 @@
 	        enumerable: true,
 	        configurable: true
 	    });
+	    Object.defineProperty(ClientDataSource.prototype, "state", {
+	        get: function () {
+	            return this._state;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(ClientDataSource.prototype, "totalCount", {
+	        get: function () {
+	            return this._data.length;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
 	    Object.defineProperty(ClientDataSource.prototype, "view", {
 	        get: function () {
 	            return this._view;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(ClientDataSource.prototype, "onDataBinding", {
+	        set: function (value) {
+	            this._onDataBinging = value;
 	        },
 	        enumerable: true,
 	        configurable: true
@@ -207,16 +261,18 @@
 
 
 /***/ },
-/* 7 */
+/* 7 */,
+/* 8 */,
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Enzyme = __webpack_require__(8);
+	var Enzyme = __webpack_require__(10);
 	var chai_1 = __webpack_require__(2);
-	var React = __webpack_require__(9);
+	var React = __webpack_require__(11);
 	var data_source_1 = __webpack_require__(6);
-	var grid_1 = __webpack_require__(10);
-	var grid_column_1 = __webpack_require__(11);
+	var grid_1 = __webpack_require__(12);
+	var grid_column_1 = __webpack_require__(13);
 	describe('<Grid />', function () {
 	    describe('behaviour', function () {
 	        describe('sorting', function () {
@@ -272,19 +328,19 @@
 
 
 /***/ },
-/* 8 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = (__webpack_require__(3))(41);
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = (__webpack_require__(3))(43);
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -293,9 +349,9 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var React = __webpack_require__(9);
-	var grid_column_1 = __webpack_require__(11);
-	var style_provider_1 = __webpack_require__(12);
+	var React = __webpack_require__(11);
+	var grid_column_1 = __webpack_require__(13);
+	var style_provider_1 = __webpack_require__(14);
 	var GridBase = (function (_super) {
 	    __extends(GridBase, _super);
 	    function GridBase(props) {
@@ -403,7 +459,7 @@
 
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -412,7 +468,7 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var React = __webpack_require__(9);
+	var React = __webpack_require__(11);
 	var data_source_1 = __webpack_require__(6);
 	var GridColumnBase = (function (_super) {
 	    __extends(GridColumnBase, _super);
@@ -528,7 +584,7 @@
 
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports) {
 
 	"use strict";

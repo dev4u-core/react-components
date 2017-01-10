@@ -8,6 +8,7 @@ module.exports = {
     entry: {
         'comparer.test': ['./tests/comparer'],
         'data-source.test': ['./tests/data-source'],
+        'data-source-pager.test': ['./tests/data-source-pager'],
         'grid.integration-test': ['./tests/grid'],
         'panel-container.integration-test': ['./tests/panel-container']
     },

@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(8);
+	module.exports = __webpack_require__(5);
 
 
 /***/ },
@@ -90,7 +90,47 @@
 
 
 /***/ },
-/* 5 */,
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var chai_1 = __webpack_require__(2);
+	var data_source_1 = __webpack_require__(6);
+	var data_source_pager_1 = __webpack_require__(7);
+	describe('DataSourcePager', function () {
+	    function createPager() {
+	        var dataSource = new data_source_1.ClientDataSource([{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }], { pageSize: 2 });
+	        dataSource.dataBind();
+	        return new data_source_pager_1.DataSourcePager(dataSource);
+	    }
+	    it('setFirstPageIndex', function () {
+	        var pager = createPager();
+	        pager.setLastPageIndex();
+	        pager.setFirstPageIndex();
+	        chai_1.expect(pager.dataSource.view.pageIndex).to.equal(1);
+	    });
+	    it('setLastPageIndex', function () {
+	        var pager = createPager();
+	        pager.setFirstPageIndex();
+	        pager.setLastPageIndex();
+	        chai_1.expect(pager.dataSource.view.pageIndex).to.equal(3);
+	    });
+	    it('setNextPageIndex', function () {
+	        var pager = createPager();
+	        pager.setFirstPageIndex();
+	        pager.setNextPageIndex();
+	        chai_1.expect(pager.dataSource.view.pageIndex).to.equal(2);
+	    });
+	    it('setPrevPageIndex', function () {
+	        var pager = createPager();
+	        pager.setLastPageIndex();
+	        pager.setPrevPageIndex();
+	        chai_1.expect(pager.dataSource.view.pageIndex).to.equal(2);
+	    });
+	});
+
+
+/***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -261,117 +301,43 @@
 
 
 /***/ },
-/* 7 */,
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/* 7 */
+/***/ function(module, exports) {
 
 	"use strict";
-	var chai_1 = __webpack_require__(2);
-	var data_source_1 = __webpack_require__(6);
-	describe('ClientDataSource', function () {
-	    it('dataBind', function () {
-	        var data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
-	        var dataSource = new data_source_1.ClientDataSource(data);
-	        chai_1.expect(dataSource.view).to.be.null;
-	        dataSource.dataBind();
-	        chai_1.expect(dataSource.view.data[0].field).to.equal('value0');
-	        chai_1.expect(dataSource.view.data[1].field).to.equal('value1');
-	        chai_1.expect(dataSource.view.data[2].field).to.equal('value2');
+	var DataSourcePager = (function () {
+	    function DataSourcePager(dataSource) {
+	        this._dataSource = dataSource;
+	    }
+	    DataSourcePager.prototype.setFirstPageIndex = function () {
+	        this._dataSource.setPageIndex(1);
+	        this._dataSource.dataBind();
+	    };
+	    DataSourcePager.prototype.setNextPageIndex = function () {
+	        var pageIndex = this._dataSource.view.pageIndex + 1;
+	        this._dataSource.setPageIndex(pageIndex);
+	        this._dataSource.dataBind();
+	    };
+	    DataSourcePager.prototype.setLastPageIndex = function () {
+	        var pageIndex = Math.ceil(this._dataSource.totalCount / this._dataSource.pageSize);
+	        this._dataSource.setPageIndex(pageIndex);
+	        this._dataSource.dataBind();
+	    };
+	    DataSourcePager.prototype.setPrevPageIndex = function () {
+	        var pageIndex = this._dataSource.view.pageIndex - 1;
+	        this._dataSource.setPageIndex(pageIndex);
+	        this._dataSource.dataBind();
+	    };
+	    Object.defineProperty(DataSourcePager.prototype, "dataSource", {
+	        get: function () {
+	            return this._dataSource;
+	        },
+	        enumerable: true,
+	        configurable: true
 	    });
-	    describe('paging', function () {
-	        var data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
-	        it('default', function () {
-	            var dataSource = new data_source_1.ClientDataSource(data, { pageSize: 1 });
-	            dataSource.dataBind();
-	            chai_1.expect(dataSource.view.pageIndex).to.equal(1, 'pageIndex');
-	            chai_1.expect(dataSource.view.data.length).to.equal(1, 'data.length');
-	            chai_1.expect(dataSource.view.data[0].field).to.equal('value0', 'data[0].field');
-	        });
-	        it('setPageIndex', function () {
-	            [{ pageIndex: 1 }, { pageIndex: 2 }, { pageIndex: 3 }]
-	                .forEach(function (x, i) {
-	                var dataSource = new data_source_1.ClientDataSource(data, { pageSize: 1 });
-	                dataSource.setPageIndex(x.pageIndex).dataBind();
-	                chai_1.expect(dataSource.view.pageIndex).to.equal(x.pageIndex, 'pageIndex');
-	                chai_1.expect(dataSource.view.data.length).to.equal(1, 'data.length');
-	                chai_1.expect(dataSource.view.data[0].field).to.equal('value' + i, 'data[0].field');
-	            });
-	        });
-	    });
-	    describe('sort', function () {
-	        var testCases = [
-	            [{ booleanField: true, stringField: 'value0' }, { booleanField: false, stringField: 'value1' }, { booleanField: null, stringField: 'value2' }],
-	            [{ booleanField: null, stringField: 'value2' }, { booleanField: true, stringField: 'value0' }, { booleanField: false, stringField: 'value1' }],
-	            [{ booleanField: null, stringField: 'value2' }, { booleanField: false, stringField: 'value1' }, { booleanField: true, stringField: 'value0' }]
-	        ];
-	        it('"SortDirection.Ascending" by one field', function () {
-	            testCases.forEach(function (x) {
-	                var dataSource = new data_source_1.ClientDataSource(x);
-	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Ascending, field: 'stringField' })
-	                    .dataBind();
-	                chai_1.expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
-	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(data_source_1.SortDirection.Ascending, 'sortedBy[0].direction');
-	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('stringField', 'sortedBy[0].field');
-	            });
-	        });
-	        it('"SortDirection.Descending" by one field', function () {
-	            testCases.forEach(function (x) {
-	                var dataSource = new data_source_1.ClientDataSource(x);
-	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Descending, field: 'stringField' })
-	                    .dataBind();
-	                chai_1.expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
-	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(data_source_1.SortDirection.Descending, 'sortedBy[0].direction');
-	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('stringField', 'sortedBy[0].field');
-	            });
-	        });
-	        it('"SortDirection.Ascending" by one "boolean" field', function () {
-	            testCases.forEach(function (x) {
-	                var dataSource = new data_source_1.ClientDataSource(x);
-	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Ascending, field: 'booleanField' })
-	                    .dataBind();
-	                chai_1.expect(dataSource.view.data[0].booleanField).to.equal(null);
-	                chai_1.expect(dataSource.view.data[1].booleanField).to.equal(false);
-	                chai_1.expect(dataSource.view.data[2].booleanField).to.equal(true);
-	            });
-	        });
-	        it('"SortDirection.Descending" by one "boolean" field', function () {
-	            testCases.forEach(function (x) {
-	                var dataSource = new data_source_1.ClientDataSource(x);
-	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Descending, field: 'booleanField' })
-	                    .dataBind();
-	                chai_1.expect(dataSource.view.data[0].booleanField).to.equal(true);
-	                chai_1.expect(dataSource.view.data[1].booleanField).to.equal(false);
-	                chai_1.expect(dataSource.view.data[2].booleanField).to.equal(null);
-	            });
-	        });
-	        it('"SortDirection.Ascending" by one "string" field', function () {
-	            testCases.forEach(function (x) {
-	                var dataSource = new data_source_1.ClientDataSource(x);
-	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Ascending, field: 'stringField' })
-	                    .dataBind();
-	                chai_1.expect(dataSource.view.data[0].stringField).to.equal('value0');
-	                chai_1.expect(dataSource.view.data[1].stringField).to.equal('value1');
-	                chai_1.expect(dataSource.view.data[2].stringField).to.equal('value2');
-	            });
-	        });
-	        it('"SortDirection.Descending" by one "string" field', function () {
-	            testCases.forEach(function (x) {
-	                var dataSource = new data_source_1.ClientDataSource(x);
-	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Descending, field: 'stringField' })
-	                    .dataBind();
-	                chai_1.expect(dataSource.view.data[0].stringField).to.equal('value2');
-	                chai_1.expect(dataSource.view.data[1].stringField).to.equal('value1');
-	                chai_1.expect(dataSource.view.data[2].stringField).to.equal('value0');
-	            });
-	        });
-	    });
-	});
+	    return DataSourcePager;
+	}());
+	exports.DataSourcePager = DataSourcePager;
 
 
 /***/ }

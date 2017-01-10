@@ -23,20 +23,20 @@ describe('ClientDataSource', () => {
 
             dataSource.dataBind();
 
-            expect(dataSource.view.pageIndex).to.equal(0, 'pageIndex');
+            expect(dataSource.view.pageIndex).to.equal(1, 'pageIndex');
             expect(dataSource.view.data.length).to.equal(1, 'data.length');
             expect(dataSource.view.data[0].field).to.equal('value0', 'data[0].field');
         });
         it('setPageIndex', () => {
-            [{ pageIndex: 0 }, { pageIndex: 1 }, { pageIndex: 2 }]
-                .forEach(x => {
+            [{ pageIndex: 1 }, { pageIndex: 2 }, { pageIndex: 3 }]
+                .forEach((x, i) => {
                     let dataSource = new ClientDataSource(data, { pageSize: 1 });
 
                     dataSource.setPageIndex(x.pageIndex).dataBind();
 
                     expect(dataSource.view.pageIndex).to.equal(x.pageIndex, 'pageIndex');
                     expect(dataSource.view.data.length).to.equal(1, 'data.length');
-                    expect(dataSource.view.data[0].field).to.equal('value' + x.pageIndex, 'data[0].field');
+                    expect(dataSource.view.data[0].field).to.equal('value' + i, 'data[0].field');
                 });
         });
     });
