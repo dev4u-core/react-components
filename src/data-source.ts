@@ -54,6 +54,7 @@ export interface DataSource<T> {
 
 export interface ClientDataSourceProps {
     pageSize?: number;
+    pageIndex?: number;
 }
 
 export class ClientDataSource<T> implements DataSource<T> {
@@ -70,9 +71,11 @@ export class ClientDataSource<T> implements DataSource<T> {
     public constructor(data: T[], props?: ClientDataSourceProps) {
         if (props && props.pageSize) {
             this._pageSize = props.pageSize;
-            this.setPageIndex(1);
+            this.setPageIndex(props.pageIndex || 1);
         }
         this._data = data;
+        this._onDataBinging = [];
+        this._onDataBound = [];
         this._state = DataSourceState.Empty;
         this._view = null;
     }
@@ -169,11 +172,9 @@ export class ClientDataSource<T> implements DataSource<T> {
     }
 
     public set onDataBinding(value: (sender: DataSource<T>) => void) {
-        this._onDataBinging = this._onDataBinging || [];
         this._onDataBinging.push(value);
     }
     public set onDataBound(value: (sender: DataSource<T>) => void) {
-        this._onDataBound = this._onDataBound || [];
         this._onDataBinging.push(value);
     }
 }

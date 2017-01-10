@@ -1,5 +1,12 @@
 import { DataSource } from './data-source';
 
+export enum PageType {
+    First,
+    Next,
+    Last,
+    Previous
+}
+
 export class DataSourcePager {
     private readonly _dataSource: DataSource<any>;
 
@@ -7,22 +14,27 @@ export class DataSourcePager {
         this._dataSource = dataSource;
     }
 
-    public setFirstPageIndex() {
-        this._dataSource.setPageIndex(1);
-        this._dataSource.dataBind();
+    protected getPageCount(): number {
+        return Math.ceil(this._dataSource.totalCount / this._dataSource.pageSize);
     }
-    public setNextPageIndex() {
-        let pageIndex = this._dataSource.view.pageIndex + 1;
-        this._dataSource.setPageIndex(pageIndex);
-        this._dataSource.dataBind();
+    protected getPageIndex(pageType: PageType) {
+        switch (pageType) {
+            case PageType.First: return 1;
+            case PageType.Last: return this.getPageCount();
+            case PageType.Next: return this._dataSource.view.pageIndex + 1;
+            case PageType.Previous: return this._dataSource.view.pageIndex - 1;
+        }
     }
-    public setLastPageIndex() {
-        let pageIndex = Math.ceil(this._dataSource.totalCount / this._dataSource.pageSize);
-        this._dataSource.setPageIndex(pageIndex);
-        this._dataSource.dataBind();
+
+    public canMoveToPage(pageType: PageType): boolean {
+        let nextPageIndex = this.getPageIndex(pageType);
+        let pageCount = this.getPageCount();
+        return (nextPageIndex > 0) && (nextPageIndex <= pageCount) && (nextPageIndex != this._dataSource.view.pageIndex);
     }
-    public setPrevPageIndex() {
-        let pageIndex = this._dataSource.view.pageIndex - 1;
+    public moveToPage(pageType: PageType) {
+        if (!this.canMoveToPage(pageType)) return;
+
+        let pageIndex = this.getPageIndex(pageType);
         this._dataSource.setPageIndex(pageIndex);
         this._dataSource.dataBind();
     }

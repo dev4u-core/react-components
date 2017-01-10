@@ -128,9 +128,11 @@
 	    function ClientDataSource(data, props) {
 	        if (props && props.pageSize) {
 	            this._pageSize = props.pageSize;
-	            this.setPageIndex(1);
+	            this.setPageIndex(props.pageIndex || 1);
 	        }
 	        this._data = data;
+	        this._onDataBinging = [];
+	        this._onDataBound = [];
 	        this._state = DataSourceState.Empty;
 	        this._view = null;
 	    }
@@ -250,7 +252,6 @@
 	    });
 	    Object.defineProperty(ClientDataSource.prototype, "onDataBinding", {
 	        set: function (value) {
-	            this._onDataBinging = this._onDataBinging || [];
 	            this._onDataBinging.push(value);
 	        },
 	        enumerable: true,
@@ -258,7 +259,6 @@
 	    });
 	    Object.defineProperty(ClientDataSource.prototype, "onDataBound", {
 	        set: function (value) {
-	            this._onDataBound = this._onDataBound || [];
 	            this._onDataBinging.push(value);
 	        },
 	        enumerable: true,

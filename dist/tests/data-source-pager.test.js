@@ -99,33 +99,77 @@
 	var data_source_pager_1 = __webpack_require__(7);
 	describe('DataSourcePager', function () {
 	    function createPager() {
-	        var dataSource = new data_source_1.ClientDataSource([{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }], { pageSize: 2 });
+	        var dataSource = new data_source_1.ClientDataSource([{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }], { pageSize: 2, pageIndex: 2 });
 	        dataSource.dataBind();
 	        return new data_source_pager_1.DataSourcePager(dataSource);
 	    }
-	    it('setFirstPageIndex', function () {
-	        var pager = createPager();
-	        pager.setLastPageIndex();
-	        pager.setFirstPageIndex();
-	        chai_1.expect(pager.dataSource.view.pageIndex).to.equal(1);
+	    describe('canMoveToPage', function () {
+	        it('PageType.First if true', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.First)).equal(true);
+	        });
+	        it('PageType.First if false', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.First)).equal(false);
+	        });
+	        it('PageType.Last if true', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Last)).equal(true);
+	        });
+	        it('PageType.Last if false', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Last)).equal(false);
+	        });
+	        it('PageType.Next if true', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Next)).equal(true);
+	        });
+	        it('PageType.Next if false', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Next)).equal(false);
+	        });
+	        it('PageType.Last if true', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Previous)).equal(true);
+	        });
+	        it('PageType.Last if false', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Previous)).equal(false);
+	        });
 	    });
-	    it('setLastPageIndex', function () {
-	        var pager = createPager();
-	        pager.setFirstPageIndex();
-	        pager.setLastPageIndex();
-	        chai_1.expect(pager.dataSource.view.pageIndex).to.equal(3);
-	    });
-	    it('setNextPageIndex', function () {
-	        var pager = createPager();
-	        pager.setFirstPageIndex();
-	        pager.setNextPageIndex();
-	        chai_1.expect(pager.dataSource.view.pageIndex).to.equal(2);
-	    });
-	    it('setPrevPageIndex', function () {
-	        var pager = createPager();
-	        pager.setLastPageIndex();
-	        pager.setPrevPageIndex();
-	        chai_1.expect(pager.dataSource.view.pageIndex).to.equal(2);
+	    describe('moveToPage', function () {
+	        it('PageType.First', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(1);
+	        });
+	        it('PageType.Last', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(3);
+	        });
+	        it('PageType.Next', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            pager.moveToPage(data_source_pager_1.PageType.Next);
+	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(2);
+	        });
+	        it('PageType.Previous', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            pager.moveToPage(data_source_pager_1.PageType.Previous);
+	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(2);
+	        });
 	    });
 	});
 
@@ -168,9 +212,11 @@
 	    function ClientDataSource(data, props) {
 	        if (props && props.pageSize) {
 	            this._pageSize = props.pageSize;
-	            this.setPageIndex(1);
+	            this.setPageIndex(props.pageIndex || 1);
 	        }
 	        this._data = data;
+	        this._onDataBinging = [];
+	        this._onDataBound = [];
 	        this._state = DataSourceState.Empty;
 	        this._view = null;
 	    }
@@ -290,7 +336,6 @@
 	    });
 	    Object.defineProperty(ClientDataSource.prototype, "onDataBinding", {
 	        set: function (value) {
-	            this._onDataBinging = this._onDataBinging || [];
 	            this._onDataBinging.push(value);
 	        },
 	        enumerable: true,
@@ -298,7 +343,6 @@
 	    });
 	    Object.defineProperty(ClientDataSource.prototype, "onDataBound", {
 	        set: function (value) {
-	            this._onDataBound = this._onDataBound || [];
 	            this._onDataBinging.push(value);
 	        },
 	        enumerable: true,
@@ -314,26 +358,37 @@
 /***/ function(module, exports) {
 
 	"use strict";
+	(function (PageType) {
+	    PageType[PageType["First"] = 0] = "First";
+	    PageType[PageType["Next"] = 1] = "Next";
+	    PageType[PageType["Last"] = 2] = "Last";
+	    PageType[PageType["Previous"] = 3] = "Previous";
+	})(exports.PageType || (exports.PageType = {}));
+	var PageType = exports.PageType;
 	var DataSourcePager = (function () {
 	    function DataSourcePager(dataSource) {
 	        this._dataSource = dataSource;
 	    }
-	    DataSourcePager.prototype.setFirstPageIndex = function () {
-	        this._dataSource.setPageIndex(1);
-	        this._dataSource.dataBind();
+	    DataSourcePager.prototype.getPageCount = function () {
+	        return Math.ceil(this._dataSource.totalCount / this._dataSource.pageSize);
 	    };
-	    DataSourcePager.prototype.setNextPageIndex = function () {
-	        var pageIndex = this._dataSource.view.pageIndex + 1;
-	        this._dataSource.setPageIndex(pageIndex);
-	        this._dataSource.dataBind();
+	    DataSourcePager.prototype.getPageIndex = function (pageType) {
+	        switch (pageType) {
+	            case PageType.First: return 1;
+	            case PageType.Last: return this.getPageCount();
+	            case PageType.Next: return this._dataSource.view.pageIndex + 1;
+	            case PageType.Previous: return this._dataSource.view.pageIndex - 1;
+	        }
 	    };
-	    DataSourcePager.prototype.setLastPageIndex = function () {
-	        var pageIndex = Math.ceil(this._dataSource.totalCount / this._dataSource.pageSize);
-	        this._dataSource.setPageIndex(pageIndex);
-	        this._dataSource.dataBind();
+	    DataSourcePager.prototype.canMoveToPage = function (pageType) {
+	        var nextPageIndex = this.getPageIndex(pageType);
+	        var pageCount = this.getPageCount();
+	        return (nextPageIndex > 0) && (nextPageIndex <= pageCount) && (nextPageIndex != this._dataSource.view.pageIndex);
 	    };
-	    DataSourcePager.prototype.setPrevPageIndex = function () {
-	        var pageIndex = this._dataSource.view.pageIndex - 1;
+	    DataSourcePager.prototype.moveToPage = function (pageType) {
+	        if (!this.canMoveToPage(pageType))
+	            return;
+	        var pageIndex = this.getPageIndex(pageType);
 	        this._dataSource.setPageIndex(pageIndex);
 	        this._dataSource.dataBind();
 	    };
