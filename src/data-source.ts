@@ -59,8 +59,9 @@ export interface ClientDataSourceProps {
 export class ClientDataSource<T> implements DataSource<T> {
     private _data: (() => Promise<T[]>) | T[];
     private _fieldAccessor: FieldAccessor;
-    private _onDataBinging: (sender: DataSource<T>) => void;
-    private _onDataBound: (sender: DataSource<T>) => void;
+    private _onDataBinging: ((sender: DataSource<T>) => void)[];
+    private _onDataBound: ((sender: DataSource<T>) => void)[];
+    private _pageSize: number;
     private _setPageIndex: ((view: DataView<T>) => void);
     private _sort: ((view: DataView<T>) => void);
     private _state: DataSourceState;
@@ -68,7 +69,7 @@ export class ClientDataSource<T> implements DataSource<T> {
 
     public constructor(data: T[], props?: ClientDataSourceProps) {
         if (props && props.pageSize) {
-            this.pageSize = props.pageSize;
+            this._pageSize = props.pageSize;
             this.setPageIndex(1);
         }
         this._data = data;
@@ -96,14 +97,14 @@ export class ClientDataSource<T> implements DataSource<T> {
 
     protected handleDataBinding() {
         this._state = DataSourceState.Binding;
-        if (this._onDataBinging != null) {
-            this._onDataBinging(this as any);
+        for (let i = 0; i < this._onDataBinging.length; i++) {
+            this._onDataBinging[i](this);
         }
     }
     protected handleDataBound() {
         this._state = DataSourceState.Bound;
-        if (this._onDataBound != null) {
-            this._onDataBound(this as any);
+        for (let i = 0; i < this._onDataBound.length; i++) {
+            this._onDataBound[i](this);
         }
     }
     protected internalDataBind(data: T[]) {
@@ -154,7 +155,9 @@ export class ClientDataSource<T> implements DataSource<T> {
     public get fieldAccessor(): FieldAccessor {
         return this._fieldAccessor = this._fieldAccessor || new FieldAccessor();
     }
-    public pageSize: number;
+    public get pageSize(): number {
+        return this._pageSize;
+    }
     public get state(): DataSourceState {
         return this._state;
     }
@@ -166,9 +169,11 @@ export class ClientDataSource<T> implements DataSource<T> {
     }
 
     public set onDataBinding(value: (sender: DataSource<T>) => void) {
-        this._onDataBinging = value;
+        this._onDataBinging = this._onDataBinging || [];
+        this._onDataBinging.push(value);
     }
     public set onDataBound(value: (sender: DataSource<T>) => void) {
-        this._onDataBound = value;
+        this._onDataBound = this._onDataBound || [];
+        this._onDataBinging.push(value);
     }
 }

@@ -167,7 +167,7 @@
 	var ClientDataSource = (function () {
 	    function ClientDataSource(data, props) {
 	        if (props && props.pageSize) {
-	            this.pageSize = props.pageSize;
+	            this._pageSize = props.pageSize;
 	            this.setPageIndex(1);
 	        }
 	        this._data = data;
@@ -195,14 +195,14 @@
 	    };
 	    ClientDataSource.prototype.handleDataBinding = function () {
 	        this._state = DataSourceState.Binding;
-	        if (this._onDataBinging != null) {
-	            this._onDataBinging(this);
+	        for (var i = 0; i < this._onDataBinging.length; i++) {
+	            this._onDataBinging[i](this);
 	        }
 	    };
 	    ClientDataSource.prototype.handleDataBound = function () {
 	        this._state = DataSourceState.Bound;
-	        if (this._onDataBound != null) {
-	            this._onDataBound(this);
+	        for (var i = 0; i < this._onDataBound.length; i++) {
+	            this._onDataBound[i](this);
 	        }
 	    };
 	    ClientDataSource.prototype.internalDataBind = function (data) {
@@ -260,6 +260,13 @@
 	        enumerable: true,
 	        configurable: true
 	    });
+	    Object.defineProperty(ClientDataSource.prototype, "pageSize", {
+	        get: function () {
+	            return this._pageSize;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
 	    Object.defineProperty(ClientDataSource.prototype, "state", {
 	        get: function () {
 	            return this._state;
@@ -283,14 +290,16 @@
 	    });
 	    Object.defineProperty(ClientDataSource.prototype, "onDataBinding", {
 	        set: function (value) {
-	            this._onDataBinging = value;
+	            this._onDataBinging = this._onDataBinging || [];
+	            this._onDataBinging.push(value);
 	        },
 	        enumerable: true,
 	        configurable: true
 	    });
 	    Object.defineProperty(ClientDataSource.prototype, "onDataBound", {
 	        set: function (value) {
-	            this._onDataBound = value;
+	            this._onDataBound = this._onDataBound || [];
+	            this._onDataBinging.push(value);
 	        },
 	        enumerable: true,
 	        configurable: true
