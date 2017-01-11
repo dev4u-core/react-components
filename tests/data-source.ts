@@ -23,7 +23,7 @@ describe('ClientDataSource', () => {
 
             dataSource.dataBind();
 
-            expect(dataSource.view.pageIndex).to.equal(1, 'pageIndex');
+            expect(dataSource.view.pageIndex).to.equal(0, 'pageIndex');
             expect(dataSource.view.data.length).to.equal(1, 'data.length');
             expect(dataSource.view.data[0].field).to.equal('value0', 'data[0].field');
         });
@@ -36,7 +36,7 @@ describe('ClientDataSource', () => {
 
                     expect(dataSource.view.pageIndex).to.equal(x.pageIndex, 'pageIndex');
                     expect(dataSource.view.data.length).to.equal(1, 'data.length');
-                    expect(dataSource.view.data[0].field).to.equal('value' + i, 'data[0].field');
+                    expect(dataSource.view.data[0].field).to.equal('value' + x.pageIndex, 'data[0].field');
                 });
         });
     });

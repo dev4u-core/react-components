@@ -145,30 +145,45 @@
 	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Previous)).equal(false);
 	        });
 	    });
+	    describe('getPageInfo', function () {
+	        var testCases = [
+	            { pageIndex: 1, pageInfo: { firstIndex: 0, lastIndex: 1 } },
+	            { pageIndex: 2, pageInfo: { firstIndex: 2, lastIndex: 3 } },
+	            { pageIndex: 3, pageInfo: { firstIndex: 4, lastIndex: 4 } }
+	        ];
+	        it('testCases', function () {
+	            testCases.forEach(function (x) {
+	                var pager = createPager();
+	                var pageInfo = pager.getPageInfo(x.pageIndex);
+	                chai_1.expect(pageInfo.firstIndex).to.equal(x.pageInfo.firstIndex, 'firstIndex');
+	                chai_1.expect(pageInfo.lastIndex).to.equal(x.pageInfo.lastIndex, 'lastIndex');
+	            });
+	        });
+	    });
 	    describe('moveToPage', function () {
 	        it('PageType.First', function () {
 	            var pager = createPager();
 	            pager.moveToPage(data_source_pager_1.PageType.Last);
 	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(1);
+	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(0);
 	        });
 	        it('PageType.Last', function () {
 	            var pager = createPager();
 	            pager.moveToPage(data_source_pager_1.PageType.First);
 	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(3);
+	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(2);
 	        });
 	        it('PageType.Next', function () {
 	            var pager = createPager();
 	            pager.moveToPage(data_source_pager_1.PageType.First);
 	            pager.moveToPage(data_source_pager_1.PageType.Next);
-	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(2);
+	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(1);
 	        });
 	        it('PageType.Previous', function () {
 	            var pager = createPager();
 	            pager.moveToPage(data_source_pager_1.PageType.Last);
 	            pager.moveToPage(data_source_pager_1.PageType.Previous);
-	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(2);
+	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(1);
 	        });
 	    });
 	});
@@ -212,7 +227,7 @@
 	    function ClientDataSource(data, props) {
 	        if (props && props.pageSize) {
 	            this._pageSize = props.pageSize;
-	            this.setPageIndex(props.pageIndex || 1);
+	            this.setPageIndex(props.pageIndex || 0);
 	        }
 	        this._data = data;
 	        this._onDataBinging = [];
@@ -283,7 +298,7 @@
 	        var _this = this;
 	        this._setPageIndex = function (x) {
 	            x.pageIndex = value;
-	            x.data = x.data.slice(_this.pageSize * (value - 1), _this.pageSize * value);
+	            x.data = x.data.slice(_this.pageSize * value, _this.pageSize * (value + 1));
 	        };
 	        return this;
 	    };
@@ -369,28 +384,37 @@
 	    function DataSourcePager(dataSource) {
 	        this._dataSource = dataSource;
 	    }
-	    DataSourcePager.prototype.getPageCount = function () {
-	        return Math.ceil(this._dataSource.totalCount / this._dataSource.pageSize);
-	    };
 	    DataSourcePager.prototype.getPageIndex = function (pageType) {
 	        switch (pageType) {
-	            case PageType.First: return 1;
-	            case PageType.Last: return this.getPageCount();
-	            case PageType.Next: return this._dataSource.view.pageIndex + 1;
-	            case PageType.Previous: return this._dataSource.view.pageIndex - 1;
+	            case PageType.First: return 0;
+	            case PageType.Last: return this.getPageCount() - 1;
+	            case PageType.Next: return this.dataSource.view.pageIndex + 1;
+	            case PageType.Previous: return this.dataSource.view.pageIndex - 1;
 	        }
 	    };
 	    DataSourcePager.prototype.canMoveToPage = function (pageType) {
 	        var nextPageIndex = this.getPageIndex(pageType);
 	        var pageCount = this.getPageCount();
-	        return (nextPageIndex > 0) && (nextPageIndex <= pageCount) && (nextPageIndex != this._dataSource.view.pageIndex);
+	        return (nextPageIndex >= 0) && (nextPageIndex < pageCount) && (nextPageIndex != this.dataSource.view.pageIndex);
+	    };
+	    DataSourcePager.prototype.getPageCount = function () {
+	        return Math.ceil(this.dataSource.totalCount / this.dataSource.pageSize);
+	    };
+	    DataSourcePager.prototype.getPageInfo = function (pageIndex) {
+	        var lastPageIndex = pageIndex * this.dataSource.pageSize - 1;
+	        return {
+	            firstIndex: (pageIndex - 1) * this.dataSource.pageSize,
+	            lastIndex: (lastPageIndex < this.dataSource.totalCount)
+	                ? lastPageIndex
+	                : (this.dataSource.totalCount - 1)
+	        };
 	    };
 	    DataSourcePager.prototype.moveToPage = function (pageType) {
 	        if (!this.canMoveToPage(pageType))
 	            return;
 	        var pageIndex = this.getPageIndex(pageType);
-	        this._dataSource.setPageIndex(pageIndex);
-	        this._dataSource.dataBind();
+	        this.dataSource.setPageIndex(pageIndex);
+	        this.dataSource.dataBind();
 	    };
 	    Object.defineProperty(DataSourcePager.prototype, "dataSource", {
 	        get: function () {

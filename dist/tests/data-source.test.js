@@ -128,7 +128,7 @@
 	    function ClientDataSource(data, props) {
 	        if (props && props.pageSize) {
 	            this._pageSize = props.pageSize;
-	            this.setPageIndex(props.pageIndex || 1);
+	            this.setPageIndex(props.pageIndex || 0);
 	        }
 	        this._data = data;
 	        this._onDataBinging = [];
@@ -199,7 +199,7 @@
 	        var _this = this;
 	        this._setPageIndex = function (x) {
 	            x.pageIndex = value;
-	            x.data = x.data.slice(_this.pageSize * (value - 1), _this.pageSize * value);
+	            x.data = x.data.slice(_this.pageSize * value, _this.pageSize * (value + 1));
 	        };
 	        return this;
 	    };
@@ -292,7 +292,7 @@
 	        it('default', function () {
 	            var dataSource = new data_source_1.ClientDataSource(data, { pageSize: 1 });
 	            dataSource.dataBind();
-	            chai_1.expect(dataSource.view.pageIndex).to.equal(1, 'pageIndex');
+	            chai_1.expect(dataSource.view.pageIndex).to.equal(0, 'pageIndex');
 	            chai_1.expect(dataSource.view.data.length).to.equal(1, 'data.length');
 	            chai_1.expect(dataSource.view.data[0].field).to.equal('value0', 'data[0].field');
 	        });
@@ -303,7 +303,7 @@
 	                dataSource.setPageIndex(x.pageIndex).dataBind();
 	                chai_1.expect(dataSource.view.pageIndex).to.equal(x.pageIndex, 'pageIndex');
 	                chai_1.expect(dataSource.view.data.length).to.equal(1, 'data.length');
-	                chai_1.expect(dataSource.view.data[0].field).to.equal('value' + i, 'data[0].field');
+	                chai_1.expect(dataSource.view.data[0].field).to.equal('value' + x.pageIndex, 'data[0].field');
 	            });
 	        });
 	    });

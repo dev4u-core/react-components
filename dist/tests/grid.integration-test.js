@@ -128,7 +128,7 @@
 	    function ClientDataSource(data, props) {
 	        if (props && props.pageSize) {
 	            this._pageSize = props.pageSize;
-	            this.setPageIndex(props.pageIndex || 1);
+	            this.setPageIndex(props.pageIndex || 0);
 	        }
 	        this._data = data;
 	        this._onDataBinging = [];
@@ -199,7 +199,7 @@
 	        var _this = this;
 	        this._setPageIndex = function (x) {
 	            x.pageIndex = value;
-	            x.data = x.data.slice(_this.pageSize * (value - 1), _this.pageSize * value);
+	            x.data = x.data.slice(_this.pageSize * value, _this.pageSize * (value + 1));
 	        };
 	        return this;
 	    };

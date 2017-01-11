@@ -72,6 +72,24 @@ describe('DataSourcePager', () => {
             expect(pager.canMoveToPage(PageType.Previous)).equal(false);
         });
     });
+    describe('getPageInfo', () => {
+        let testCases = [
+            { pageIndex: 1, pageInfo: { firstIndex: 0, lastIndex: 1 }},
+            { pageIndex: 2, pageInfo: { firstIndex: 2, lastIndex: 3 }},
+            { pageIndex: 3, pageInfo: { firstIndex: 4, lastIndex: 4 }}
+        ];
+
+        it('testCases', () => {
+            testCases.forEach(x => {
+                let pager = createPager();
+
+                let pageInfo = pager.getPageInfo(x.pageIndex);
+
+                expect(pageInfo.firstIndex).to.equal(x.pageInfo.firstIndex, 'firstIndex');
+                expect(pageInfo.lastIndex).to.equal(x.pageInfo.lastIndex, 'lastIndex');
+            });
+        })
+    });
     describe('moveToPage', () => {
         it('PageType.First', () => {
             let pager = createPager();
@@ -79,7 +97,7 @@ describe('DataSourcePager', () => {
             pager.moveToPage(PageType.Last);
             pager.moveToPage(PageType.First);
 
-            expect(pager.dataSource.view.pageIndex).to.equal(1);
+            expect(pager.dataSource.view.pageIndex).to.equal(0);
         });
         it('PageType.Last', () => {
             let pager = createPager();
@@ -87,7 +105,7 @@ describe('DataSourcePager', () => {
             pager.moveToPage(PageType.First);
             pager.moveToPage(PageType.Last);
 
-            expect(pager.dataSource.view.pageIndex).to.equal(3);
+            expect(pager.dataSource.view.pageIndex).to.equal(2);
         });
         it('PageType.Next', () => {
             let pager = createPager();
@@ -95,7 +113,7 @@ describe('DataSourcePager', () => {
             pager.moveToPage(PageType.First);
             pager.moveToPage(PageType.Next);
 
-            expect(pager.dataSource.view.pageIndex).to.equal(2);
+            expect(pager.dataSource.view.pageIndex).to.equal(1);
         });
         it('PageType.Previous', () => {
             let pager = createPager();
@@ -103,7 +121,7 @@ describe('DataSourcePager', () => {
             pager.moveToPage(PageType.Last);
             pager.moveToPage(PageType.Previous);
 
-            expect(pager.dataSource.view.pageIndex).to.equal(2);
+            expect(pager.dataSource.view.pageIndex).to.equal(1);
         });
     });
 });
