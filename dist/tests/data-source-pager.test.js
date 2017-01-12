@@ -98,8 +98,8 @@
 	var data_source_1 = __webpack_require__(6);
 	var data_source_pager_1 = __webpack_require__(7);
 	describe('DataSourcePager', function () {
-	    function createPager() {
-	        var dataSource = new data_source_1.ClientDataSource([{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }], { pageSize: 2, pageIndex: 2 });
+	    function createPager(pageSize) {
+	        var dataSource = new data_source_1.ClientDataSource([{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }], { pageSize: pageSize || 2, pageIndex: 2 });
 	        dataSource.dataBind();
 	        return new data_source_pager_1.DataSourcePager(dataSource);
 	    }
@@ -146,18 +146,23 @@
 	        });
 	    });
 	    describe('getPageInfo', function () {
-	        var testCases = [
-	            { pageIndex: 1, pageInfo: { firstIndex: 0, lastIndex: 1 } },
-	            { pageIndex: 2, pageInfo: { firstIndex: 2, lastIndex: 3 } },
-	            { pageIndex: 3, pageInfo: { firstIndex: 4, lastIndex: 4 } }
-	        ];
-	        it('testCases', function () {
-	            testCases.forEach(function (x) {
+	        it('if total count more then page size', function () {
+	            [
+	                { pageIndex: 0, pageInfo: { firstIndex: 0, lastIndex: 1 } },
+	                { pageIndex: 1, pageInfo: { firstIndex: 2, lastIndex: 3 } },
+	                { pageIndex: 2, pageInfo: { firstIndex: 4, lastIndex: 4 } }
+	            ].forEach(function (x) {
 	                var pager = createPager();
 	                var pageInfo = pager.getPageInfo(x.pageIndex);
 	                chai_1.expect(pageInfo.firstIndex).to.equal(x.pageInfo.firstIndex, 'firstIndex');
 	                chai_1.expect(pageInfo.lastIndex).to.equal(x.pageInfo.lastIndex, 'lastIndex');
 	            });
+	        });
+	        it('if total count less then page size', function () {
+	            var pager = createPager(10);
+	            var pageInfo = pager.getPageInfo(0);
+	            chai_1.expect(pageInfo.firstIndex).to.equal(0, 'firstIndex');
+	            chai_1.expect(pageInfo.lastIndex).to.equal(4, 'lastIndex');
 	        });
 	    });
 	    describe('moveToPage', function () {
@@ -401,9 +406,9 @@
 	        return Math.ceil(this.dataSource.totalCount / this.dataSource.pageSize);
 	    };
 	    DataSourcePager.prototype.getPageInfo = function (pageIndex) {
-	        var lastPageIndex = pageIndex * this.dataSource.pageSize - 1;
+	        var lastPageIndex = (pageIndex + 1) * this.dataSource.pageSize - 1;
 	        return {
-	            firstIndex: (pageIndex - 1) * this.dataSource.pageSize,
+	            firstIndex: pageIndex * this.dataSource.pageSize,
 	            lastIndex: (lastPageIndex < this.dataSource.totalCount)
 	                ? lastPageIndex
 	                : (this.dataSource.totalCount - 1)

@@ -37,9 +37,9 @@ export class DataSourcePager {
         return Math.ceil(this.dataSource.totalCount / this.dataSource.pageSize);
     }
     public getPageInfo(pageIndex: number): PageInfo {
-        let lastPageIndex = pageIndex * this.dataSource.pageSize - 1;
+        let lastPageIndex = (pageIndex + 1) * this.dataSource.pageSize - 1;
         return {
-            firstIndex: (pageIndex - 1) * this.dataSource.pageSize,
+            firstIndex: pageIndex * this.dataSource.pageSize,
             lastIndex: (lastPageIndex < this.dataSource.totalCount)
                 ? lastPageIndex
                 : (this.dataSource.totalCount - 1)

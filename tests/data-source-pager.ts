@@ -4,10 +4,10 @@ import { ClientDataSource } from '../src/data-source';
 import { DataSourcePager, PageType } from '../src/data-source-pager';
 
 describe('DataSourcePager', () => {
-    function createPager() {
+    function createPager(pageSize?: number) {
         let dataSource = new ClientDataSource(
             [{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }],
-            { pageSize: 2, pageIndex: 2 }
+            { pageSize: pageSize || 2, pageIndex: 2 }
         );
         dataSource.dataBind();
 
@@ -73,14 +73,12 @@ describe('DataSourcePager', () => {
         });
     });
     describe('getPageInfo', () => {
-        let testCases = [
-            { pageIndex: 1, pageInfo: { firstIndex: 0, lastIndex: 1 }},
-            { pageIndex: 2, pageInfo: { firstIndex: 2, lastIndex: 3 }},
-            { pageIndex: 3, pageInfo: { firstIndex: 4, lastIndex: 4 }}
-        ];
-
-        it('testCases', () => {
-            testCases.forEach(x => {
+        it('if total count more then page size', () => {
+            [
+                { pageIndex: 0, pageInfo: { firstIndex: 0, lastIndex: 1 }},
+                { pageIndex: 1, pageInfo: { firstIndex: 2, lastIndex: 3 }},
+                { pageIndex: 2, pageInfo: { firstIndex: 4, lastIndex: 4 }}
+            ].forEach(x => {
                 let pager = createPager();
 
                 let pageInfo = pager.getPageInfo(x.pageIndex);
@@ -89,6 +87,14 @@ describe('DataSourcePager', () => {
                 expect(pageInfo.lastIndex).to.equal(x.pageInfo.lastIndex, 'lastIndex');
             });
         })
+        it('if total count less then page size', () => {
+            let pager = createPager(10);
+
+            let pageInfo = pager.getPageInfo(0);
+
+            expect(pageInfo.firstIndex).to.equal(0, 'firstIndex');
+            expect(pageInfo.lastIndex).to.equal(4, 'lastIndex');
+        });
     });
     describe('moveToPage', () => {
         it('PageType.First', () => {

@@ -28,7 +28,7 @@ describe('ClientDataSource', () => {
             expect(dataSource.view.data[0].field).to.equal('value0', 'data[0].field');
         });
         it('setPageIndex', () => {
-            [{ pageIndex: 1 }, { pageIndex: 2 }, { pageIndex: 3 }]
+            [{ pageIndex: 0 }, { pageIndex: 1 }, { pageIndex: 2 }]
                 .forEach((x, i) => {
                     let dataSource = new ClientDataSource(data, { pageSize: 1 });
 

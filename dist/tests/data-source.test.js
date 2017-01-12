@@ -297,7 +297,7 @@
 	            chai_1.expect(dataSource.view.data[0].field).to.equal('value0', 'data[0].field');
 	        });
 	        it('setPageIndex', function () {
-	            [{ pageIndex: 1 }, { pageIndex: 2 }, { pageIndex: 3 }]
+	            [{ pageIndex: 0 }, { pageIndex: 1 }, { pageIndex: 2 }]
 	                .forEach(function (x, i) {
 	                var dataSource = new data_source_1.ClientDataSource(data, { pageSize: 1 });
 	                dataSource.setPageIndex(x.pageIndex).dataBind();
