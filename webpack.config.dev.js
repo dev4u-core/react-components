@@ -6,11 +6,11 @@ var webpack = require('webpack');
 module.exports = {
     cache: true,
     entry: {
-        'comparer.test': ['./tests/comparer'],
-        'data-source.test': ['./tests/data-source'],
-        'data-source-pager.test': ['./tests/data-source-pager'],
-        'grid.integration-test': ['./tests/grid'],
-        'panel-container.integration-test': ['./tests/panel-container']
+        'components/grid.test': ['./tests/components/grid'],
+        'components/panel-container.test': ['./tests/components/panel-container'],
+        'infrastructure/comparer.test': ['./tests/infrastructure/comparer'],
+        'infrastructure/data-source.test': ['./tests/infrastructure/data-source'],
+        'infrastructure/data-source-pager.test': ['./tests/infrastructure/data-source-pager']
     },
     module: {
         loaders: [

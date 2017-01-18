@@ -44,17 +44,12 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(5);
+	module.exports = __webpack_require__(15);
 
 
 /***/ },
 /* 1 */,
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = (__webpack_require__(3))(1);
-
-/***/ },
+/* 2 */,
 /* 3 */
 /***/ function(module, exports) {
 
@@ -62,144 +57,19 @@
 
 /***/ },
 /* 4 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-	var Comparer = (function () {
-	    function Comparer() {
-	    }
-	    Comparer.toComparedValue = function (value) {
-	        if (typeof value == 'string') {
-	            return value.toLowerCase();
-	        }
-	        return (value == false) ? 1 : ((value == true) ? 2 : value);
-	    };
-	    Comparer.prototype.compare = function (x, y) {
-	        var xValue = Comparer.toComparedValue(x);
-	        var yValue = Comparer.toComparedValue(y);
-	        if (xValue > yValue)
-	            return 1;
-	        if (xValue < yValue)
-	            return -1;
-	        return 0;
-	    };
-	    Comparer.Instance = new Comparer();
-	    return Comparer;
-	}());
-	exports.Comparer = Comparer;
-
+	module.exports = (__webpack_require__(3))(1);
 
 /***/ },
-/* 5 */
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var chai_1 = __webpack_require__(2);
-	var data_source_1 = __webpack_require__(6);
-	var data_source_pager_1 = __webpack_require__(7);
-	describe('DataSourcePager', function () {
-	    function createPager(pageSize) {
-	        var dataSource = new data_source_1.ClientDataSource([{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }], { pageSize: pageSize || 2, pageIndex: 2 });
-	        dataSource.dataBind();
-	        return new data_source_pager_1.DataSourcePager(dataSource);
-	    }
-	    describe('canMoveToPage', function () {
-	        it('PageType.First if true', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.First)).equal(true);
-	        });
-	        it('PageType.First if false', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.First)).equal(false);
-	        });
-	        it('PageType.Last if true', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Last)).equal(true);
-	        });
-	        it('PageType.Last if false', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Last)).equal(false);
-	        });
-	        it('PageType.Next if true', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Next)).equal(true);
-	        });
-	        it('PageType.Next if false', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Next)).equal(false);
-	        });
-	        it('PageType.Last if true', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Previous)).equal(true);
-	        });
-	        it('PageType.Last if false', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Previous)).equal(false);
-	        });
-	    });
-	    describe('getPageInfo', function () {
-	        it('if total count more then page size', function () {
-	            [
-	                { pageIndex: 0, pageInfo: { firstIndex: 0, lastIndex: 1 } },
-	                { pageIndex: 1, pageInfo: { firstIndex: 2, lastIndex: 3 } },
-	                { pageIndex: 2, pageInfo: { firstIndex: 4, lastIndex: 4 } }
-	            ].forEach(function (x) {
-	                var pager = createPager();
-	                var pageInfo = pager.getPageInfo(x.pageIndex);
-	                chai_1.expect(pageInfo.firstIndex).to.equal(x.pageInfo.firstIndex, 'firstIndex');
-	                chai_1.expect(pageInfo.lastIndex).to.equal(x.pageInfo.lastIndex, 'lastIndex');
-	            });
-	        });
-	        it('if total count less then page size', function () {
-	            var pager = createPager(10);
-	            var pageInfo = pager.getPageInfo(0);
-	            chai_1.expect(pageInfo.firstIndex).to.equal(0, 'firstIndex');
-	            chai_1.expect(pageInfo.lastIndex).to.equal(4, 'lastIndex');
-	        });
-	    });
-	    describe('moveToPage', function () {
-	        it('PageType.First', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(0);
-	        });
-	        it('PageType.Last', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(2);
-	        });
-	        it('PageType.Next', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            pager.moveToPage(data_source_pager_1.PageType.Next);
-	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(1);
-	        });
-	        it('PageType.Previous', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            pager.moveToPage(data_source_pager_1.PageType.Previous);
-	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(1);
-	        });
-	    });
-	});
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var comparer_1 = __webpack_require__(4);
+	var comparer_1 = __webpack_require__(9);
 	var FieldAccessor = (function () {
 	    function FieldAccessor() {
 	    }
@@ -374,7 +244,146 @@
 
 
 /***/ },
-/* 7 */
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var Comparer = (function () {
+	    function Comparer() {
+	    }
+	    Comparer.toComparedValue = function (value) {
+	        if (typeof value == 'string') {
+	            return value.toLowerCase();
+	        }
+	        return (value == false) ? 1 : ((value == true) ? 2 : value);
+	    };
+	    Comparer.prototype.compare = function (x, y) {
+	        var xValue = Comparer.toComparedValue(x);
+	        var yValue = Comparer.toComparedValue(y);
+	        if (xValue > yValue)
+	            return 1;
+	        if (xValue < yValue)
+	            return -1;
+	        return 0;
+	    };
+	    Comparer.Instance = new Comparer();
+	    return Comparer;
+	}());
+	exports.Comparer = Comparer;
+
+
+/***/ },
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var chai_1 = __webpack_require__(4);
+	var data_source_1 = __webpack_require__(8);
+	var data_source_pager_1 = __webpack_require__(16);
+	describe('DataSourcePager', function () {
+	    function createPager(pageSize) {
+	        var dataSource = new data_source_1.ClientDataSource([{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }], { pageSize: pageSize || 2, pageIndex: 2 });
+	        dataSource.dataBind();
+	        return new data_source_pager_1.DataSourcePager(dataSource);
+	    }
+	    describe('canMoveToPage', function () {
+	        it('PageType.First if true', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.First)).equal(true);
+	        });
+	        it('PageType.First if false', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.First)).equal(false);
+	        });
+	        it('PageType.Last if true', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Last)).equal(true);
+	        });
+	        it('PageType.Last if false', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Last)).equal(false);
+	        });
+	        it('PageType.Next if true', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Next)).equal(true);
+	        });
+	        it('PageType.Next if false', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Next)).equal(false);
+	        });
+	        it('PageType.Last if true', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Previous)).equal(true);
+	        });
+	        it('PageType.Last if false', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Previous)).equal(false);
+	        });
+	    });
+	    describe('getPageInfo', function () {
+	        it('if total count more then page size', function () {
+	            [
+	                { pageIndex: 0, pageInfo: { firstIndex: 0, lastIndex: 1 } },
+	                { pageIndex: 1, pageInfo: { firstIndex: 2, lastIndex: 3 } },
+	                { pageIndex: 2, pageInfo: { firstIndex: 4, lastIndex: 4 } }
+	            ].forEach(function (x) {
+	                var pager = createPager();
+	                var pageInfo = pager.getPageInfo(x.pageIndex);
+	                chai_1.expect(pageInfo.firstIndex).to.equal(x.pageInfo.firstIndex, 'firstIndex');
+	                chai_1.expect(pageInfo.lastIndex).to.equal(x.pageInfo.lastIndex, 'lastIndex');
+	            });
+	        });
+	        it('if total count less then page size', function () {
+	            var pager = createPager(10);
+	            var pageInfo = pager.getPageInfo(0);
+	            chai_1.expect(pageInfo.firstIndex).to.equal(0, 'firstIndex');
+	            chai_1.expect(pageInfo.lastIndex).to.equal(4, 'lastIndex');
+	        });
+	    });
+	    describe('moveToPage', function () {
+	        it('PageType.First', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(0);
+	        });
+	        it('PageType.Last', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(2);
+	        });
+	        it('PageType.Next', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.First);
+	            pager.moveToPage(data_source_pager_1.PageType.Next);
+	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(1);
+	        });
+	        it('PageType.Previous', function () {
+	            var pager = createPager();
+	            pager.moveToPage(data_source_pager_1.PageType.Last);
+	            pager.moveToPage(data_source_pager_1.PageType.Previous);
+	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(1);
+	        });
+	    });
+	});
+
+
+/***/ },
+/* 16 */
 /***/ function(module, exports) {
 
 	"use strict";

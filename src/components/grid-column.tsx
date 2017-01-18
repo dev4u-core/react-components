@@ -1,20 +1,26 @@
 import * as React from 'react';
-import { DataSource, SortDirection } from '../src/data-source';
 import { Grid, GridStyle } from './grid';
+import { Style } from '../../src/components/common';
+import { DataSource, SortDirection } from '../../src/infrastructure/data-source';
+
+export interface GridCellProps {
+    className?: string;
+    styleTemplate?: (column: GridColumnBase<any>, model?: any) => Style;
+    template?: (column: GridColumnBase<any>, model?: any) => JSX.Element;
+}
 
 export interface GridColumnBaseProps {
+    body?: GridCellProps;
     className?: string;
     field?: string;
+    footer?: GridCellProps;
+    header?: GridCellProps;
     isSortable?: boolean;
     title?: string;
-
-    bodyTemplate?: (gridColumn: GridColumnBase<any>, model: any) => JSX.Element;
-    footerTemplate?: (gridColumn: GridColumnBase<any>) => JSX.Element;
-    headerTemplate?: (gridColumn: GridColumnBase<any>) => JSX.Element;
 }
 
 export abstract class GridColumnBase<P extends GridColumnBaseProps> extends React.Component<P, any> {
-    private _grid: Grid;
+    private readonly _grid: Grid;
 
     public constructor(props: P, grid: Grid) {
         super(props);
@@ -50,16 +56,19 @@ export abstract class GridColumnBase<P extends GridColumnBaseProps> extends Reac
         }
         dataSource.dataBind();
     }
+
     public renderBody(model: any, index: number): JSX.Element {
         return this.props.children
             ? React.Children.only(this.props.children)
-            : (this.props.bodyTemplate ? this.props.bodyTemplate(this, model) : model[this.props.field]);
+            : ((this.props.body && this.props.body.template) ? this.props.body.template(this, model) : model[this.props.field]);
     }
+
     public renderFooter(): JSX.Element {
-        return this.props.footerTemplate ? this.props.footerTemplate(this) : null;
+        return (this.props.footer && this.props.footer.template) ? this.props.footer.template(this) : null;
     }
+
     public renderHeader(): JSX.Element {
-        return this.props.headerTemplate ? this.props.headerTemplate(this) : null;
+        return (this.props.header && this.props.header.template) ? this.props.header.template(this) : null;
     }
 
     protected get grid() {
@@ -71,13 +80,15 @@ export class GridColumn extends GridColumnBase<GridColumnBaseProps> {
     public renderBody(model: any, index: number): JSX.Element {
         return this.props.children
             ? React.Children.only(this.props.children)
-            : (this.props.bodyTemplate
-                ? this.props.bodyTemplate(this, model)
+            : (this.props.body && this.props.body.template
+                ? this.props.body.template(this, model)
                 : (this.props.field ? (<span>{model[this.props.field]}</span>) : null));
     }
+
     public renderFooter(): JSX.Element {
-        return this.props.footerTemplate ? this.props.footerTemplate(this) : null;
+        return (this.props.footer && this.props.footer.template) ? this.props.footer.template(this) : null;
     }
+
     public renderHeader(): JSX.Element {
         let direction = this.getSortDirection(); 
         let className = '';//this.style.headerRow.cell.classBySorting[direction];
@@ -107,6 +118,7 @@ export class DetailGridColumn extends GridColumnBase<DetailGridColumnProps> {
         }
         this.grid.forceUpdate();
     }
+
     public renderBody(model: any, rowIndex: number): JSX.Element {
         return (
             <a href="javascript:" onClick={() => this.handleClickToExpandOrCollapseDetail(model)}>
@@ -114,6 +126,7 @@ export class DetailGridColumn extends GridColumnBase<DetailGridColumnProps> {
             </a>
         );
     }
+
     public renderDetailRow(model: any, rowIndex: number): JSX.Element {
         return this.props.detailRowTemplate ? this.props.detailRowTemplate(this, model, rowIndex) : null;
     }

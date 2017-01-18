@@ -44,17 +44,12 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(8);
+	module.exports = __webpack_require__(17);
 
 
 /***/ },
 /* 1 */,
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = (__webpack_require__(3))(1);
-
-/***/ },
+/* 2 */,
 /* 3 */
 /***/ function(module, exports) {
 
@@ -62,40 +57,19 @@
 
 /***/ },
 /* 4 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-	var Comparer = (function () {
-	    function Comparer() {
-	    }
-	    Comparer.toComparedValue = function (value) {
-	        if (typeof value == 'string') {
-	            return value.toLowerCase();
-	        }
-	        return (value == false) ? 1 : ((value == true) ? 2 : value);
-	    };
-	    Comparer.prototype.compare = function (x, y) {
-	        var xValue = Comparer.toComparedValue(x);
-	        var yValue = Comparer.toComparedValue(y);
-	        if (xValue > yValue)
-	            return 1;
-	        if (xValue < yValue)
-	            return -1;
-	        return 0;
-	    };
-	    Comparer.Instance = new Comparer();
-	    return Comparer;
-	}());
-	exports.Comparer = Comparer;
-
+	module.exports = (__webpack_require__(3))(1);
 
 /***/ },
 /* 5 */,
-/* 6 */
+/* 6 */,
+/* 7 */,
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var comparer_1 = __webpack_require__(4);
+	var comparer_1 = __webpack_require__(9);
 	var FieldAccessor = (function () {
 	    function FieldAccessor() {
 	    }
@@ -270,13 +244,48 @@
 
 
 /***/ },
-/* 7 */,
-/* 8 */
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var Comparer = (function () {
+	    function Comparer() {
+	    }
+	    Comparer.toComparedValue = function (value) {
+	        if (typeof value == 'string') {
+	            return value.toLowerCase();
+	        }
+	        return (value == false) ? 1 : ((value == true) ? 2 : value);
+	    };
+	    Comparer.prototype.compare = function (x, y) {
+	        var xValue = Comparer.toComparedValue(x);
+	        var yValue = Comparer.toComparedValue(y);
+	        if (xValue > yValue)
+	            return 1;
+	        if (xValue < yValue)
+	            return -1;
+	        return 0;
+	    };
+	    Comparer.Instance = new Comparer();
+	    return Comparer;
+	}());
+	exports.Comparer = Comparer;
+
+
+/***/ },
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var chai_1 = __webpack_require__(2);
-	var data_source_1 = __webpack_require__(6);
+	var chai_1 = __webpack_require__(4);
+	var data_source_1 = __webpack_require__(8);
 	describe('ClientDataSource', function () {
 	    it('dataBind', function () {
 	        var data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];

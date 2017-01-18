@@ -1,4 +1,4 @@
-import { GridStyle } from './grid';
+import { GridStyle } from '../components/grid';
 
 enum StyleType {
     GridStyle

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as Mocha from 'mocha';
-import { ClientDataSource } from '../src/data-source';
-import { DataSourcePager, PageType } from '../src/data-source-pager';
+import { ClientDataSource } from '../../src/infrastructure/data-source';
+import { DataSourcePager, PageType } from '../../src/infrastructure/data-source-pager';
 
 describe('DataSourcePager', () => {
     function createPager(pageSize?: number) {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { ClientDataSource } from './../src/data-source';
-import { Grid } from './../src/grid';
-import { DetailGridColumn, GridColumn } from './../src/grid-column';
+import { Grid } from '../src/components/grid';
+import { DetailGridColumn, GridColumn } from '../src/components/grid-column';
+import { ClientDataSource } from '../src/infrastructure/data-source';
 
 function getData(index): any[] {
     let result = [];
@@ -26,7 +26,7 @@ ReactDom.render(
         <GridColumn field="description" title="Description" />
         <GridColumn
             isSortable={false}
-            bodyTemplate={(sender, x) => (<a href="javascript:">{x.title}</a>)}
+            body={{ template: (sender, x) => (<a href="javascript:">{x.title}</a>)}}
             title="Link" />
     </Grid>,
     document.getElementById('grid')

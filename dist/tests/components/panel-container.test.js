@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(15);
+	module.exports = __webpack_require__(11);
 
 
 /***/ },
@@ -52,7 +52,7 @@
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = (__webpack_require__(3))(1);
+	module.exports = (__webpack_require__(3))(41);
 
 /***/ },
 /* 3 */
@@ -61,36 +61,32 @@
 	module.exports = vendors;
 
 /***/ },
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = (__webpack_require__(3))(41);
+	module.exports = (__webpack_require__(3))(1);
 
 /***/ },
-/* 11 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = (__webpack_require__(3))(43);
 
 /***/ },
-/* 12 */,
-/* 13 */,
-/* 14 */,
-/* 15 */
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var chai_1 = __webpack_require__(2);
-	var panel_1 = __webpack_require__(16);
-	var panel_container_1 = __webpack_require__(17);
-	var Enzyme = __webpack_require__(10);
-	var React = __webpack_require__(11);
+	var chai_1 = __webpack_require__(4);
+	var Enzyme = __webpack_require__(2);
+	var React = __webpack_require__(5);
+	var panel_1 = __webpack_require__(12);
+	var panel_container_1 = __webpack_require__(13);
 	describe('<PanelContainer />', function () {
 	    describe('initialization', function () {
 	        it('"staticPanels" property should be initialized', function () {
@@ -205,7 +201,7 @@
 
 
 /***/ },
-/* 16 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -214,7 +210,7 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var React = __webpack_require__(11);
+	var React = __webpack_require__(5);
 	var Panel = (function (_super) {
 	    __extends(Panel, _super);
 	    function Panel(props) {
@@ -251,7 +247,7 @@
 
 
 /***/ },
-/* 17 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -260,8 +256,8 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var React = __webpack_require__(11);
-	var panel_1 = __webpack_require__(16);
+	var React = __webpack_require__(5);
+	var panel_1 = __webpack_require__(12);
 	(function (PanelContainerMode) {
 	    PanelContainerMode[PanelContainerMode["DynamicAndStatic"] = 1] = "DynamicAndStatic";
 	    PanelContainerMode[PanelContainerMode["StaticAndDynamic"] = 2] = "StaticAndDynamic";

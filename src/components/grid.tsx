@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { DataSource, SortDirection } from '../src/data-source';
-import { DetailGridColumn, GridColumnBase  } from '../src/grid-column';
-import { StyleProvider } from '../src/style-provider';
+import { DetailGridColumn, GridColumnBase, GridCellProps } from '../../src/components/grid-column';
+import { Style } from '../../src/components/common';
+import { DataSource, DataSourceState, SortDirection } from '../../src/infrastructure/data-source';
+import { StyleProvider } from '../../src/infrastructure/style-provider';
 
 export type GridStyle = {
     class: string;
@@ -40,28 +41,50 @@ export abstract class GridBase<P extends GridBaseProps> extends React.Component<
         this.state = { expandedDetailRows: [] };
     }
 
-    protected dataBind() {
-        if (this.props.dataSource) {
-            this.props.dataSource.onDataBound = () => this.forceUpdate();
+    protected componentWillMount() {
+        this.setDataSource(this.props.dataSource);
+    }
+
+    protected componentWillUpdate() {
+        this._columns = null;
+        this._detailColumn = null;
+    }
+
+    protected componentWillReceiveProps(nextProps: P) {
+        if ((this.props.dataSource != nextProps.dataSource) && (nextProps.dataSource != null)) {
+            this.setDataSource(nextProps.dataSource);
         }
-        if ((this.props.autoBind != false) && !this.props.dataSource.view) {
-            this.props.dataSource.dataBind();
-        }
     }
-    protected componentDidUpdate() {
-        this.dataBind();
+
+    protected getCellClassName(column: GridColumnBase<any>, cellProps: GridCellProps): string {
+        return cellProps
+            ? (cellProps.styleTemplate ? (cellProps.styleTemplate(column) ? cellProps.styleTemplate(column).className : null) : null)
+            : null;
     }
-    protected componentDidMount() {
-        this.dataBind();
-    }
+
     protected renderDetailRow(model: any, rowIndex: number): JSX.Element {
         return this.detailColumn ? this.detailColumn.renderDetailRow(model, rowIndex) : null;
     }
+
     protected renderBodyCell(column: GridColumnBase<any>, model: any, columnIndex: number, rowIndex: number): JSX.Element {
         return column.renderBody(model, rowIndex);
     }
+
     protected renderHeaderCell(column: GridColumnBase<any>, columnIndex: number): JSX.Element {
         return column.renderHeader();
+    }
+
+    protected setDataSource(dataSource: DataSource<any>) {
+        if ((this.props.autoBind != false) && (dataSource.state == DataSourceState.Empty)) {
+            dataSource.dataBind();
+        }
+        if (dataSource) {
+            dataSource.onDataBound = dataSource => {
+                if (dataSource == this.props.dataSource) {
+                    this.forceUpdate();
+                }
+            };
+        }
     }
 
     protected get columns(): GridColumnBase<any>[] {
@@ -70,6 +93,7 @@ export abstract class GridBase<P extends GridBaseProps> extends React.Component<
                 .map(x => new (x as any).type((x as any).props, this))
                 .filter(x => x instanceof GridColumnBase) as any;
     }
+
     protected get detailColumn(): DetailGridColumn {
         return this._detailColumn = this._detailColumn
             || (this.columns as any).find(x => x instanceof DetailGridColumn);
@@ -93,13 +117,15 @@ export class Grid extends GridBase<GridBaseProps> {
             </tbody>
         );
     }
+
     protected renderBodyCell(column: GridColumnBase<any>, model: any, columnIndex: number, rowIndex: number): JSX.Element {
         return (
-            <td key={`${rowIndex}_${columnIndex}`}>
+            <td className={this.getCellClassName(column, column.props.body)} key={`${rowIndex}_${columnIndex}`}>
                 {super.renderBodyCell(column, model, columnIndex, rowIndex)}
             </td>
         );
     }
+
     protected renderBodyRow(model: any, rowIndex: number): JSX.Element {
         return (
             <tr key={rowIndex}>
@@ -107,6 +133,7 @@ export class Grid extends GridBase<GridBaseProps> {
             </tr>
         );
     }
+
     protected renderDetailRow(model: any, rowIndex: number): JSX.Element {
         return (
             <tr>
@@ -116,6 +143,7 @@ export class Grid extends GridBase<GridBaseProps> {
             </tr>
         );
     }
+
     protected renderHeader(): JSX.Element {
         return (
             <thead>
@@ -123,13 +151,15 @@ export class Grid extends GridBase<GridBaseProps> {
             </thead>
         );
     }
+
     protected renderHeaderCell(column: GridColumnBase<any>, columnIndex: number): JSX.Element {
         return (
-            <th key={columnIndex}>
+            <th className={this.getCellClassName(column, column.props.header)} key={columnIndex}>
                 {super.renderHeaderCell(column, columnIndex)}
             </th>
         );
     }
+
     protected renderHeaderRow(): JSX.Element {
         return (
             <tr>
@@ -138,12 +168,31 @@ export class Grid extends GridBase<GridBaseProps> {
         );
     }
 
+    protected renderStyleSection(): JSX.Element {
+        let renderStyle = (x: Style) => `.${x.className} {${x.content}}`;
+
+        let headerStyles = this.columns.filter(x => x.props.header && x.props.header.styleTemplate)
+            .map(x => renderStyle(x.props.header.styleTemplate(x)))
+            .join();
+        let bodyStyles = this.columns.filter(x => x.props.body && x.props.body.styleTemplate)
+            .map(x => renderStyle(x.props.body.styleTemplate(x)))
+            .join();
+        let footerStyles = this.columns.filter(x => x.props.footer && x.props.footer.styleTemplate)
+            .map(x => renderStyle(x.props.footer.styleTemplate(x)))
+            .join();
+
+        return <style>{headerStyles + bodyStyles + footerStyles}</style>;
+    }
+
     public render(): JSX.Element {
         return (
-            <table className={this.style.class}>
-                {this.renderHeader()}
-                {this.renderBody()}
-            </table>
+            <div>
+                {this.renderStyleSection()}
+                <table className={this.style.class}>
+                    {this.renderHeader()}
+                    {this.renderBody()}
+                </table>
+            </div>
         );
     }
 }

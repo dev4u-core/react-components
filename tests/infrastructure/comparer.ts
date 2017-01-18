@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import * as Mocha from 'mocha';
-import { Comparer } from '../src/comparer';
+import { Comparer } from '../../src/infrastructure/comparer';
 
 describe('Comparer', () => {
     it('compare boolean values', () => {
