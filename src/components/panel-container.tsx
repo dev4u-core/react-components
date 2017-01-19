@@ -55,15 +55,18 @@ export class PanelContainer extends React.Component<PanelContainerProps, PanelCo
 
         this.forceUpdate();
     }
+
     protected handlePanelClosing(panel: Panel): boolean {
         return this.props.onPanelClosing ? this.props.onPanelClosing(panel) : true;
     }
+
     protected handleStaticPanelClosed(panel: Panel) {
         let staticPanelIndex = this.state.staticPanels.indexOf(panel);
         this.state.staticPanels.splice(staticPanelIndex, 1);
 
         this.forceUpdate();
     }
+
     protected renderDynamicPanel(renderContext: PanelContainerRenderContext, panel: PanelProps, index: number): JSX.Element {
         let columnCount = panel.columnCount || renderContext.defaultColumnCount;
         return <Panel columnCount={columnCount}
@@ -72,9 +75,11 @@ export class PanelContainer extends React.Component<PanelContainerProps, PanelCo
             onClosed={this.handleDynamicPanelClosed}
             onClosing={this.handlePanelClosing} />;
     }
+
     protected renderDynamicPanels(renderContext: PanelContainerRenderContext): JSX.Element[] {
         return this.state.dynamicPanels.map((x, i) => this.renderDynamicPanel(renderContext, x, i));
     }
+
     protected renderStaticPanel(renderContext: PanelContainerRenderContext, panel: PanelProps, index: number): JSX.Element {
         return React.cloneElement(
             panel as any,
@@ -85,6 +90,7 @@ export class PanelContainer extends React.Component<PanelContainerProps, PanelCo
                 onClosing: this.handlePanelClosing
             });
     }
+
     protected renderStaticPanels(renderContext: PanelContainerRenderContext): JSX.Element[] {
         var result = React.Children.map(
             this.props.children,

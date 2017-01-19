@@ -6,15 +6,17 @@ var webpack = require('webpack');
 module.exports = {
     cache: true,
     entry: {
-        'components/grid.test': ['./tests/components/grid'],
-        'components/panel-container.test': ['./tests/components/panel-container'],
-        'infrastructure/comparer.test': ['./tests/infrastructure/comparer'],
-        'infrastructure/data-source.test': ['./tests/infrastructure/data-source'],
-        'infrastructure/data-source-pager.test': ['./tests/infrastructure/data-source-pager']
+        'components/grid': ['./tests/components/grid'],
+        'components/panel-container': ['./tests/components/panel-container'],
+        'infrastructure/class-name-builder': ['./tests/infrastructure/class-name-builder'],
+        'infrastructure/class-name-generator': ['./tests/infrastructure/class-name-generator'],
+        'infrastructure/comparer': ['./tests/infrastructure/comparer'],
+        'infrastructure/data-source': ['./tests/infrastructure/data-source'],
+        'infrastructure/data-source-pager': ['./tests/infrastructure/data-source-pager']
     },
     module: {
         loaders: [
-            { loader: 'ts-loader', test: /\.tsx?$/ }
+            { loader: 'ts', test: /\.tsx?$/ }
         ]
     },
     output: {

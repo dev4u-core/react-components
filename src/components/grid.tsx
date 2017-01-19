@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { Style } from './common';
 import { DetailGridColumn, GridColumnBase, GridCellProps } from '../../src/components/grid-column';
-import { Style } from '../../src/components/common';
+import { ClassNameBuilder } from '../../src/infrastructure/class-name-builder';
 import { DataSource, DataSourceState, SortDirection } from '../../src/infrastructure/data-source';
 import { StyleProvider } from '../../src/infrastructure/style-provider';
 
@@ -57,9 +58,16 @@ export abstract class GridBase<P extends GridBaseProps> extends React.Component<
     }
 
     protected getCellClassName(column: GridColumnBase<any>, cellProps: GridCellProps): string {
-        return cellProps
-            ? (cellProps.styleTemplate ? (cellProps.styleTemplate(column) ? cellProps.styleTemplate(column).className : null) : null)
-            : null;
+        let classNameBuilder = new ClassNameBuilder();
+
+        if (cellProps) {
+            console.log((cellProps.styleTemplate != null));
+            classNameBuilder
+                .add(cellProps.className)
+                .addIf((cellProps.styleTemplate != null) && (cellProps.styleTemplate(column) != null), () => cellProps.styleTemplate(column).className);
+        }
+
+        return classNameBuilder.build();
     }
 
     protected renderDetailRow(model: any, rowIndex: number): JSX.Element {

@@ -40,32 +40,31 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(15);
+	module.exports = __webpack_require__(19);
 
 
 /***/ },
-/* 1 */,
-/* 2 */,
-/* 3 */
+
+/***/ 3:
 /***/ function(module, exports) {
 
 	module.exports = vendors;
 
 /***/ },
-/* 4 */
+
+/***/ 4:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = (__webpack_require__(3))(1);
 
 /***/ },
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */
+
+/***/ 8:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -244,7 +243,8 @@
 
 
 /***/ },
-/* 9 */
+
+/***/ 9:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -273,174 +273,119 @@
 
 
 /***/ },
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */,
-/* 15 */
+
+/***/ 19:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var chai_1 = __webpack_require__(4);
 	var data_source_1 = __webpack_require__(8);
-	var data_source_pager_1 = __webpack_require__(16);
-	describe('DataSourcePager', function () {
-	    function createPager(pageSize) {
-	        var dataSource = new data_source_1.ClientDataSource([{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }], { pageSize: pageSize || 2, pageIndex: 2 });
+	describe('ClientDataSource', function () {
+	    it('dataBind', function () {
+	        var data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
+	        var dataSource = new data_source_1.ClientDataSource(data);
+	        chai_1.expect(dataSource.view).to.be.null;
 	        dataSource.dataBind();
-	        return new data_source_pager_1.DataSourcePager(dataSource);
-	    }
-	    describe('canMoveToPage', function () {
-	        it('PageType.First if true', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.First)).equal(true);
-	        });
-	        it('PageType.First if false', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.First)).equal(false);
-	        });
-	        it('PageType.Last if true', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Last)).equal(true);
-	        });
-	        it('PageType.Last if false', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Last)).equal(false);
-	        });
-	        it('PageType.Next if true', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Next)).equal(true);
-	        });
-	        it('PageType.Next if false', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Next)).equal(false);
-	        });
-	        it('PageType.Last if true', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Previous)).equal(true);
-	        });
-	        it('PageType.Last if false', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            chai_1.expect(pager.canMoveToPage(data_source_pager_1.PageType.Previous)).equal(false);
-	        });
+	        chai_1.expect(dataSource.view.data[0].field).to.equal('value0');
+	        chai_1.expect(dataSource.view.data[1].field).to.equal('value1');
+	        chai_1.expect(dataSource.view.data[2].field).to.equal('value2');
 	    });
-	    describe('getPageInfo', function () {
-	        it('if total count more then page size', function () {
-	            [
-	                { pageIndex: 0, pageInfo: { firstIndex: 0, lastIndex: 1 } },
-	                { pageIndex: 1, pageInfo: { firstIndex: 2, lastIndex: 3 } },
-	                { pageIndex: 2, pageInfo: { firstIndex: 4, lastIndex: 4 } }
-	            ].forEach(function (x) {
-	                var pager = createPager();
-	                var pageInfo = pager.getPageInfo(x.pageIndex);
-	                chai_1.expect(pageInfo.firstIndex).to.equal(x.pageInfo.firstIndex, 'firstIndex');
-	                chai_1.expect(pageInfo.lastIndex).to.equal(x.pageInfo.lastIndex, 'lastIndex');
+	    describe('paging', function () {
+	        var data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
+	        it('default', function () {
+	            var dataSource = new data_source_1.ClientDataSource(data, { pageSize: 1 });
+	            dataSource.dataBind();
+	            chai_1.expect(dataSource.view.pageIndex).to.equal(0, 'pageIndex');
+	            chai_1.expect(dataSource.view.data.length).to.equal(1, 'data.length');
+	            chai_1.expect(dataSource.view.data[0].field).to.equal('value0', 'data[0].field');
+	        });
+	        it('setPageIndex', function () {
+	            [{ pageIndex: 0 }, { pageIndex: 1 }, { pageIndex: 2 }]
+	                .forEach(function (x, i) {
+	                var dataSource = new data_source_1.ClientDataSource(data, { pageSize: 1 });
+	                dataSource.setPageIndex(x.pageIndex).dataBind();
+	                chai_1.expect(dataSource.view.pageIndex).to.equal(x.pageIndex, 'pageIndex');
+	                chai_1.expect(dataSource.view.data.length).to.equal(1, 'data.length');
+	                chai_1.expect(dataSource.view.data[0].field).to.equal('value' + x.pageIndex, 'data[0].field');
 	            });
 	        });
-	        it('if total count less then page size', function () {
-	            var pager = createPager(10);
-	            var pageInfo = pager.getPageInfo(0);
-	            chai_1.expect(pageInfo.firstIndex).to.equal(0, 'firstIndex');
-	            chai_1.expect(pageInfo.lastIndex).to.equal(4, 'lastIndex');
-	        });
 	    });
-	    describe('moveToPage', function () {
-	        it('PageType.First', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(0);
+	    describe('sort', function () {
+	        var testCases = [
+	            [{ booleanField: true, stringField: 'value0' }, { booleanField: false, stringField: 'value1' }, { booleanField: null, stringField: 'value2' }],
+	            [{ booleanField: null, stringField: 'value2' }, { booleanField: true, stringField: 'value0' }, { booleanField: false, stringField: 'value1' }],
+	            [{ booleanField: null, stringField: 'value2' }, { booleanField: false, stringField: 'value1' }, { booleanField: true, stringField: 'value0' }]
+	        ];
+	        it('"SortDirection.Ascending" by one field', function () {
+	            testCases.forEach(function (x) {
+	                var dataSource = new data_source_1.ClientDataSource(x);
+	                dataSource
+	                    .sort({ direction: data_source_1.SortDirection.Ascending, field: 'stringField' })
+	                    .dataBind();
+	                chai_1.expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
+	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(data_source_1.SortDirection.Ascending, 'sortedBy[0].direction');
+	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('stringField', 'sortedBy[0].field');
+	            });
 	        });
-	        it('PageType.Last', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(2);
+	        it('"SortDirection.Descending" by one field', function () {
+	            testCases.forEach(function (x) {
+	                var dataSource = new data_source_1.ClientDataSource(x);
+	                dataSource
+	                    .sort({ direction: data_source_1.SortDirection.Descending, field: 'stringField' })
+	                    .dataBind();
+	                chai_1.expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
+	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(data_source_1.SortDirection.Descending, 'sortedBy[0].direction');
+	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('stringField', 'sortedBy[0].field');
+	            });
 	        });
-	        it('PageType.Next', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.First);
-	            pager.moveToPage(data_source_pager_1.PageType.Next);
-	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(1);
+	        it('"SortDirection.Ascending" by one "boolean" field', function () {
+	            testCases.forEach(function (x) {
+	                var dataSource = new data_source_1.ClientDataSource(x);
+	                dataSource
+	                    .sort({ direction: data_source_1.SortDirection.Ascending, field: 'booleanField' })
+	                    .dataBind();
+	                chai_1.expect(dataSource.view.data[0].booleanField).to.equal(null);
+	                chai_1.expect(dataSource.view.data[1].booleanField).to.equal(false);
+	                chai_1.expect(dataSource.view.data[2].booleanField).to.equal(true);
+	            });
 	        });
-	        it('PageType.Previous', function () {
-	            var pager = createPager();
-	            pager.moveToPage(data_source_pager_1.PageType.Last);
-	            pager.moveToPage(data_source_pager_1.PageType.Previous);
-	            chai_1.expect(pager.dataSource.view.pageIndex).to.equal(1);
+	        it('"SortDirection.Descending" by one "boolean" field', function () {
+	            testCases.forEach(function (x) {
+	                var dataSource = new data_source_1.ClientDataSource(x);
+	                dataSource
+	                    .sort({ direction: data_source_1.SortDirection.Descending, field: 'booleanField' })
+	                    .dataBind();
+	                chai_1.expect(dataSource.view.data[0].booleanField).to.equal(true);
+	                chai_1.expect(dataSource.view.data[1].booleanField).to.equal(false);
+	                chai_1.expect(dataSource.view.data[2].booleanField).to.equal(null);
+	            });
+	        });
+	        it('"SortDirection.Ascending" by one "string" field', function () {
+	            testCases.forEach(function (x) {
+	                var dataSource = new data_source_1.ClientDataSource(x);
+	                dataSource
+	                    .sort({ direction: data_source_1.SortDirection.Ascending, field: 'stringField' })
+	                    .dataBind();
+	                chai_1.expect(dataSource.view.data[0].stringField).to.equal('value0');
+	                chai_1.expect(dataSource.view.data[1].stringField).to.equal('value1');
+	                chai_1.expect(dataSource.view.data[2].stringField).to.equal('value2');
+	            });
+	        });
+	        it('"SortDirection.Descending" by one "string" field', function () {
+	            testCases.forEach(function (x) {
+	                var dataSource = new data_source_1.ClientDataSource(x);
+	                dataSource
+	                    .sort({ direction: data_source_1.SortDirection.Descending, field: 'stringField' })
+	                    .dataBind();
+	                chai_1.expect(dataSource.view.data[0].stringField).to.equal('value2');
+	                chai_1.expect(dataSource.view.data[1].stringField).to.equal('value1');
+	                chai_1.expect(dataSource.view.data[2].stringField).to.equal('value0');
+	            });
 	        });
 	    });
 	});
 
 
-/***/ },
-/* 16 */
-/***/ function(module, exports) {
-
-	"use strict";
-	(function (PageType) {
-	    PageType[PageType["First"] = 0] = "First";
-	    PageType[PageType["Next"] = 1] = "Next";
-	    PageType[PageType["Last"] = 2] = "Last";
-	    PageType[PageType["Previous"] = 3] = "Previous";
-	})(exports.PageType || (exports.PageType = {}));
-	var PageType = exports.PageType;
-	var DataSourcePager = (function () {
-	    function DataSourcePager(dataSource) {
-	        this._dataSource = dataSource;
-	    }
-	    DataSourcePager.prototype.getPageIndex = function (pageType) {
-	        switch (pageType) {
-	            case PageType.First: return 0;
-	            case PageType.Last: return this.getPageCount() - 1;
-	            case PageType.Next: return this.dataSource.view.pageIndex + 1;
-	            case PageType.Previous: return this.dataSource.view.pageIndex - 1;
-	        }
-	    };
-	    DataSourcePager.prototype.canMoveToPage = function (pageType) {
-	        var nextPageIndex = this.getPageIndex(pageType);
-	        var pageCount = this.getPageCount();
-	        return (nextPageIndex >= 0) && (nextPageIndex < pageCount) && (nextPageIndex != this.dataSource.view.pageIndex);
-	    };
-	    DataSourcePager.prototype.getPageCount = function () {
-	        return Math.ceil(this.dataSource.totalCount / this.dataSource.pageSize);
-	    };
-	    DataSourcePager.prototype.getPageInfo = function (pageIndex) {
-	        var lastPageIndex = (pageIndex + 1) * this.dataSource.pageSize - 1;
-	        return {
-	            firstIndex: pageIndex * this.dataSource.pageSize,
-	            lastIndex: (lastPageIndex < this.dataSource.totalCount)
-	                ? lastPageIndex
-	                : (this.dataSource.totalCount - 1)
-	        };
-	    };
-	    DataSourcePager.prototype.moveToPage = function (pageType) {
-	        if (!this.canMoveToPage(pageType))
-	            return;
-	        var pageIndex = this.getPageIndex(pageType);
-	        this.dataSource.setPageIndex(pageIndex);
-	        this.dataSource.dataBind();
-	    };
-	    Object.defineProperty(DataSourcePager.prototype, "dataSource", {
-	        get: function () {
-	            return this._dataSource;
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    return DataSourcePager;
-	}());
-	exports.DataSourcePager = DataSourcePager;
-
-
 /***/ }
-/******/ ]);
+
+/******/ });

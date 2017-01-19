@@ -120,6 +120,12 @@
 	            content: 'display: none'
 	        };
 	        describe('body', function () {
+	            it('className', function () {
+	                var grid = Enzyme.mount(React.createElement(grid_1.Grid, {autoBind: true, dataSource: new data_source_1.ClientDataSource([{}])}, 
+	                    React.createElement(grid_column_1.GridColumn, {body: { className: 'class0' }, field: "title", title: "Title"})
+	                ));
+	                chai_1.expect(grid.find("tbody td.class0").length).to.equal(1);
+	            });
 	            it('styleTemplate', function () {
 	                var grid = Enzyme.mount(React.createElement(grid_1.Grid, {autoBind: true, dataSource: new data_source_1.ClientDataSource([{}])}, 
 	                    React.createElement(grid_column_1.GridColumn, {body: { styleTemplate: function () { return style; } }, field: "title", title: "Title"})
@@ -129,6 +135,12 @@
 	            });
 	        });
 	        describe('header', function () {
+	            it('className', function () {
+	                var grid = Enzyme.mount(React.createElement(grid_1.Grid, {autoBind: true, dataSource: new data_source_1.ClientDataSource([{}])}, 
+	                    React.createElement(grid_column_1.GridColumn, {header: { className: 'class0' }, field: "title", title: "Title"})
+	                ));
+	                chai_1.expect(grid.find("th.class0").length).to.equal(1);
+	            });
 	            it('styleTemplate', function () {
 	                var grid = Enzyme.mount(React.createElement(grid_1.Grid, {autoBind: true, dataSource: new data_source_1.ClientDataSource([{}])}, 
 	                    React.createElement(grid_column_1.GridColumn, {header: { styleTemplate: function () { return style; } }, field: "title", title: "Title"})
@@ -177,8 +189,9 @@
 	};
 	var React = __webpack_require__(5);
 	var grid_column_1 = __webpack_require__(7);
+	var class_name_builder_1 = __webpack_require__(10);
 	var data_source_1 = __webpack_require__(8);
-	var style_provider_1 = __webpack_require__(10);
+	var style_provider_1 = __webpack_require__(11);
 	var GridBase = (function (_super) {
 	    __extends(GridBase, _super);
 	    function GridBase(props) {
@@ -198,9 +211,14 @@
 	        }
 	    };
 	    GridBase.prototype.getCellClassName = function (column, cellProps) {
-	        return cellProps
-	            ? (cellProps.styleTemplate ? (cellProps.styleTemplate(column) ? cellProps.styleTemplate(column).className : null) : null)
-	            : null;
+	        var classNameBuilder = new class_name_builder_1.ClassNameBuilder();
+	        if (cellProps) {
+	            console.log((cellProps.styleTemplate != null));
+	            classNameBuilder
+	                .add(cellProps.className)
+	                .addIf((cellProps.styleTemplate != null) && (cellProps.styleTemplate(column) != null), function () { return cellProps.styleTemplate(column).className; });
+	        }
+	        return classNameBuilder.build();
 	    };
 	    GridBase.prototype.renderDetailRow = function (model, rowIndex) {
 	        return this.detailColumn ? this.detailColumn.renderDetailRow(model, rowIndex) : null;
@@ -650,6 +668,41 @@
 
 /***/ },
 /* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var ClassNameSeparator = ' ';
+	var ClassNameBuilder = (function () {
+	    function ClassNameBuilder() {
+	        this._stack = [];
+	    }
+	    ClassNameBuilder.prototype.add = function (className) {
+	        this._stack.push(function (x) { return x ? (x + ClassNameSeparator + className) : className; });
+	        return this;
+	    };
+	    ClassNameBuilder.prototype.addIf = function (condition, classNameGetter) {
+	        if (condition) {
+	            this.add(classNameGetter());
+	        }
+	        return this;
+	    };
+	    ClassNameBuilder.prototype.addUnique = function (key) {
+	        return this;
+	    };
+	    ClassNameBuilder.prototype.build = function () {
+	        var result = null;
+	        for (var i = 0; i < this._stack.length; i++) {
+	            result = this._stack[i](result);
+	        }
+	        return result;
+	    };
+	    return ClassNameBuilder;
+	}());
+	exports.ClassNameBuilder = ClassNameBuilder;
+
+
+/***/ },
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";

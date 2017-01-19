@@ -30,6 +30,7 @@ describe('<Grid />', () => {
                 expect(dataSource.view.sortedBy[0].direction).to.equal(SortDirection.Ascending, 'sortedBy[0].direction');
                 expect(dataSource.view.sortedBy[0].field).to.equal('title', 'sortedBy[0].field');
             });
+
             it('one click on first column and one click by last column', () => {
                 grid.find('th a').first().simulate('click');
                 grid.find('th a').last().simulate('click');
@@ -38,6 +39,7 @@ describe('<Grid />', () => {
                 expect(dataSource.view.sortedBy[0].direction).to.equal(SortDirection.Ascending, 'sortedBy[0].direction');
                 expect(dataSource.view.sortedBy[0].field).to.equal('description', 'sortedBy[0].field');
             });
+
             it('two click on first column', () => {
                 grid.find('th a')
                     .first()
@@ -48,6 +50,7 @@ describe('<Grid />', () => {
                 expect(dataSource.view.sortedBy[0].direction).to.equal(SortDirection.Descending, 'sortedBy[0].direction');
                 expect(dataSource.view.sortedBy[0].field).to.equal('title', 'sortedBy[0].field');
             });
+
             it('three click on first column', () => {
                 grid.find('th a')
                     .first()
@@ -57,6 +60,7 @@ describe('<Grid />', () => {
 
                 expect(dataSource.view.sortedBy.length).to.equal(0, 'sortedBy.length');
             });
+
             it('two click on first column and one click on last column', () => {
                 grid.find('th a')
                     .first()
@@ -72,6 +76,7 @@ describe('<Grid />', () => {
             });
         });
     });
+
     describe('property', () => {
         let style = {
             className: 'class0',
@@ -79,6 +84,16 @@ describe('<Grid />', () => {
         };
 
         describe('body', () => {
+            it('className', () => {
+                let grid = Enzyme.mount(
+                    <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>
+                        <GridColumn body={{ className: 'class0' }} field="title" title="Title" />
+                    </Grid>
+                );
+
+                expect(grid.find(`tbody td.class0`).length).to.equal(1);
+            });
+
             it('styleTemplate', () => {
                 let grid = Enzyme.mount(
                     <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>
@@ -90,7 +105,18 @@ describe('<Grid />', () => {
                 expect(grid.find('style').html()).to.equal(`<style>.${style.className} {${style.content}}</style>`);
             });
         });
+
         describe('header', () => {
+            it('className', () => {
+                let grid = Enzyme.mount(
+                    <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>
+                        <GridColumn header={{ className: 'class0' }} field="title" title="Title" />
+                    </Grid>
+                );
+
+                expect(grid.find(`th.class0`).length).to.equal(1);
+            });
+
             it('styleTemplate', () => {
                 let grid = Enzyme.mount(
                     <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>

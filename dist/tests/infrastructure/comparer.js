@@ -40,33 +40,31 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(14);
+	module.exports = __webpack_require__(18);
 
 
 /***/ },
-/* 1 */,
-/* 2 */,
-/* 3 */
+
+/***/ 3:
 /***/ function(module, exports) {
 
 	module.exports = vendors;
 
 /***/ },
-/* 4 */
+
+/***/ 4:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = (__webpack_require__(3))(1);
 
 /***/ },
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */
+
+/***/ 9:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -95,11 +93,8 @@
 
 
 /***/ },
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */
+
+/***/ 18:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -135,4 +130,5 @@
 
 
 /***/ }
-/******/ ]);
+
+/******/ });

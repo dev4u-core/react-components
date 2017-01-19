@@ -22,6 +22,7 @@ export class Panel extends React.Component<PanelProps, any> {
 
         if (shouldBeClosed && this.props.onClosed) this.props.onClosed(this);
     }
+
     protected renderBody(): any {
         return this.props.children;
     }

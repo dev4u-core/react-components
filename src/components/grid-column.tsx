@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Style } from './common';
 import { Grid, GridStyle } from './grid';
-import { Style } from '../../src/components/common';
 import { DataSource, SortDirection } from '../../src/infrastructure/data-source';
 
 export interface GridCellProps {
