@@ -78,9 +78,9 @@ describe('<Grid />', () => {
     });
 
     describe('property', () => {
-        let style = {
-            className: 'class0',
-            content: 'display: none'
+        let cssClass = {
+            name: 'class0',
+            styles: 'content: \'value0\''
         };
 
         describe('body', () => {
@@ -94,15 +94,15 @@ describe('<Grid />', () => {
                 expect(grid.find(`tbody td.class0`).length).to.equal(1);
             });
 
-            it('styleTemplate', () => {
+            it('classTemplate', () => {
                 let grid = Enzyme.mount(
                     <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>
-                        <GridColumn body={{ styleTemplate: () => style }} field="title" title="Title" />
+                        <GridColumn body={{ classTemplate: () => cssClass }} field="title" title="Title" />
                     </Grid>
                 );
 
-                expect(grid.find(`tbody td.${style.className}`).length).to.equal(1);
-                expect(grid.find('style').html()).to.equal(`<style>.${style.className} {${style.content}}</style>`);
+                expect(grid.find(`tbody td.class0`).length).to.equal(1);
+                expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\' }</style>');
             });
         });
 
@@ -117,15 +117,15 @@ describe('<Grid />', () => {
                 expect(grid.find(`th.class0`).length).to.equal(1);
             });
 
-            it('styleTemplate', () => {
+            it('classTemplate', () => {
                 let grid = Enzyme.mount(
                     <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>
-                        <GridColumn header={{ styleTemplate: () => style }} field="title" title="Title" />
+                        <GridColumn header={{ classTemplate: () => cssClass }} field="title" title="Title" />
                     </Grid>
                 );
 
-                expect(grid.find(`th.${style.className}`).length).to.equal(1);
-                expect(grid.find('style').html()).to.equal(`<style>.${style.className} {${style.content}}</style>`);
+                expect(grid.find(`th.class0`).length).to.equal(1);
+                expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\' }</style>');
             });
         });
     });

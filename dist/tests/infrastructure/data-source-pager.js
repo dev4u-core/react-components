@@ -40,32 +40,31 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(20);
+	module.exports = __webpack_require__(22);
 
 
 /***/ },
-/* 1 */,
-/* 2 */,
-/* 3 */
+
+/***/ 3:
 /***/ function(module, exports) {
 
 	module.exports = vendors;
 
 /***/ },
-/* 4 */
+
+/***/ 4:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = (__webpack_require__(3))(1);
 
 /***/ },
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */
+
+/***/ 8:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -244,7 +243,8 @@
 
 
 /***/ },
-/* 9 */
+
+/***/ 9:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -273,23 +273,14 @@
 
 
 /***/ },
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */,
-/* 15 */,
-/* 16 */,
-/* 17 */,
-/* 18 */,
-/* 19 */,
-/* 20 */
+
+/***/ 22:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var chai_1 = __webpack_require__(4);
 	var data_source_1 = __webpack_require__(8);
-	var data_source_pager_1 = __webpack_require__(21);
+	var data_source_pager_1 = __webpack_require__(23);
 	describe('DataSourcePager', function () {
 	    function createPager(pageSize) {
 	        var dataSource = new data_source_1.ClientDataSource([{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }], { pageSize: pageSize || 2, pageIndex: 2 });
@@ -388,7 +379,8 @@
 
 
 /***/ },
-/* 21 */
+
+/***/ 23:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -448,4 +440,5 @@
 
 
 /***/ }
-/******/ ]);
+
+/******/ });

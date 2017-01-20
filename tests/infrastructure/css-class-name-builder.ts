@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import * as Mocha from 'mocha';
-import { ClassNameBuilder } from '../../src/infrastructure/class-name-builder';
+import { CssClassNameBuilder } from '../../src/infrastructure/css-class-name-builder';
 
 describe('ClassNameBuilder', () => {
     describe('add', () => {
         it('one class', () => {
-            let classNameBuilder = new ClassNameBuilder();
+            let classNameBuilder = new CssClassNameBuilder();
 
             classNameBuilder.add('class0');
 
@@ -13,7 +13,7 @@ describe('ClassNameBuilder', () => {
         });
 
         it('two classes', () => {
-            let classNameBuilder = new ClassNameBuilder();
+            let classNameBuilder = new CssClassNameBuilder();
 
             classNameBuilder.add('class0');
             classNameBuilder.add('class1');
@@ -24,7 +24,7 @@ describe('ClassNameBuilder', () => {
 
     describe('addIf', () => {
         it('condition is true', () => {
-            let classNameBuilder = new ClassNameBuilder();
+            let classNameBuilder = new CssClassNameBuilder();
 
             classNameBuilder.addIf(true, () => 'class0');
 
@@ -32,7 +32,7 @@ describe('ClassNameBuilder', () => {
         });
 
         it('condition is false', () => {
-            let classNameBuilder = new ClassNameBuilder();
+            let classNameBuilder = new CssClassNameBuilder();
 
             classNameBuilder.addIf(false, () => 'class0');
 

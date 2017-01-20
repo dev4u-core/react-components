@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Style } from './common';
 import { Grid, GridStyle } from './grid';
+import { CssClass } from '../../src/infrastructure/common';
 import { DataSource, SortDirection } from '../../src/infrastructure/data-source';
 
 export interface GridCellProps {
     className?: string;
-    styleTemplate?: (column: GridColumnBase<any>, model?: any) => Style;
+    classTemplate?: (column: GridColumnBase<any>, model?: any) => CssClass;
     template?: (column: GridColumnBase<any>, model?: any) => JSX.Element;
 }
 
@@ -122,7 +122,7 @@ export class DetailGridColumn extends GridColumnBase<DetailGridColumnProps> {
     public renderBody(model: any, rowIndex: number): JSX.Element {
         return (
             <a href="javascript:" onClick={() => this.handleClickToExpandOrCollapseDetail(model)}>
-                {(this.grid.state.expandedDetailRows.indexOf(model) != -1) ? "-" : "+"}
+                {(this.grid.state.expandedDetailRows.indexOf(model) != -1) ? '-' : '+'}
             </a>
         );
     }

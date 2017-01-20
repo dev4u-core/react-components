@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Style } from './common';
-import { DetailGridColumn, GridColumnBase, GridCellProps } from '../../src/components/grid-column';
-import { ClassNameBuilder } from '../../src/infrastructure/class-name-builder';
+import { DetailGridColumn, GridColumnBase, GridColumnBaseProps, GridCellProps } from '../../src/components/grid-column';
+import { CssClass } from '../../src/infrastructure/common';
+import { CssClassNameBuilder } from '../../src/infrastructure/css-class-name-builder';
+import { CssClassSerializer } from '../../src/infrastructure/css-class-serializer';
 import { DataSource, DataSourceState, SortDirection } from '../../src/infrastructure/data-source';
 import { StyleProvider } from '../../src/infrastructure/style-provider';
 
@@ -58,13 +59,13 @@ export abstract class GridBase<P extends GridBaseProps> extends React.Component<
     }
 
     protected getCellClassName(column: GridColumnBase<any>, cellProps: GridCellProps): string {
-        let classNameBuilder = new ClassNameBuilder();
+        let classNameBuilder = new CssClassNameBuilder();
 
         if (cellProps) {
-            console.log((cellProps.styleTemplate != null));
+            console.log((cellProps.classTemplate != null));
             classNameBuilder
                 .add(cellProps.className)
-                .addIf((cellProps.styleTemplate != null) && (cellProps.styleTemplate(column) != null), () => cellProps.styleTemplate(column).className);
+                .addIf((cellProps.classTemplate != null) && (cellProps.classTemplate(column) != null), () => cellProps.classTemplate(column).name);
         }
 
         return classNameBuilder.build();
@@ -82,6 +83,20 @@ export abstract class GridBase<P extends GridBaseProps> extends React.Component<
         return column.renderHeader();
     }
 
+    protected renderStyleSection(): JSX.Element {
+        let headerStyles = this.columns.filter(x => x.props.header && x.props.header.classTemplate)
+            .map(x => CssClassSerializer.instance.serialize(x.props.header.classTemplate(x)))
+            .join();
+        let bodyStyles = this.columns.filter(x => x.props.body && x.props.body.classTemplate)
+            .map(x => CssClassSerializer.instance.serialize(x.props.body.classTemplate(x)))
+            .join();
+        let footerStyles = this.columns.filter(x => x.props.footer && x.props.footer.classTemplate)
+            .map(x => CssClassSerializer.instance.serialize(x.props.footer.classTemplate(x)))
+            .join();
+
+        return <style>{headerStyles + bodyStyles + footerStyles}</style>;
+    }
+
     protected setDataSource(dataSource: DataSource<any>) {
         if ((this.props.autoBind != false) && (dataSource.state == DataSourceState.Empty)) {
             dataSource.dataBind();
@@ -95,7 +110,7 @@ export abstract class GridBase<P extends GridBaseProps> extends React.Component<
         }
     }
 
-    protected get columns(): GridColumnBase<any>[] {
+    protected get columns(): GridColumnBase<GridColumnBaseProps>[] {
         return this._columns = this._columns
             || React.Children.toArray(this.props.children)
                 .map(x => new (x as any).type((x as any).props, this))
@@ -174,22 +189,6 @@ export class Grid extends GridBase<GridBaseProps> {
                 {this.columns.map((x, i) => this.renderHeaderCell(x, i))}
             </tr>
         );
-    }
-
-    protected renderStyleSection(): JSX.Element {
-        let renderStyle = (x: Style) => `.${x.className} {${x.content}}`;
-
-        let headerStyles = this.columns.filter(x => x.props.header && x.props.header.styleTemplate)
-            .map(x => renderStyle(x.props.header.styleTemplate(x)))
-            .join();
-        let bodyStyles = this.columns.filter(x => x.props.body && x.props.body.styleTemplate)
-            .map(x => renderStyle(x.props.body.styleTemplate(x)))
-            .join();
-        let footerStyles = this.columns.filter(x => x.props.footer && x.props.footer.styleTemplate)
-            .map(x => renderStyle(x.props.footer.styleTemplate(x)))
-            .join();
-
-        return <style>{headerStyles + bodyStyles + footerStyles}</style>;
     }
 
     public render(): JSX.Element {

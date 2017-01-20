@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import * as Mocha from 'mocha';
-import { ClassNameGenerator } from '../../src/infrastructure/class-name-generator';
+import { CssClassNameGenerator } from '../../src/infrastructure/css-class-name-generator';
 
 describe('ClassNameGenerator', () => {
     describe('generate', () => {
         it('result is different', () => {
-            let className0 = ClassNameGenerator.instance.generate();
-            let className1 = ClassNameGenerator.instance.generate();
+            let className0 = CssClassNameGenerator.instance.generate();
+            let className1 = CssClassNameGenerator.instance.generate();
 
             expect(className0).is.not.null;
             expect(className1).is.not.null;
@@ -16,8 +16,8 @@ describe('ClassNameGenerator', () => {
 
     describe('generateByKey', () => {
         it('result is the same', () => {
-            let className0 = ClassNameGenerator.instance.generateByKey('0');
-            let className1 = ClassNameGenerator.instance.generateByKey('0');
+            let className0 = CssClassNameGenerator.instance.generateByKey('0');
+            let className1 = CssClassNameGenerator.instance.generateByKey('0');
 
             expect(className0).is.not.null;
             expect(className1).is.not.null;

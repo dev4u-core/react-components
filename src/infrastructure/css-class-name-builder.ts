@@ -1,24 +1,18 @@
 const ClassNameSeparator: string = ' ';
 
-export class ClassNameBuilder {
+export class CssClassNameBuilder {
     private _stack: ((x: string) => string)[] = [];
 
-    public add(className: string): ClassNameBuilder {
+    public add(className: string): CssClassNameBuilder {
         this._stack.push(x => x ? (x + ClassNameSeparator + className) : className);
 
         return this;
     }
 
-    public addIf(condition: boolean, classNameGetter: () => string): ClassNameBuilder {
+    public addIf(condition: boolean, classNameGetter: () => string): CssClassNameBuilder {
         if (condition) {
             this.add(classNameGetter());
         }
-
-        return this;
-    }
-
-    public addUnique(key: string): ClassNameBuilder {
-
 
         return this;
     }

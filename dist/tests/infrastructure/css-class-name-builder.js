@@ -40,87 +40,78 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(15);
+	module.exports = __webpack_require__(17);
 
 
 /***/ },
-/* 1 */,
-/* 2 */,
-/* 3 */
+
+/***/ 3:
 /***/ function(module, exports) {
 
 	module.exports = vendors;
 
 /***/ },
-/* 4 */
+
+/***/ 4:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = (__webpack_require__(3))(1);
 
 /***/ },
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */
+
+/***/ 10:
 /***/ function(module, exports) {
 
 	"use strict";
 	var ClassNameSeparator = ' ';
-	var ClassNameBuilder = (function () {
-	    function ClassNameBuilder() {
+	var CssClassNameBuilder = (function () {
+	    function CssClassNameBuilder() {
 	        this._stack = [];
 	    }
-	    ClassNameBuilder.prototype.add = function (className) {
+	    CssClassNameBuilder.prototype.add = function (className) {
 	        this._stack.push(function (x) { return x ? (x + ClassNameSeparator + className) : className; });
 	        return this;
 	    };
-	    ClassNameBuilder.prototype.addIf = function (condition, classNameGetter) {
+	    CssClassNameBuilder.prototype.addIf = function (condition, classNameGetter) {
 	        if (condition) {
 	            this.add(classNameGetter());
 	        }
 	        return this;
 	    };
-	    ClassNameBuilder.prototype.addUnique = function (key) {
-	        return this;
-	    };
-	    ClassNameBuilder.prototype.build = function () {
+	    CssClassNameBuilder.prototype.build = function () {
 	        var result = null;
 	        for (var i = 0; i < this._stack.length; i++) {
 	            result = this._stack[i](result);
 	        }
 	        return result;
 	    };
-	    return ClassNameBuilder;
+	    return CssClassNameBuilder;
 	}());
-	exports.ClassNameBuilder = ClassNameBuilder;
+	exports.CssClassNameBuilder = CssClassNameBuilder;
 
 
 /***/ },
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */,
-/* 15 */
+
+/***/ 17:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var chai_1 = __webpack_require__(4);
-	var class_name_builder_1 = __webpack_require__(10);
+	var css_class_name_builder_1 = __webpack_require__(10);
 	describe('ClassNameBuilder', function () {
 	    describe('add', function () {
 	        it('one class', function () {
-	            var classNameBuilder = new class_name_builder_1.ClassNameBuilder();
+	            var classNameBuilder = new css_class_name_builder_1.CssClassNameBuilder();
 	            classNameBuilder.add('class0');
 	            chai_1.expect(classNameBuilder.build()).to.equal('class0');
 	        });
 	        it('two classes', function () {
-	            var classNameBuilder = new class_name_builder_1.ClassNameBuilder();
+	            var classNameBuilder = new css_class_name_builder_1.CssClassNameBuilder();
 	            classNameBuilder.add('class0');
 	            classNameBuilder.add('class1');
 	            chai_1.expect(classNameBuilder.build()).to.equal('class0 class1');
@@ -128,12 +119,12 @@
 	    });
 	    describe('addIf', function () {
 	        it('condition is true', function () {
-	            var classNameBuilder = new class_name_builder_1.ClassNameBuilder();
+	            var classNameBuilder = new css_class_name_builder_1.CssClassNameBuilder();
 	            classNameBuilder.addIf(true, function () { return 'class0'; });
 	            chai_1.expect(classNameBuilder.build()).to.equal('class0');
 	        });
 	        it('condition is false', function () {
-	            var classNameBuilder = new class_name_builder_1.ClassNameBuilder();
+	            var classNameBuilder = new css_class_name_builder_1.CssClassNameBuilder();
 	            classNameBuilder.addIf(false, function () { return 'class0'; });
 	            chai_1.expect(classNameBuilder.build()).to.equal(null);
 	        });
@@ -142,4 +133,5 @@
 
 
 /***/ }
-/******/ ]);
+
+/******/ });

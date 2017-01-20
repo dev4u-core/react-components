@@ -45,7 +45,7 @@
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(16);
+	module.exports = __webpack_require__(18);
 
 
 /***/ },
@@ -64,17 +64,17 @@
 
 /***/ },
 
-/***/ 16:
+/***/ 18:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var chai_1 = __webpack_require__(4);
-	var class_name_generator_1 = __webpack_require__(17);
+	var css_class_name_generator_1 = __webpack_require__(19);
 	describe('ClassNameGenerator', function () {
 	    describe('generate', function () {
 	        it('result is different', function () {
-	            var className0 = class_name_generator_1.ClassNameGenerator.instance.generate();
-	            var className1 = class_name_generator_1.ClassNameGenerator.instance.generate();
+	            var className0 = css_class_name_generator_1.CssClassNameGenerator.instance.generate();
+	            var className1 = css_class_name_generator_1.CssClassNameGenerator.instance.generate();
 	            chai_1.expect(className0).is.not.null;
 	            chai_1.expect(className1).is.not.null;
 	            chai_1.expect(className0).to.not.equal(className1);
@@ -82,8 +82,8 @@
 	    });
 	    describe('generateByKey', function () {
 	        it('result is the same', function () {
-	            var className0 = class_name_generator_1.ClassNameGenerator.instance.generateByKey('0');
-	            var className1 = class_name_generator_1.ClassNameGenerator.instance.generateByKey('0');
+	            var className0 = css_class_name_generator_1.CssClassNameGenerator.instance.generateByKey('0');
+	            var className1 = css_class_name_generator_1.CssClassNameGenerator.instance.generateByKey('0');
 	            chai_1.expect(className0).is.not.null;
 	            chai_1.expect(className1).is.not.null;
 	            chai_1.expect(className0).to.equal(className1);
@@ -94,18 +94,18 @@
 
 /***/ },
 
-/***/ 17:
+/***/ 19:
 /***/ function(module, exports) {
 
 	"use strict";
-	var ClassNameGenerator = (function () {
-	    function ClassNameGenerator() {
+	var CssClassNameGenerator = (function () {
+	    function CssClassNameGenerator() {
 	        this._byKey = {};
 	    }
-	    ClassNameGenerator.prototype.generate = function () {
-	        return '--' + ('0000' + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4);
+	    CssClassNameGenerator.prototype.generate = function () {
+	        return '--' + ('00000000' + (Math.random() * Math.pow(36, 8) << 0).toString(36)).slice(-8);
 	    };
-	    ClassNameGenerator.prototype.generateByKey = function (key) {
+	    CssClassNameGenerator.prototype.generateByKey = function (key) {
 	        var result = this._byKey[key];
 	        if (!result) {
 	            result = this.generate();
@@ -113,10 +113,10 @@
 	        }
 	        return result;
 	    };
-	    ClassNameGenerator.instance = new ClassNameGenerator();
-	    return ClassNameGenerator;
+	    CssClassNameGenerator.instance = new CssClassNameGenerator();
+	    return CssClassNameGenerator;
 	}());
-	exports.ClassNameGenerator = ClassNameGenerator;
+	exports.CssClassNameGenerator = CssClassNameGenerator;
 
 
 /***/ }

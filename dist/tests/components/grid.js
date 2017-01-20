@@ -115,9 +115,9 @@
 	        });
 	    });
 	    describe('property', function () {
-	        var style = {
-	            className: 'class0',
-	            content: 'display: none'
+	        var cssClass = {
+	            name: 'class0',
+	            styles: 'content: \'value0\''
 	        };
 	        describe('body', function () {
 	            it('className', function () {
@@ -126,12 +126,12 @@
 	                ));
 	                chai_1.expect(grid.find("tbody td.class0").length).to.equal(1);
 	            });
-	            it('styleTemplate', function () {
+	            it('classTemplate', function () {
 	                var grid = Enzyme.mount(React.createElement(grid_1.Grid, {autoBind: true, dataSource: new data_source_1.ClientDataSource([{}])}, 
-	                    React.createElement(grid_column_1.GridColumn, {body: { styleTemplate: function () { return style; } }, field: "title", title: "Title"})
+	                    React.createElement(grid_column_1.GridColumn, {body: { classTemplate: function () { return cssClass; } }, field: "title", title: "Title"})
 	                ));
-	                chai_1.expect(grid.find("tbody td." + style.className).length).to.equal(1);
-	                chai_1.expect(grid.find('style').html()).to.equal("<style>." + style.className + " {" + style.content + "}</style>");
+	                chai_1.expect(grid.find("tbody td.class0").length).to.equal(1);
+	                chai_1.expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\' }</style>');
 	            });
 	        });
 	        describe('header', function () {
@@ -141,12 +141,12 @@
 	                ));
 	                chai_1.expect(grid.find("th.class0").length).to.equal(1);
 	            });
-	            it('styleTemplate', function () {
+	            it('classTemplate', function () {
 	                var grid = Enzyme.mount(React.createElement(grid_1.Grid, {autoBind: true, dataSource: new data_source_1.ClientDataSource([{}])}, 
-	                    React.createElement(grid_column_1.GridColumn, {header: { styleTemplate: function () { return style; } }, field: "title", title: "Title"})
+	                    React.createElement(grid_column_1.GridColumn, {header: { classTemplate: function () { return cssClass; } }, field: "title", title: "Title"})
 	                ));
-	                chai_1.expect(grid.find("th." + style.className).length).to.equal(1);
-	                chai_1.expect(grid.find('style').html()).to.equal("<style>." + style.className + " {" + style.content + "}</style>");
+	                chai_1.expect(grid.find("th.class0").length).to.equal(1);
+	                chai_1.expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\' }</style>');
 	            });
 	        });
 	    });
@@ -189,9 +189,10 @@
 	};
 	var React = __webpack_require__(5);
 	var grid_column_1 = __webpack_require__(7);
-	var class_name_builder_1 = __webpack_require__(10);
+	var css_class_name_builder_1 = __webpack_require__(10);
+	var css_class_serializer_1 = __webpack_require__(11);
 	var data_source_1 = __webpack_require__(8);
-	var style_provider_1 = __webpack_require__(11);
+	var style_provider_1 = __webpack_require__(12);
 	var GridBase = (function (_super) {
 	    __extends(GridBase, _super);
 	    function GridBase(props) {
@@ -211,12 +212,12 @@
 	        }
 	    };
 	    GridBase.prototype.getCellClassName = function (column, cellProps) {
-	        var classNameBuilder = new class_name_builder_1.ClassNameBuilder();
+	        var classNameBuilder = new css_class_name_builder_1.CssClassNameBuilder();
 	        if (cellProps) {
-	            console.log((cellProps.styleTemplate != null));
+	            console.log((cellProps.classTemplate != null));
 	            classNameBuilder
 	                .add(cellProps.className)
-	                .addIf((cellProps.styleTemplate != null) && (cellProps.styleTemplate(column) != null), function () { return cellProps.styleTemplate(column).className; });
+	                .addIf((cellProps.classTemplate != null) && (cellProps.classTemplate(column) != null), function () { return cellProps.classTemplate(column).name; });
 	        }
 	        return classNameBuilder.build();
 	    };
@@ -309,15 +310,14 @@
 	        return (React.createElement("tr", null, this.columns.map(function (x, i) { return _this.renderHeaderCell(x, i); })));
 	    };
 	    Grid.prototype.renderStyleSection = function () {
-	        var renderStyle = function (x) { return ("." + x.className + " {" + x.content + "}"); };
-	        var headerStyles = this.columns.filter(function (x) { return x.props.header && x.props.header.styleTemplate; })
-	            .map(function (x) { return renderStyle(x.props.header.styleTemplate(x)); })
+	        var headerStyles = this.columns.filter(function (x) { return x.props.header && x.props.header.classTemplate; })
+	            .map(function (x) { return css_class_serializer_1.CssClassSerializer.instance.serialize(x.props.header.classTemplate(x)); })
 	            .join();
-	        var bodyStyles = this.columns.filter(function (x) { return x.props.body && x.props.body.styleTemplate; })
-	            .map(function (x) { return renderStyle(x.props.body.styleTemplate(x)); })
+	        var bodyStyles = this.columns.filter(function (x) { return x.props.body && x.props.body.classTemplate; })
+	            .map(function (x) { return css_class_serializer_1.CssClassSerializer.instance.serialize(x.props.body.classTemplate(x)); })
 	            .join();
-	        var footerStyles = this.columns.filter(function (x) { return x.props.footer && x.props.footer.styleTemplate; })
-	            .map(function (x) { return renderStyle(x.props.footer.styleTemplate(x)); })
+	        var footerStyles = this.columns.filter(function (x) { return x.props.footer && x.props.footer.classTemplate; })
+	            .map(function (x) { return css_class_serializer_1.CssClassSerializer.instance.serialize(x.props.footer.classTemplate(x)); })
 	            .join();
 	        return React.createElement("style", null, headerStyles + bodyStyles + footerStyles);
 	    };
@@ -448,7 +448,7 @@
 	    };
 	    DetailGridColumn.prototype.renderBody = function (model, rowIndex) {
 	        var _this = this;
-	        return (React.createElement("a", {href: "javascript:", onClick: function () { return _this.handleClickToExpandOrCollapseDetail(model); }}, (this.grid.state.expandedDetailRows.indexOf(model) != -1) ? "-" : "+"));
+	        return (React.createElement("a", {href: "javascript:", onClick: function () { return _this.handleClickToExpandOrCollapseDetail(model); }}, (this.grid.state.expandedDetailRows.indexOf(model) != -1) ? '-' : '+'));
 	    };
 	    DetailGridColumn.prototype.renderDetailRow = function (model, rowIndex) {
 	        return this.props.detailRowTemplate ? this.props.detailRowTemplate(this, model, rowIndex) : null;
@@ -672,37 +672,53 @@
 
 	"use strict";
 	var ClassNameSeparator = ' ';
-	var ClassNameBuilder = (function () {
-	    function ClassNameBuilder() {
+	var CssClassNameBuilder = (function () {
+	    function CssClassNameBuilder() {
 	        this._stack = [];
 	    }
-	    ClassNameBuilder.prototype.add = function (className) {
+	    CssClassNameBuilder.prototype.add = function (className) {
 	        this._stack.push(function (x) { return x ? (x + ClassNameSeparator + className) : className; });
 	        return this;
 	    };
-	    ClassNameBuilder.prototype.addIf = function (condition, classNameGetter) {
+	    CssClassNameBuilder.prototype.addIf = function (condition, classNameGetter) {
 	        if (condition) {
 	            this.add(classNameGetter());
 	        }
 	        return this;
 	    };
-	    ClassNameBuilder.prototype.addUnique = function (key) {
-	        return this;
-	    };
-	    ClassNameBuilder.prototype.build = function () {
+	    CssClassNameBuilder.prototype.build = function () {
 	        var result = null;
 	        for (var i = 0; i < this._stack.length; i++) {
 	            result = this._stack[i](result);
 	        }
 	        return result;
 	    };
-	    return ClassNameBuilder;
+	    return CssClassNameBuilder;
 	}());
-	exports.ClassNameBuilder = ClassNameBuilder;
+	exports.CssClassNameBuilder = CssClassNameBuilder;
 
 
 /***/ },
 /* 11 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var CssClassSerializer = (function () {
+	    function CssClassSerializer() {
+	    }
+	    CssClassSerializer.prototype.serialize = function (cssClass) {
+	        return cssClass.selector
+	            ? "." + cssClass.name + ": " + cssClass.selector + " { " + cssClass.styles + " }"
+	            : "." + cssClass.name + " { " + cssClass.styles + " }";
+	    };
+	    CssClassSerializer.instance = new CssClassSerializer();
+	    return CssClassSerializer;
+	}());
+	exports.CssClassSerializer = CssClassSerializer;
+
+
+/***/ },
+/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";
