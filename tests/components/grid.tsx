@@ -80,7 +80,7 @@ describe('<Grid />', () => {
     describe('property', () => {
         let cssClass = {
             name: 'class0',
-            styles: 'content: \'value0\''
+            styles: 'content: \'value0\';'
         };
 
         describe('body', () => {
@@ -102,7 +102,7 @@ describe('<Grid />', () => {
                 );
 
                 expect(grid.find(`tbody td.class0`).length).to.equal(1);
-                expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\' }</style>');
+                expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\'; }</style>');
             });
         });
 
@@ -125,7 +125,7 @@ describe('<Grid />', () => {
                 );
 
                 expect(grid.find(`th.class0`).length).to.equal(1);
-                expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\' }</style>');
+                expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\'; }</style>');
             });
         });
     });

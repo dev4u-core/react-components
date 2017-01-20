@@ -5,8 +5,10 @@ import { CssClassNameGenerator } from '../../src/infrastructure/css-class-name-g
 describe('ClassNameGenerator', () => {
     describe('generate', () => {
         it('result is different', () => {
-            let className0 = CssClassNameGenerator.instance.generate();
-            let className1 = CssClassNameGenerator.instance.generate();
+            let classNameGenerator = new CssClassNameGenerator();
+
+            let className0 = classNameGenerator.generate();
+            let className1 = classNameGenerator.generate();
 
             expect(className0).is.not.null;
             expect(className1).is.not.null;
@@ -16,8 +18,10 @@ describe('ClassNameGenerator', () => {
 
     describe('generateByKey', () => {
         it('result is the same', () => {
-            let className0 = CssClassNameGenerator.instance.generateByKey('0');
-            let className1 = CssClassNameGenerator.instance.generateByKey('0');
+            let classNameGenerator = new CssClassNameGenerator();
+
+            let className0 = classNameGenerator.generateByKey('0');
+            let className1 = classNameGenerator.generateByKey('0');
 
             expect(className0).is.not.null;
             expect(className1).is.not.null;

@@ -72,9 +72,13 @@
 	    function CssClassSerializer() {
 	    }
 	    CssClassSerializer.prototype.serialize = function (cssClass) {
-	        return cssClass.selector
-	            ? "." + cssClass.name + ": " + cssClass.selector + " { " + cssClass.styles + " }"
+	        var result = cssClass.selector
+	            ? "." + cssClass.name + ":" + cssClass.selector + " { " + cssClass.styles + " }"
 	            : "." + cssClass.name + " { " + cssClass.styles + " }";
+	        if (cssClass.media) {
+	            result = "@media " + cssClass.media + " { " + result + " }";
+	        }
+	        return result;
 	    };
 	    CssClassSerializer.instance = new CssClassSerializer();
 	    return CssClassSerializer;
@@ -92,22 +96,31 @@
 	var css_class_serializer_1 = __webpack_require__(11);
 	describe('CssClassSerializer', function () {
 	    describe('serialize', function () {
-	        it('selector is null', function () {
+	        it('media and selector are null', function () {
 	            var cssClass = {
 	                name: 'class0',
-	                styles: 'content: \'value0\''
+	                styles: 'content: \'value0\';'
 	            };
 	            var value = css_class_serializer_1.CssClassSerializer.instance.serialize(cssClass);
-	            chai_1.expect(value).to.equal('.class0 { content: \'value0\' }');
+	            chai_1.expect(value).to.equal('.class0 { content: \'value0\'; }');
 	        });
 	        it('selector is not null', function () {
 	            var cssClass = {
 	                name: 'class0',
 	                selector: 'after',
-	                styles: 'content: \'value0\''
+	                styles: 'content: \'value0\';'
 	            };
 	            var value = css_class_serializer_1.CssClassSerializer.instance.serialize(cssClass);
-	            chai_1.expect(value).to.equal('.class0: after { content: \'value0\' }');
+	            chai_1.expect(value).to.equal('.class0:after { content: \'value0\'; }');
+	        });
+	        it('media is not null', function () {
+	            var cssClass = {
+	                media: 'all',
+	                name: 'class0',
+	                styles: 'content: \'value0\';'
+	            };
+	            var value = css_class_serializer_1.CssClassSerializer.instance.serialize(cssClass);
+	            chai_1.expect(value).to.equal('@media all { .class0 { content: \'value0\'; } }');
 	        });
 	    });
 	});

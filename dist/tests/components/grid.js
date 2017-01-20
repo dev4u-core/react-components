@@ -117,7 +117,7 @@
 	    describe('property', function () {
 	        var cssClass = {
 	            name: 'class0',
-	            styles: 'content: \'value0\''
+	            styles: 'content: \'value0\';'
 	        };
 	        describe('body', function () {
 	            it('className', function () {
@@ -131,7 +131,7 @@
 	                    React.createElement(grid_column_1.GridColumn, {body: { classTemplate: function () { return cssClass; } }, field: "title", title: "Title"})
 	                ));
 	                chai_1.expect(grid.find("tbody td.class0").length).to.equal(1);
-	                chai_1.expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\' }</style>');
+	                chai_1.expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\'; }</style>');
 	            });
 	        });
 	        describe('header', function () {
@@ -146,7 +146,7 @@
 	                    React.createElement(grid_column_1.GridColumn, {header: { classTemplate: function () { return cssClass; } }, field: "title", title: "Title"})
 	                ));
 	                chai_1.expect(grid.find("th.class0").length).to.equal(1);
-	                chai_1.expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\' }</style>');
+	                chai_1.expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\'; }</style>');
 	            });
 	        });
 	    });
@@ -230,6 +230,18 @@
 	    GridBase.prototype.renderHeaderCell = function (column, columnIndex) {
 	        return column.renderHeader();
 	    };
+	    GridBase.prototype.renderStyleSection = function () {
+	        var headerStyles = this.columns.filter(function (x) { return x.props.header && x.props.header.classTemplate; })
+	            .map(function (x) { return css_class_serializer_1.CssClassSerializer.instance.serialize(x.props.header.classTemplate(x)); })
+	            .join();
+	        var bodyStyles = this.columns.filter(function (x) { return x.props.body && x.props.body.classTemplate; })
+	            .map(function (x) { return css_class_serializer_1.CssClassSerializer.instance.serialize(x.props.body.classTemplate(x)); })
+	            .join();
+	        var footerStyles = this.columns.filter(function (x) { return x.props.footer && x.props.footer.classTemplate; })
+	            .map(function (x) { return css_class_serializer_1.CssClassSerializer.instance.serialize(x.props.footer.classTemplate(x)); })
+	            .join();
+	        return React.createElement("style", null, headerStyles + bodyStyles + footerStyles);
+	    };
 	    GridBase.prototype.setDataSource = function (dataSource) {
 	        var _this = this;
 	        if ((this.props.autoBind != false) && (dataSource.state == data_source_1.DataSourceState.Empty)) {
@@ -308,18 +320,6 @@
 	    Grid.prototype.renderHeaderRow = function () {
 	        var _this = this;
 	        return (React.createElement("tr", null, this.columns.map(function (x, i) { return _this.renderHeaderCell(x, i); })));
-	    };
-	    Grid.prototype.renderStyleSection = function () {
-	        var headerStyles = this.columns.filter(function (x) { return x.props.header && x.props.header.classTemplate; })
-	            .map(function (x) { return css_class_serializer_1.CssClassSerializer.instance.serialize(x.props.header.classTemplate(x)); })
-	            .join();
-	        var bodyStyles = this.columns.filter(function (x) { return x.props.body && x.props.body.classTemplate; })
-	            .map(function (x) { return css_class_serializer_1.CssClassSerializer.instance.serialize(x.props.body.classTemplate(x)); })
-	            .join();
-	        var footerStyles = this.columns.filter(function (x) { return x.props.footer && x.props.footer.classTemplate; })
-	            .map(function (x) { return css_class_serializer_1.CssClassSerializer.instance.serialize(x.props.footer.classTemplate(x)); })
-	            .join();
-	        return React.createElement("style", null, headerStyles + bodyStyles + footerStyles);
 	    };
 	    Grid.prototype.render = function () {
 	        return (React.createElement("div", null, 
@@ -707,9 +707,13 @@
 	    function CssClassSerializer() {
 	    }
 	    CssClassSerializer.prototype.serialize = function (cssClass) {
-	        return cssClass.selector
-	            ? "." + cssClass.name + ": " + cssClass.selector + " { " + cssClass.styles + " }"
+	        var result = cssClass.selector
+	            ? "." + cssClass.name + ":" + cssClass.selector + " { " + cssClass.styles + " }"
 	            : "." + cssClass.name + " { " + cssClass.styles + " }";
+	        if (cssClass.media) {
+	            result = "@media " + cssClass.media + " { " + result + " }";
+	        }
+	        return result;
 	    };
 	    CssClassSerializer.instance = new CssClassSerializer();
 	    return CssClassSerializer;
