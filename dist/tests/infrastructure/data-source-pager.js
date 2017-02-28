@@ -45,7 +45,7 @@
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(22);
+	module.exports = __webpack_require__(24);
 
 
 /***/ },
@@ -70,17 +70,23 @@
 	"use strict";
 	var comparer_1 = __webpack_require__(9);
 	var FieldAccessor = (function () {
-	    function FieldAccessor() {
+	    function FieldAccessor(fieldAccessors) {
+	        this._fieldAccessors = fieldAccessors;
 	    }
 	    FieldAccessor.prototype.getValue = function (model, compositeField) {
-	        var result = model;
-	        var fields = compositeField.split(FieldAccessor.Separator);
-	        for (var i = 0; i < fields.length; i++) {
-	            result = result[fields[i]];
-	            if (!result)
-	                break;
+	        if (this._fieldAccessors && this._fieldAccessors[compositeField]) {
+	            return this._fieldAccessors[compositeField](model);
 	        }
-	        return result;
+	        else {
+	            var result = model;
+	            var fields = compositeField.split(FieldAccessor.Separator);
+	            for (var i = 0; i < fields.length; i++) {
+	                result = result[fields[i]];
+	                if (!result)
+	                    break;
+	            }
+	            return result;
+	        }
 	    };
 	    FieldAccessor.Separator = '.';
 	    return FieldAccessor;
@@ -99,9 +105,15 @@
 	var DataSourceState = exports.DataSourceState;
 	var ClientDataSource = (function () {
 	    function ClientDataSource(data, props) {
-	        if (props && props.pageSize) {
-	            this._pageSize = props.pageSize;
-	            this.setPageIndex(props.pageIndex || 0);
+	        if (props) {
+	            if (props.pageSize) {
+	                this._pageSize = props.pageSize;
+	                this.setPageIndex(props.pageIndex || 0);
+	            }
+	            if (props.sortedBy) {
+	                this.sort.apply(this, props.sortedBy);
+	            }
+	            this._fieldAccessor = props.fieldAccessor;
 	        }
 	        this._data = data;
 	        this._onDataBinging = [];
@@ -232,7 +244,7 @@
 	    });
 	    Object.defineProperty(ClientDataSource.prototype, "onDataBound", {
 	        set: function (value) {
-	            this._onDataBinging.push(value);
+	            this._onDataBound.push(value);
 	        },
 	        enumerable: true,
 	        configurable: true
@@ -255,7 +267,7 @@
 	        if (typeof value == 'string') {
 	            return value.toLowerCase();
 	        }
-	        return (value == false) ? 1 : ((value == true) ? 2 : value);
+	        return (value === false) ? 1 : ((value === true) ? 2 : value);
 	    };
 	    Comparer.prototype.compare = function (x, y) {
 	        var xValue = Comparer.toComparedValue(x);
@@ -274,13 +286,13 @@
 
 /***/ },
 
-/***/ 22:
+/***/ 24:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var chai_1 = __webpack_require__(4);
 	var data_source_1 = __webpack_require__(8);
-	var data_source_pager_1 = __webpack_require__(23);
+	var data_source_pager_1 = __webpack_require__(25);
 	describe('DataSourcePager', function () {
 	    function createPager(pageSize) {
 	        var dataSource = new data_source_1.ClientDataSource([{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }], { pageSize: pageSize || 2, pageIndex: 2 });
@@ -380,7 +392,7 @@
 
 /***/ },
 
-/***/ 23:
+/***/ 25:
 /***/ function(module, exports) {
 
 	"use strict";

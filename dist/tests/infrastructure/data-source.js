@@ -40,47 +40,54 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__(21);
 
 
 /***/ },
-
-/***/ 3:
+/* 1 */,
+/* 2 */,
+/* 3 */
 /***/ function(module, exports) {
 
 	module.exports = vendors;
 
 /***/ },
-
-/***/ 4:
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = (__webpack_require__(3))(1);
 
 /***/ },
-
-/***/ 8:
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var comparer_1 = __webpack_require__(9);
 	var FieldAccessor = (function () {
-	    function FieldAccessor() {
+	    function FieldAccessor(fieldAccessors) {
+	        this._fieldAccessors = fieldAccessors;
 	    }
 	    FieldAccessor.prototype.getValue = function (model, compositeField) {
-	        var result = model;
-	        var fields = compositeField.split(FieldAccessor.Separator);
-	        for (var i = 0; i < fields.length; i++) {
-	            result = result[fields[i]];
-	            if (!result)
-	                break;
+	        if (this._fieldAccessors && this._fieldAccessors[compositeField]) {
+	            return this._fieldAccessors[compositeField](model);
 	        }
-	        return result;
+	        else {
+	            var result = model;
+	            var fields = compositeField.split(FieldAccessor.Separator);
+	            for (var i = 0; i < fields.length; i++) {
+	                result = result[fields[i]];
+	                if (!result)
+	                    break;
+	            }
+	            return result;
+	        }
 	    };
 	    FieldAccessor.Separator = '.';
 	    return FieldAccessor;
@@ -99,9 +106,15 @@
 	var DataSourceState = exports.DataSourceState;
 	var ClientDataSource = (function () {
 	    function ClientDataSource(data, props) {
-	        if (props && props.pageSize) {
-	            this._pageSize = props.pageSize;
-	            this.setPageIndex(props.pageIndex || 0);
+	        if (props) {
+	            if (props.pageSize) {
+	                this._pageSize = props.pageSize;
+	                this.setPageIndex(props.pageIndex || 0);
+	            }
+	            if (props.sortedBy) {
+	                this.sort.apply(this, props.sortedBy);
+	            }
+	            this._fieldAccessor = props.fieldAccessor;
 	        }
 	        this._data = data;
 	        this._onDataBinging = [];
@@ -232,7 +245,7 @@
 	    });
 	    Object.defineProperty(ClientDataSource.prototype, "onDataBound", {
 	        set: function (value) {
-	            this._onDataBinging.push(value);
+	            this._onDataBound.push(value);
 	        },
 	        enumerable: true,
 	        configurable: true
@@ -243,8 +256,7 @@
 
 
 /***/ },
-
-/***/ 9:
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -255,7 +267,7 @@
 	        if (typeof value == 'string') {
 	            return value.toLowerCase();
 	        }
-	        return (value == false) ? 1 : ((value == true) ? 2 : value);
+	        return (value === false) ? 1 : ((value === true) ? 2 : value);
 	    };
 	    Comparer.prototype.compare = function (x, y) {
 	        var xValue = Comparer.toComparedValue(x);
@@ -273,13 +285,25 @@
 
 
 /***/ },
-
-/***/ 21:
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var chai_1 = __webpack_require__(4);
+	var common_1 = __webpack_require__(22);
 	var data_source_1 = __webpack_require__(8);
+	var type_converter_1 = __webpack_require__(23);
 	describe('ClientDataSource', function () {
 	    it('dataBind', function () {
 	        var data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
@@ -292,7 +316,7 @@
 	    });
 	    describe('paging', function () {
 	        var data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
-	        it('default', function () {
+	        it('by default', function () {
 	            var dataSource = new data_source_1.ClientDataSource(data, { pageSize: 1 });
 	            dataSource.dataBind();
 	            chai_1.expect(dataSource.view.pageIndex).to.equal(0, 'pageIndex');
@@ -310,82 +334,204 @@
 	            });
 	        });
 	    });
-	    describe('sort', function () {
-	        var testCases = [
-	            [{ booleanField: true, stringField: 'value0' }, { booleanField: false, stringField: 'value1' }, { booleanField: null, stringField: 'value2' }],
-	            [{ booleanField: null, stringField: 'value2' }, { booleanField: true, stringField: 'value0' }, { booleanField: false, stringField: 'value1' }],
-	            [{ booleanField: null, stringField: 'value2' }, { booleanField: false, stringField: 'value1' }, { booleanField: true, stringField: 'value0' }]
-	        ];
-	        it('"SortDirection.Ascending" by one field', function () {
-	            testCases.forEach(function (x) {
-	                var dataSource = new data_source_1.ClientDataSource(x);
+	    describe('sorting', function () {
+	        describe('check view properties', function () {
+	            it('ascending sorting by one field', function () {
+	                var dataSource = new data_source_1.ClientDataSource([]);
 	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Ascending, field: 'stringField' })
+	                    .sort({ direction: data_source_1.SortDirection.Ascending, field: 'field' })
 	                    .dataBind();
 	                chai_1.expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
 	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(data_source_1.SortDirection.Ascending, 'sortedBy[0].direction');
-	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('stringField', 'sortedBy[0].field');
+	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('field', 'sortedBy[0].field');
 	            });
-	        });
-	        it('"SortDirection.Descending" by one field', function () {
-	            testCases.forEach(function (x) {
-	                var dataSource = new data_source_1.ClientDataSource(x);
+	            it('descending sorting by one field', function () {
+	                var dataSource = new data_source_1.ClientDataSource([]);
 	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Descending, field: 'stringField' })
+	                    .sort({ direction: data_source_1.SortDirection.Descending, field: 'field' })
 	                    .dataBind();
 	                chai_1.expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
 	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(data_source_1.SortDirection.Descending, 'sortedBy[0].direction');
-	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('stringField', 'sortedBy[0].field');
+	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('field', 'sortedBy[0].field');
 	            });
 	        });
-	        it('"SortDirection.Ascending" by one "boolean" field', function () {
-	            testCases.forEach(function (x) {
-	                var dataSource = new data_source_1.ClientDataSource(x);
-	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Ascending, field: 'booleanField' })
-	                    .dataBind();
-	                chai_1.expect(dataSource.view.data[0].booleanField).to.equal(null);
-	                chai_1.expect(dataSource.view.data[1].booleanField).to.equal(false);
-	                chai_1.expect(dataSource.view.data[2].booleanField).to.equal(true);
+	        describe('by one "boolean" field', function () {
+	            var testCases = [
+	                [{ booleanField: true }, { booleanField: false }, { booleanField: null }],
+	                [{ booleanField: null }, { booleanField: true }, { booleanField: false }],
+	                [{ booleanField: null }, { booleanField: false }, { booleanField: true }]
+	            ];
+	            it('ascending sorting', function () {
+	                testCases.forEach(function (x) {
+	                    var dataSource = new data_source_1.ClientDataSource(x);
+	                    dataSource
+	                        .sort({ direction: data_source_1.SortDirection.Ascending, field: 'booleanField' })
+	                        .dataBind();
+	                    chai_1.expect(dataSource.view.data[0].booleanField).to.equal(null);
+	                    chai_1.expect(dataSource.view.data[1].booleanField).to.equal(false);
+	                    chai_1.expect(dataSource.view.data[2].booleanField).to.equal(true);
+	                });
+	            });
+	            it('descending sorting', function () {
+	                testCases.forEach(function (x) {
+	                    var dataSource = new data_source_1.ClientDataSource(x);
+	                    dataSource
+	                        .sort({ direction: data_source_1.SortDirection.Descending, field: 'booleanField' })
+	                        .dataBind();
+	                    chai_1.expect(dataSource.view.data[0].booleanField).to.equal(true);
+	                    chai_1.expect(dataSource.view.data[1].booleanField).to.equal(false);
+	                    chai_1.expect(dataSource.view.data[2].booleanField).to.equal(null);
+	                });
 	            });
 	        });
-	        it('"SortDirection.Descending" by one "boolean" field', function () {
-	            testCases.forEach(function (x) {
-	                var dataSource = new data_source_1.ClientDataSource(x);
-	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Descending, field: 'booleanField' })
-	                    .dataBind();
-	                chai_1.expect(dataSource.view.data[0].booleanField).to.equal(true);
-	                chai_1.expect(dataSource.view.data[1].booleanField).to.equal(false);
-	                chai_1.expect(dataSource.view.data[2].booleanField).to.equal(null);
+	        describe('by one "number" field', function () {
+	            var testCases = [
+	                [{ numberField: 0 }, { numberField: 1 }, { numberField: 2 }],
+	                [{ numberField: 2 }, { numberField: 0 }, { numberField: 1 }],
+	                [{ numberField: 2 }, { numberField: 1 }, { numberField: 0 }]
+	            ];
+	            it('ascending sorting', function () {
+	                testCases.forEach(function (x) {
+	                    var dataSource = new data_source_1.ClientDataSource(x);
+	                    dataSource
+	                        .sort({ direction: data_source_1.SortDirection.Ascending, field: 'numberField' })
+	                        .dataBind();
+	                    chai_1.expect(dataSource.view.data[0].numberField).to.equal(0);
+	                    chai_1.expect(dataSource.view.data[1].numberField).to.equal(1);
+	                    chai_1.expect(dataSource.view.data[2].numberField).to.equal(2);
+	                });
+	            });
+	            it('descending sorting', function () {
+	                testCases.forEach(function (x) {
+	                    var dataSource = new data_source_1.ClientDataSource(x);
+	                    dataSource
+	                        .sort({ direction: data_source_1.SortDirection.Descending, field: 'numberField' })
+	                        .dataBind();
+	                    chai_1.expect(dataSource.view.data[0].numberField).to.equal(2);
+	                    chai_1.expect(dataSource.view.data[1].numberField).to.equal(1);
+	                    chai_1.expect(dataSource.view.data[2].numberField).to.equal(0);
+	                });
 	            });
 	        });
-	        it('"SortDirection.Ascending" by one "string" field', function () {
-	            testCases.forEach(function (x) {
-	                var dataSource = new data_source_1.ClientDataSource(x);
-	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Ascending, field: 'stringField' })
-	                    .dataBind();
-	                chai_1.expect(dataSource.view.data[0].stringField).to.equal('value0');
-	                chai_1.expect(dataSource.view.data[1].stringField).to.equal('value1');
-	                chai_1.expect(dataSource.view.data[2].stringField).to.equal('value2');
+	        describe('by one "string" field', function () {
+	            var testCases = [
+	                [{ stringField: 'value0' }, { stringField: 'value1' }, { stringField: 'value2' }],
+	                [{ stringField: 'value2' }, { stringField: 'value0' }, { stringField: 'value1' }],
+	                [{ stringField: 'value2' }, { stringField: 'value1' }, { stringField: 'value0' }]
+	            ];
+	            it('ascending sorting', function () {
+	                testCases.forEach(function (x) {
+	                    var dataSource = new data_source_1.ClientDataSource(x);
+	                    dataSource
+	                        .sort({ direction: data_source_1.SortDirection.Ascending, field: 'stringField' })
+	                        .dataBind();
+	                    chai_1.expect(dataSource.view.data[0].stringField).to.equal('value0');
+	                    chai_1.expect(dataSource.view.data[1].stringField).to.equal('value1');
+	                    chai_1.expect(dataSource.view.data[2].stringField).to.equal('value2');
+	                });
+	            });
+	            it('descending sorting', function () {
+	                testCases.forEach(function (x) {
+	                    var dataSource = new data_source_1.ClientDataSource(x);
+	                    dataSource
+	                        .sort({ direction: data_source_1.SortDirection.Descending, field: 'stringField' })
+	                        .dataBind();
+	                    chai_1.expect(dataSource.view.data[0].stringField).to.equal('value2');
+	                    chai_1.expect(dataSource.view.data[1].stringField).to.equal('value1');
+	                    chai_1.expect(dataSource.view.data[2].stringField).to.equal('value0');
+	                });
 	            });
 	        });
-	        it('"SortDirection.Descending" by one "string" field', function () {
-	            testCases.forEach(function (x) {
-	                var dataSource = new data_source_1.ClientDataSource(x);
-	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Descending, field: 'stringField' })
-	                    .dataBind();
-	                chai_1.expect(dataSource.view.data[0].stringField).to.equal('value2');
-	                chai_1.expect(dataSource.view.data[1].stringField).to.equal('value1');
-	                chai_1.expect(dataSource.view.data[2].stringField).to.equal('value0');
+	        describe('by one "date" field if value is string', function () {
+	            var typeConverter = type_converter_1.TypeConverterProvider.instance.get(common_1.DataType.Date);
+	            var fieldAccessor = new data_source_1.FieldAccessor({ 'dateField': function (x) { return typeConverter.convert(x.dateField); } });
+	            var testCases = [
+	                [{ dateField: '3/1/2001' }, { dateField: '2/1/2002' }, { dateField: '1/1/2003' }],
+	                [{ dateField: '1/1/2003' }, { dateField: '3/1/2001' }, { dateField: '2/1/2002' }],
+	                [{ dateField: '1/1/2003' }, { dateField: '2/1/2002' }, { dateField: '3/1/2001' }]
+	            ];
+	            it('ascending sorting', function () {
+	                testCases.forEach(function (x) {
+	                    var dataSource = new data_source_1.ClientDataSource(x, { fieldAccessor: fieldAccessor });
+	                    dataSource
+	                        .sort({ direction: data_source_1.SortDirection.Ascending, field: 'dateField' })
+	                        .dataBind();
+	                    chai_1.expect(dataSource.view.data[0].dateField).to.equal('3/1/2001');
+	                    chai_1.expect(dataSource.view.data[1].dateField).to.equal('2/1/2002');
+	                    chai_1.expect(dataSource.view.data[2].dateField).to.equal('1/1/2003');
+	                });
+	            });
+	            it('descending sorting', function () {
+	                testCases.forEach(function (x) {
+	                    var dataSource = new data_source_1.ClientDataSource(x, { fieldAccessor: fieldAccessor });
+	                    dataSource
+	                        .sort({ direction: data_source_1.SortDirection.Descending, field: 'dateField' })
+	                        .dataBind();
+	                    chai_1.expect(dataSource.view.data[0].dateField).to.equal('1/1/2003');
+	                    chai_1.expect(dataSource.view.data[1].dateField).to.equal('2/1/2002');
+	                    chai_1.expect(dataSource.view.data[2].dateField).to.equal('3/1/2001');
+	                });
 	            });
 	        });
 	    });
 	});
 
 
-/***/ }
+/***/ },
+/* 22 */
+/***/ function(module, exports) {
 
-/******/ });
+	"use strict";
+	(function (DataType) {
+	    DataType[DataType["Date"] = 0] = "Date";
+	    DataType[DataType["Enum"] = 1] = "Enum";
+	    DataType[DataType["String"] = 2] = "String";
+	    DataType[DataType["Number"] = 3] = "Number";
+	})(exports.DataType || (exports.DataType = {}));
+	var DataType = exports.DataType;
+
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var common_1 = __webpack_require__(22);
+	var DefaultConverter = (function () {
+	    function DefaultConverter() {
+	    }
+	    DefaultConverter.prototype.convert = function (value) {
+	        return value;
+	    };
+	    DefaultConverter.instance = new DefaultConverter();
+	    return DefaultConverter;
+	}());
+	exports.DefaultConverter = DefaultConverter;
+	var DateConverter = (function () {
+	    function DateConverter() {
+	    }
+	    DateConverter.prototype.convert = function (value) {
+	        return value ? new Date(value) : null;
+	    };
+	    return DateConverter;
+	}());
+	exports.DateConverter = DateConverter;
+	var TypeConverterProvider = (function () {
+	    function TypeConverterProvider() {
+	        this._converters = (_a = {},
+	            _a[common_1.DataType[common_1.DataType.Date]] = new DateConverter(),
+	            _a
+	        );
+	        var _a;
+	    }
+	    TypeConverterProvider.prototype.get = function (dataType) {
+	        return this._converters[common_1.DataType[dataType]] || DefaultConverter.instance;
+	    };
+	    TypeConverterProvider.instance = new TypeConverterProvider();
+	    return TypeConverterProvider;
+	}());
+	exports.TypeConverterProvider = TypeConverterProvider;
+
+
+/***/ }
+/******/ ]);

@@ -1,17 +1,30 @@
 import { } from 'es6-shim';
 import { Comparer } from './comparer';
+import { DataType } from './common';
 
 export class FieldAccessor {
     private static readonly Separator: string = '.';
 
+    private readonly _fieldAccessors: { [field: string]: (model: any) => any };
+
+    public constructor(fieldAccessors?: { [field: string]: (model: any) => any }) {
+        this._fieldAccessors = fieldAccessors;
+    }
+
     public getValue(model: any, compositeField: string): any {
-        let result = model;
-        var fields = compositeField.split(FieldAccessor.Separator);
-        for (let i = 0; i < fields.length; i++) {
-            result = result[fields[i]];
-            if (!result) break;
+        if (this._fieldAccessors && this._fieldAccessors[compositeField]) {
+            return this._fieldAccessors[compositeField](model);
+        } else {
+            let result = model;
+            var fields = compositeField.split(FieldAccessor.Separator);
+
+            for (let i = 0; i < fields.length; i++) {
+                result = result[fields[i]];
+                if (!result) break;
+            }
+
+            return result;
         }
-        return result;
     }
 }
 
@@ -53,13 +66,16 @@ export interface DataSource<T> {
 }
 
 export interface ClientDataSourceProps {
+    fieldAccessor?: FieldAccessor;
     pageSize?: number;
     pageIndex?: number;
+    sortedBy?: SortExpression[];
 }
 
 export class ClientDataSource<T> implements DataSource<T> {
     private _data: (() => Promise<T[]>) | T[];
     private _fieldAccessor: FieldAccessor;
+    private _filter: ((view: DataView<T>) => void);
     private _onDataBinging: ((sender: DataSource<T>) => void)[];
     private _onDataBound: ((sender: DataSource<T>) => void)[];
     private _pageSize: number;
@@ -69,10 +85,19 @@ export class ClientDataSource<T> implements DataSource<T> {
     private _view: DataView<T>;
 
     public constructor(data: T[], props?: ClientDataSourceProps) {
-        if (props && props.pageSize) {
-            this._pageSize = props.pageSize;
-            this.setPageIndex(props.pageIndex || 0);
+        if (props) {
+            if (props.pageSize) {
+                this._pageSize = props.pageSize;
+                this.setPageIndex(props.pageIndex || 0);
+            }
+
+            if (props.sortedBy) {
+                this.sort(...props.sortedBy);
+            }
+
+            this._fieldAccessor = props.fieldAccessor;
         }
+
         this._data = data;
         this._onDataBinging = [];
         this._onDataBound = [];
@@ -82,34 +107,42 @@ export class ClientDataSource<T> implements DataSource<T> {
 
     private getComparer(expressions: SortExpression[]): (x: T, y: T) => number {
         let result = null;
+
         for (let i = 0; i < expressions.length; i++) {
-            var comparer = ((direction, field) =>
+            const comparer = ((direction, field) =>
                 (x, y) => {
                     let xValue = this.fieldAccessor.getValue(x, field);
                     let yValue = this.fieldAccessor.getValue(y, field);
+
                     return (direction == SortDirection.Ascending)
                         ? Comparer.Instance.compare(xValue, yValue)
                         : Comparer.Instance.compare(yValue, xValue);
                 })(expressions[i].direction, expressions[i].field);
+
             result = (result != null)
                 ? ((prevComparer) => (x, y) => prevComparer(x, y))(result)
                 : comparer;
         }
+
         return result;
     }
 
     protected handleDataBinding() {
         this._state = DataSourceState.Binding;
+
         for (let i = 0; i < this._onDataBinging.length; i++) {
             this._onDataBinging[i](this);
         }
     }
+
     protected handleDataBound() {
         this._state = DataSourceState.Bound;
+
         for (let i = 0; i < this._onDataBound.length; i++) {
             this._onDataBound[i](this);
         }
     }
+
     protected internalDataBind(data: T[]) {
         this._view = this._view || {};
         this._view.data = data;
@@ -126,47 +159,58 @@ export class ClientDataSource<T> implements DataSource<T> {
 
     public dataBind() {
         this.handleDataBinding();
+
         if (this._data != null) {
             let data = this._data as T[];
+
             if (data) {
                 this.internalDataBind(data);
                 this.handleDataBound();
             } else {
                 (this._data as (() => Promise<T[]>))().then(x => {
                     this._data = x;
+
                     this.internalDataBind(x);
                     this.handleDataBound();
                 });
             }
         }
     }
+
     public setPageIndex(value: number): DataSource<T> {
         this._setPageIndex = x => {
             x.pageIndex = value;
             x.data = x.data.slice(this.pageSize * value, this.pageSize * (value + 1));
         };
+
         return this;
     }
+
     public sort(...expressions: SortExpression[]): DataSource<T> {
         this._sort = x => {
             x.sortedBy = expressions;
             x.data = expressions ? x.data.sort(this.getComparer(expressions)) : x.data;
         };
+
         return this;
     }
 
     public get fieldAccessor(): FieldAccessor {
         return this._fieldAccessor = this._fieldAccessor || new FieldAccessor();
     }
+
     public get pageSize(): number {
         return this._pageSize;
     }
+
     public get state(): DataSourceState {
         return this._state;
     }
+
     public get totalCount(): number {
         return this._data.length;
     }
+
     public get view(): DataView<T> {
         return this._view;
     }
@@ -174,7 +218,8 @@ export class ClientDataSource<T> implements DataSource<T> {
     public set onDataBinding(value: (sender: DataSource<T>) => void) {
         this._onDataBinging.push(value);
     }
+
     public set onDataBound(value: (sender: DataSource<T>) => void) {
-        this._onDataBinging.push(value);
+        this._onDataBound.push(value);
     }
 }

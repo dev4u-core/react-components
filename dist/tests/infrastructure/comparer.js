@@ -75,7 +75,7 @@
 	        if (typeof value == 'string') {
 	            return value.toLowerCase();
 	        }
-	        return (value == false) ? 1 : ((value == true) ? 2 : value);
+	        return (value === false) ? 1 : ((value === true) ? 2 : value);
 	    };
 	    Comparer.prototype.compare = function (x, y) {
 	        var xValue = Comparer.toComparedValue(x);
