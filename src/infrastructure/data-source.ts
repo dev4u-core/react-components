@@ -181,7 +181,7 @@ export class ClientDataSource<T> implements DataSource<T> {
     public sort(...expressions: SortExpression[]): DataSource<T> {
         this._sort = x => {
             x.sortedBy = expressions;
-            x.data = expressions ? x.data.sort(this.getComparer(expressions)) : x.data;
+            x.data = (expressions && (expressions.length > 0)) ? x.data.concat().sort(this.getComparer(expressions)) : x.data;
         };
 
         return this;

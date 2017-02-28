@@ -465,23 +465,17 @@
 	"use strict";
 	var comparer_1 = __webpack_require__(9);
 	var DefaultFieldAccessor = (function () {
-	    function DefaultFieldAccessor(fieldAccessors) {
-	        this._fieldAccessors = fieldAccessors;
+	    function DefaultFieldAccessor() {
 	    }
 	    DefaultFieldAccessor.prototype.getValue = function (model, compositeField) {
-	        if (this._fieldAccessors && this._fieldAccessors[compositeField]) {
-	            return this._fieldAccessors[compositeField](model);
+	        var result = model;
+	        var fields = compositeField.split(DefaultFieldAccessor.Separator);
+	        for (var i = 0; i < fields.length; i++) {
+	            result = result[fields[i]];
+	            if (!result)
+	                break;
 	        }
-	        else {
-	            var result = model;
-	            var fields = compositeField.split(DefaultFieldAccessor.Separator);
-	            for (var i = 0; i < fields.length; i++) {
-	                result = result[fields[i]];
-	                if (!result)
-	                    break;
-	            }
-	            return result;
-	        }
+	        return result;
 	    };
 	    DefaultFieldAccessor.Separator = '.';
 	    return DefaultFieldAccessor;
@@ -591,7 +585,7 @@
 	        }
 	        this._sort = function (x) {
 	            x.sortedBy = expressions;
-	            x.data = expressions ? x.data.sort(_this.getComparer(expressions)) : x.data;
+	            x.data = (expressions && (expressions.length > 0)) ? x.data.concat().sort(_this.getComparer(expressions)) : x.data;
 	        };
 	        return this;
 	    };

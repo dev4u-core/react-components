@@ -46,7 +46,7 @@ describe('ClientDataSource', () => {
     });
 
     describe('sorting', () => {
-        describe('check view properties', () => {
+        describe('view properties', () => {
             it ('ascending sorting by one field', () => {
                 const dataSource = new ClientDataSource([]);
 
@@ -220,6 +220,23 @@ describe('ClientDataSource', () => {
                     expect(dataSource.view.data[2].dateField).to.equal('3/1/2001');
                 });
             });
+        });
+
+        describe('clear previous sorting', () => {
+            const data = [{ stringField: 'value0' }, { stringField: 'value1' }, { stringField: 'value2' }];
+            const dataSource = new ClientDataSource(data);
+
+            dataSource
+                .sort({ direction: SortDirection.Descending, field: 'stringField'})
+                .dataBind();
+
+            dataSource
+                .sort()
+                .dataBind();
+
+            expect(dataSource.view.data[0].stringField).to.equal('value0');
+            expect(dataSource.view.data[1].stringField).to.equal('value1');
+            expect(dataSource.view.data[2].stringField).to.equal('value2');
         });
     });
 });

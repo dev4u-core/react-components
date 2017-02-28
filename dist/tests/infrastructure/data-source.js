@@ -71,23 +71,17 @@
 	"use strict";
 	var comparer_1 = __webpack_require__(9);
 	var DefaultFieldAccessor = (function () {
-	    function DefaultFieldAccessor(fieldAccessors) {
-	        this._fieldAccessors = fieldAccessors;
+	    function DefaultFieldAccessor() {
 	    }
 	    DefaultFieldAccessor.prototype.getValue = function (model, compositeField) {
-	        if (this._fieldAccessors && this._fieldAccessors[compositeField]) {
-	            return this._fieldAccessors[compositeField](model);
+	        var result = model;
+	        var fields = compositeField.split(DefaultFieldAccessor.Separator);
+	        for (var i = 0; i < fields.length; i++) {
+	            result = result[fields[i]];
+	            if (!result)
+	                break;
 	        }
-	        else {
-	            var result = model;
-	            var fields = compositeField.split(DefaultFieldAccessor.Separator);
-	            for (var i = 0; i < fields.length; i++) {
-	                result = result[fields[i]];
-	                if (!result)
-	                    break;
-	            }
-	            return result;
-	        }
+	        return result;
 	    };
 	    DefaultFieldAccessor.Separator = '.';
 	    return DefaultFieldAccessor;
@@ -197,7 +191,7 @@
 	        }
 	        this._sort = function (x) {
 	            x.sortedBy = expressions;
-	            x.data = expressions ? x.data.sort(_this.getComparer(expressions)) : x.data;
+	            x.data = (expressions && (expressions.length > 0)) ? x.data.concat().sort(_this.getComparer(expressions)) : x.data;
 	        };
 	        return this;
 	    };
@@ -335,7 +329,7 @@
 	        });
 	    });
 	    describe('sorting', function () {
-	        describe('check view properties', function () {
+	        describe('view properties', function () {
 	            it('ascending sorting by one field', function () {
 	                var dataSource = new data_source_1.ClientDataSource([]);
 	                dataSource
@@ -476,6 +470,19 @@
 	                    chai_1.expect(dataSource.view.data[2].dateField).to.equal('3/1/2001');
 	                });
 	            });
+	        });
+	        describe('clear previous sorting', function () {
+	            var data = [{ stringField: 'value0' }, { stringField: 'value1' }, { stringField: 'value2' }];
+	            var dataSource = new data_source_1.ClientDataSource(data);
+	            dataSource
+	                .sort({ direction: data_source_1.SortDirection.Descending, field: 'stringField' })
+	                .dataBind();
+	            dataSource
+	                .sort()
+	                .dataBind();
+	            chai_1.expect(dataSource.view.data[0].stringField).to.equal('value0');
+	            chai_1.expect(dataSource.view.data[1].stringField).to.equal('value1');
+	            chai_1.expect(dataSource.view.data[2].stringField).to.equal('value2');
 	        });
 	    });
 	});
