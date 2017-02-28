@@ -464,17 +464,17 @@
 
 	"use strict";
 	var comparer_1 = __webpack_require__(9);
-	var FieldAccessor = (function () {
-	    function FieldAccessor(fieldAccessors) {
+	var DefaultFieldAccessor = (function () {
+	    function DefaultFieldAccessor(fieldAccessors) {
 	        this._fieldAccessors = fieldAccessors;
 	    }
-	    FieldAccessor.prototype.getValue = function (model, compositeField) {
+	    DefaultFieldAccessor.prototype.getValue = function (model, compositeField) {
 	        if (this._fieldAccessors && this._fieldAccessors[compositeField]) {
 	            return this._fieldAccessors[compositeField](model);
 	        }
 	        else {
 	            var result = model;
-	            var fields = compositeField.split(FieldAccessor.Separator);
+	            var fields = compositeField.split(DefaultFieldAccessor.Separator);
 	            for (var i = 0; i < fields.length; i++) {
 	                result = result[fields[i]];
 	                if (!result)
@@ -483,10 +483,10 @@
 	            return result;
 	        }
 	    };
-	    FieldAccessor.Separator = '.';
-	    return FieldAccessor;
+	    DefaultFieldAccessor.Separator = '.';
+	    return DefaultFieldAccessor;
 	}());
-	exports.FieldAccessor = FieldAccessor;
+	exports.DefaultFieldAccessor = DefaultFieldAccessor;
 	(function (SortDirection) {
 	    SortDirection[SortDirection["Ascending"] = 1] = "Ascending";
 	    SortDirection[SortDirection["Descending"] = 2] = "Descending";
@@ -597,7 +597,7 @@
 	    };
 	    Object.defineProperty(ClientDataSource.prototype, "fieldAccessor", {
 	        get: function () {
-	            return this._fieldAccessor = this._fieldAccessor || new FieldAccessor();
+	            return this._fieldAccessor = this._fieldAccessor || new DefaultFieldAccessor();
 	        },
 	        enumerable: true,
 	        configurable: true

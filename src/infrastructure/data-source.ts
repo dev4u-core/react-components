@@ -1,30 +1,23 @@
 import { } from 'es6-shim';
 import { Comparer } from './comparer';
-import { DataType } from './common';
 
-export class FieldAccessor {
+export interface FieldAccessor {
+    getValue(model: any, compositeField: string): any;
+}
+
+export class DefaultFieldAccessor {
     private static readonly Separator: string = '.';
 
-    private readonly _fieldAccessors: { [field: string]: (model: any) => any };
-
-    public constructor(fieldAccessors?: { [field: string]: (model: any) => any }) {
-        this._fieldAccessors = fieldAccessors;
-    }
-
     public getValue(model: any, compositeField: string): any {
-        if (this._fieldAccessors && this._fieldAccessors[compositeField]) {
-            return this._fieldAccessors[compositeField](model);
-        } else {
-            let result = model;
-            var fields = compositeField.split(FieldAccessor.Separator);
+        let result = model;
+        var fields = compositeField.split(DefaultFieldAccessor.Separator);
 
-            for (let i = 0; i < fields.length; i++) {
-                result = result[fields[i]];
-                if (!result) break;
-            }
-
-            return result;
+        for (let i = 0; i < fields.length; i++) {
+            result = result[fields[i]];
+            if (!result) break;
         }
+
+        return result;
     }
 }
 
@@ -75,7 +68,6 @@ export interface ClientDataSourceProps {
 export class ClientDataSource<T> implements DataSource<T> {
     private _data: (() => Promise<T[]>) | T[];
     private _fieldAccessor: FieldAccessor;
-    private _filter: ((view: DataView<T>) => void);
     private _onDataBinging: ((sender: DataSource<T>) => void)[];
     private _onDataBound: ((sender: DataSource<T>) => void)[];
     private _pageSize: number;
@@ -196,7 +188,7 @@ export class ClientDataSource<T> implements DataSource<T> {
     }
 
     public get fieldAccessor(): FieldAccessor {
-        return this._fieldAccessor = this._fieldAccessor || new FieldAccessor();
+        return this._fieldAccessor = this._fieldAccessor || new DefaultFieldAccessor();
     }
 
     public get pageSize(): number {

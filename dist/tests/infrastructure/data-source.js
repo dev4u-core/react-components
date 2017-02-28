@@ -70,17 +70,17 @@
 
 	"use strict";
 	var comparer_1 = __webpack_require__(9);
-	var FieldAccessor = (function () {
-	    function FieldAccessor(fieldAccessors) {
+	var DefaultFieldAccessor = (function () {
+	    function DefaultFieldAccessor(fieldAccessors) {
 	        this._fieldAccessors = fieldAccessors;
 	    }
-	    FieldAccessor.prototype.getValue = function (model, compositeField) {
+	    DefaultFieldAccessor.prototype.getValue = function (model, compositeField) {
 	        if (this._fieldAccessors && this._fieldAccessors[compositeField]) {
 	            return this._fieldAccessors[compositeField](model);
 	        }
 	        else {
 	            var result = model;
-	            var fields = compositeField.split(FieldAccessor.Separator);
+	            var fields = compositeField.split(DefaultFieldAccessor.Separator);
 	            for (var i = 0; i < fields.length; i++) {
 	                result = result[fields[i]];
 	                if (!result)
@@ -89,10 +89,10 @@
 	            return result;
 	        }
 	    };
-	    FieldAccessor.Separator = '.';
-	    return FieldAccessor;
+	    DefaultFieldAccessor.Separator = '.';
+	    return DefaultFieldAccessor;
 	}());
-	exports.FieldAccessor = FieldAccessor;
+	exports.DefaultFieldAccessor = DefaultFieldAccessor;
 	(function (SortDirection) {
 	    SortDirection[SortDirection["Ascending"] = 1] = "Ascending";
 	    SortDirection[SortDirection["Descending"] = 2] = "Descending";
@@ -203,7 +203,7 @@
 	    };
 	    Object.defineProperty(ClientDataSource.prototype, "fieldAccessor", {
 	        get: function () {
-	            return this._fieldAccessor = this._fieldAccessor || new FieldAccessor();
+	            return this._fieldAccessor = this._fieldAccessor || new DefaultFieldAccessor();
 	        },
 	        enumerable: true,
 	        configurable: true
@@ -444,7 +444,11 @@
 	        });
 	        describe('by one "date" field if value is string', function () {
 	            var typeConverter = type_converter_1.TypeConverterProvider.instance.get(common_1.DataType.Date);
-	            var fieldAccessor = new data_source_1.FieldAccessor({ 'dateField': function (x) { return typeConverter.convert(x.dateField); } });
+	            var fieldAccessor = {
+	                getValue: function (model, compositeField) {
+	                    return typeConverter.convert(model.dateField);
+	                }
+	            };
 	            var testCases = [
 	                [{ dateField: '3/1/2001' }, { dateField: '2/1/2002' }, { dateField: '1/1/2003' }],
 	                [{ dateField: '1/1/2003' }, { dateField: '3/1/2001' }, { dateField: '2/1/2002' }],

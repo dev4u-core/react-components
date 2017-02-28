@@ -182,7 +182,11 @@ describe('ClientDataSource', () => {
 
         describe('by one "date" field if value is string', () => {
             const typeConverter = TypeConverterProvider.instance.get(DataType.Date);
-            const fieldAccessor = new FieldAccessor({ 'dateField': x => typeConverter.convert(x.dateField) });
+            const fieldAccessor = {
+                getValue(model: any, compositeField: string): any {
+                    return typeConverter.convert(model.dateField);
+                }
+            };
             const testCases = [
                 [{ dateField: '3/1/2001' }, { dateField: '2/1/2002' }, { dateField: '1/1/2003' }],
                 [{ dateField: '1/1/2003' }, { dateField: '3/1/2001' }, { dateField: '2/1/2002' }],
