@@ -9,8 +9,8 @@ export class DefaultFieldAccessor {
     private static readonly Separator: string = '.';
 
     public getValue(model: any, compositeField: string): any {
+        const fields = compositeField.split(DefaultFieldAccessor.Separator);
         let result = model;
-        var fields = compositeField.split(DefaultFieldAccessor.Separator);
 
         for (let i = 0; i < fields.length; i++) {
             result = result[fields[i]];
@@ -103,8 +103,8 @@ export class ClientDataSource<T> implements DataSource<T> {
         for (let i = 0; i < expressions.length; i++) {
             const comparer = ((direction, field) =>
                 (x, y) => {
-                    let xValue = this.fieldAccessor.getValue(x, field);
-                    let yValue = this.fieldAccessor.getValue(y, field);
+                    const xValue = this.fieldAccessor.getValue(x, field);
+                    const yValue = this.fieldAccessor.getValue(y, field);
 
                     return (direction == SortDirection.Ascending)
                         ? Comparer.Instance.compare(xValue, yValue)
@@ -153,7 +153,7 @@ export class ClientDataSource<T> implements DataSource<T> {
         this.handleDataBinding();
 
         if (this._data != null) {
-            let data = this._data as T[];
+            const data = this._data as T[];
 
             if (data) {
                 this.internalDataBind(data);

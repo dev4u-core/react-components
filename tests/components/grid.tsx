@@ -93,17 +93,6 @@ describe('<Grid />', () => {
 
                 expect(grid.find(`tbody td.class0`).length).to.equal(1);
             });
-
-            it('classTemplate', () => {
-                let grid = Enzyme.mount(
-                    <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>
-                        <GridColumn body={{ classTemplate: () => cssClass }} field="title" title="Title" />
-                    </Grid>
-                );
-
-                expect(grid.find(`tbody td.class0`).length).to.equal(1);
-                expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\'; }</style>');
-            });
         });
 
         describe('header', () => {
@@ -115,17 +104,6 @@ describe('<Grid />', () => {
                 );
 
                 expect(grid.find(`th.class0`).length).to.equal(1);
-            });
-
-            it('classTemplate', () => {
-                let grid = Enzyme.mount(
-                    <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>
-                        <GridColumn header={{ classTemplate: () => cssClass }} field="title" title="Title" />
-                    </Grid>
-                );
-
-                expect(grid.find(`th.class0`).length).to.equal(1);
-                expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\'; }</style>');
             });
         });
     });

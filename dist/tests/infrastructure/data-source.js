@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(21);
+	module.exports = __webpack_require__(19);
 
 
 /***/ },
@@ -288,16 +288,14 @@
 /* 16 */,
 /* 17 */,
 /* 18 */,
-/* 19 */,
-/* 20 */,
-/* 21 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var chai_1 = __webpack_require__(4);
-	var common_1 = __webpack_require__(22);
+	var common_1 = __webpack_require__(20);
 	var data_source_1 = __webpack_require__(8);
-	var type_converter_1 = __webpack_require__(23);
+	var type_converter_1 = __webpack_require__(21);
 	describe('ClientDataSource', function () {
 	    it('dataBind', function () {
 	        var data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
@@ -489,7 +487,7 @@
 
 
 /***/ },
-/* 22 */
+/* 20 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -503,11 +501,11 @@
 
 
 /***/ },
-/* 23 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var common_1 = __webpack_require__(22);
+	var common_1 = __webpack_require__(20);
 	var DefaultConverter = (function () {
 	    function DefaultConverter() {
 	    }

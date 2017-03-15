@@ -126,13 +126,6 @@
 	                ));
 	                chai_1.expect(grid.find("tbody td.class0").length).to.equal(1);
 	            });
-	            it('classTemplate', function () {
-	                var grid = Enzyme.mount(React.createElement(grid_1.Grid, {autoBind: true, dataSource: new data_source_1.ClientDataSource([{}])}, 
-	                    React.createElement(grid_column_1.GridColumn, {body: { classTemplate: function () { return cssClass; } }, field: "title", title: "Title"})
-	                ));
-	                chai_1.expect(grid.find("tbody td.class0").length).to.equal(1);
-	                chai_1.expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\'; }</style>');
-	            });
 	        });
 	        describe('header', function () {
 	            it('className', function () {
@@ -140,13 +133,6 @@
 	                    React.createElement(grid_column_1.GridColumn, {header: { className: 'class0' }, field: "title", title: "Title"})
 	                ));
 	                chai_1.expect(grid.find("th.class0").length).to.equal(1);
-	            });
-	            it('classTemplate', function () {
-	                var grid = Enzyme.mount(React.createElement(grid_1.Grid, {autoBind: true, dataSource: new data_source_1.ClientDataSource([{}])}, 
-	                    React.createElement(grid_column_1.GridColumn, {header: { classTemplate: function () { return cssClass; } }, field: "title", title: "Title"})
-	                ));
-	                chai_1.expect(grid.find("th.class0").length).to.equal(1);
-	                chai_1.expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\'; }</style>');
 	            });
 	        });
 	    });
@@ -190,9 +176,8 @@
 	var React = __webpack_require__(5);
 	var grid_column_1 = __webpack_require__(7);
 	var css_class_name_builder_1 = __webpack_require__(10);
-	var css_class_serializer_1 = __webpack_require__(11);
 	var data_source_1 = __webpack_require__(8);
-	var style_provider_1 = __webpack_require__(12);
+	var style_provider_1 = __webpack_require__(11);
 	var GridBase = (function (_super) {
 	    __extends(GridBase, _super);
 	    function GridBase(props) {
@@ -212,14 +197,9 @@
 	        }
 	    };
 	    GridBase.prototype.getCellClassName = function (column, cellProps) {
-	        var classNameBuilder = new css_class_name_builder_1.CssClassNameBuilder();
-	        if (cellProps) {
-	            console.log((cellProps.classTemplate != null));
-	            classNameBuilder
-	                .add(cellProps.className)
-	                .addIf((cellProps.classTemplate != null) && (cellProps.classTemplate(column) != null), function () { return cellProps.classTemplate(column).name; });
-	        }
-	        return classNameBuilder.build();
+	        return new css_class_name_builder_1.CssClassNameBuilder()
+	            .addIf(column.props.cellProps, function () { return cellProps.className; })
+	            .build();
 	    };
 	    GridBase.prototype.renderDetailRow = function (model, rowIndex) {
 	        return this.detailColumn ? this.detailColumn.renderDetailRow(model, rowIndex) : null;
@@ -229,18 +209,6 @@
 	    };
 	    GridBase.prototype.renderHeaderCell = function (column, columnIndex) {
 	        return column.renderHeader();
-	    };
-	    GridBase.prototype.renderStyleSection = function () {
-	        var headerStyles = this.columns.filter(function (x) { return x.props.header && x.props.header.classTemplate; })
-	            .map(function (x) { return css_class_serializer_1.CssClassSerializer.instance.serialize(x.props.header.classTemplate(x)); })
-	            .join();
-	        var bodyStyles = this.columns.filter(function (x) { return x.props.body && x.props.body.classTemplate; })
-	            .map(function (x) { return css_class_serializer_1.CssClassSerializer.instance.serialize(x.props.body.classTemplate(x)); })
-	            .join();
-	        var footerStyles = this.columns.filter(function (x) { return x.props.footer && x.props.footer.classTemplate; })
-	            .map(function (x) { return css_class_serializer_1.CssClassSerializer.instance.serialize(x.props.footer.classTemplate(x)); })
-	            .join();
-	        return React.createElement("style", null, headerStyles + bodyStyles + footerStyles);
 	    };
 	    GridBase.prototype.setDataSource = function (dataSource) {
 	        var _this = this;
@@ -323,10 +291,10 @@
 	    };
 	    Grid.prototype.render = function () {
 	        return (React.createElement("div", null, 
-	            this.renderStyleSection(), 
 	            React.createElement("table", {className: this.style.class}, 
 	                this.renderHeader(), 
-	                this.renderBody())));
+	                this.renderBody())
+	        ));
 	    };
 	    return Grid;
 	}(GridBase));
@@ -706,29 +674,6 @@
 
 /***/ },
 /* 11 */
-/***/ function(module, exports) {
-
-	"use strict";
-	var CssClassSerializer = (function () {
-	    function CssClassSerializer() {
-	    }
-	    CssClassSerializer.prototype.serialize = function (cssClass) {
-	        var result = cssClass.selector
-	            ? "." + cssClass.name + ":" + cssClass.selector + " { " + cssClass.styles + " }"
-	            : "." + cssClass.name + " { " + cssClass.styles + " }";
-	        if (cssClass.media) {
-	            result = "@media " + cssClass.media + " { " + result + " }";
-	        }
-	        return result;
-	    };
-	    CssClassSerializer.instance = new CssClassSerializer();
-	    return CssClassSerializer;
-	}());
-	exports.CssClassSerializer = CssClassSerializer;
-
-
-/***/ },
-/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";

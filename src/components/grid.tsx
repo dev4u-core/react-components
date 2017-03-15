@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { DetailGridColumn, GridColumnBase, GridColumnBaseProps, GridCellProps } from '../../src/components/grid-column';
-import { CssClass } from '../../src/infrastructure/common';
 import { CssClassNameBuilder } from '../../src/infrastructure/css-class-name-builder';
-import { CssClassSerializer } from '../../src/infrastructure/css-class-serializer';
 import { DataSource, DataSourceState, SortDirection } from '../../src/infrastructure/data-source';
 import { StyleProvider } from '../../src/infrastructure/style-provider';
 
@@ -59,16 +57,9 @@ export abstract class GridBase<P extends GridBaseProps> extends React.Component<
     }
 
     protected getCellClassName(column: GridColumnBase<any>, cellProps: GridCellProps): string {
-        let classNameBuilder = new CssClassNameBuilder();
-
-        if (cellProps) {
-            console.log((cellProps.classTemplate != null));
-            classNameBuilder
-                .add(cellProps.className)
-                .addIf((cellProps.classTemplate != null) && (cellProps.classTemplate(column) != null), () => cellProps.classTemplate(column).name);
-        }
-
-        return classNameBuilder.build();
+        return new CssClassNameBuilder()
+            .addIf(column.props.cellProps, () => cellProps.className)
+            .build();
     }
 
     protected renderDetailRow(model: any, rowIndex: number): JSX.Element {
@@ -81,20 +72,6 @@ export abstract class GridBase<P extends GridBaseProps> extends React.Component<
 
     protected renderHeaderCell(column: GridColumnBase<any>, columnIndex: number): JSX.Element {
         return column.renderHeader();
-    }
-
-    protected renderStyleSection(): JSX.Element {
-        let headerStyles = this.columns.filter(x => x.props.header && x.props.header.classTemplate)
-            .map(x => CssClassSerializer.instance.serialize(x.props.header.classTemplate(x)))
-            .join();
-        let bodyStyles = this.columns.filter(x => x.props.body && x.props.body.classTemplate)
-            .map(x => CssClassSerializer.instance.serialize(x.props.body.classTemplate(x)))
-            .join();
-        let footerStyles = this.columns.filter(x => x.props.footer && x.props.footer.classTemplate)
-            .map(x => CssClassSerializer.instance.serialize(x.props.footer.classTemplate(x)))
-            .join();
-
-        return <style>{headerStyles + bodyStyles + footerStyles}</style>;
     }
 
     protected setDataSource(dataSource: DataSource<any>) {
@@ -194,7 +171,6 @@ export class Grid extends GridBase<GridBaseProps> {
     public render(): JSX.Element {
         return (
             <div>
-                {this.renderStyleSection()}
                 <table className={this.style.class}>
                     {this.renderHeader()}
                     {this.renderBody()}
