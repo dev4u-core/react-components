@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { DetailGridColumn, GridColumnBase, GridColumnBaseProps, GridCellProps } from '../../src/components/grid-column';
+import { SortDirection } from '../../src/infrastructure/common';
 import { CssClassNameBuilder } from '../../src/infrastructure/css-class-name-builder';
-import { DataSource, DataSourceState, SortDirection } from '../../src/infrastructure/data-source';
+import { DataSource, DataSourceState } from '../../src/infrastructure/data-source';
 import { StyleProvider } from '../../src/infrastructure/style-provider';
 
 export type GridStyle = {

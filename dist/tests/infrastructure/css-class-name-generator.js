@@ -45,7 +45,7 @@
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(17);
+	module.exports = __webpack_require__(19);
 
 
 /***/ },
@@ -64,12 +64,12 @@
 
 /***/ },
 
-/***/ 17:
+/***/ 19:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var chai_1 = __webpack_require__(4);
-	var css_class_name_generator_1 = __webpack_require__(18);
+	var css_class_name_generator_1 = __webpack_require__(20);
 	describe('ClassNameGenerator', function () {
 	    describe('generate', function () {
 	        it('result is different', function () {
@@ -96,7 +96,7 @@
 
 /***/ },
 
-/***/ 18:
+/***/ 20:
 /***/ function(module, exports) {
 
 	"use strict";

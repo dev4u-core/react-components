@@ -57,7 +57,8 @@
 	var React = __webpack_require__(5);
 	var grid_1 = __webpack_require__(6);
 	var grid_column_1 = __webpack_require__(7);
-	var data_source_1 = __webpack_require__(8);
+	var common_1 = __webpack_require__(8);
+	var data_source_1 = __webpack_require__(10);
 	describe('<Grid />', function () {
 	    describe('behaviour', function () {
 	        describe('sorting', function () {
@@ -73,14 +74,14 @@
 	            it('one click on first column', function () {
 	                grid.find('th a').first().simulate('click');
 	                chai_1.expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
-	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(data_source_1.SortDirection.Ascending, 'sortedBy[0].direction');
+	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(common_1.SortDirection.Ascending, 'sortedBy[0].direction');
 	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('title', 'sortedBy[0].field');
 	            });
 	            it('one click on first column and one click by last column', function () {
 	                grid.find('th a').first().simulate('click');
 	                grid.find('th a').last().simulate('click');
 	                chai_1.expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
-	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(data_source_1.SortDirection.Ascending, 'sortedBy[0].direction');
+	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(common_1.SortDirection.Ascending, 'sortedBy[0].direction');
 	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('description', 'sortedBy[0].field');
 	            });
 	            it('two click on first column', function () {
@@ -89,7 +90,7 @@
 	                    .simulate('click')
 	                    .simulate('click');
 	                chai_1.expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
-	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(data_source_1.SortDirection.Descending, 'sortedBy[0].direction');
+	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(common_1.SortDirection.Descending, 'sortedBy[0].direction');
 	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('title', 'sortedBy[0].field');
 	            });
 	            it('three click on first column', function () {
@@ -109,7 +110,7 @@
 	                    .last()
 	                    .simulate('click');
 	                chai_1.expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
-	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(data_source_1.SortDirection.Ascending, 'sortedBy[0].direction');
+	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(common_1.SortDirection.Ascending, 'sortedBy[0].direction');
 	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('description', 'sortedBy[0].field');
 	            });
 	        });
@@ -175,9 +176,9 @@
 	};
 	var React = __webpack_require__(5);
 	var grid_column_1 = __webpack_require__(7);
-	var css_class_name_builder_1 = __webpack_require__(10);
-	var data_source_1 = __webpack_require__(8);
-	var style_provider_1 = __webpack_require__(11);
+	var css_class_name_builder_1 = __webpack_require__(9);
+	var data_source_1 = __webpack_require__(10);
+	var style_provider_1 = __webpack_require__(13);
 	var GridBase = (function (_super) {
 	    __extends(GridBase, _super);
 	    function GridBase(props) {
@@ -312,7 +313,7 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var React = __webpack_require__(5);
-	var data_source_1 = __webpack_require__(8);
+	var common_1 = __webpack_require__(8);
 	var GridColumnBase = (function (_super) {
 	    __extends(GridColumnBase, _super);
 	    function GridColumnBase(props, grid) {
@@ -340,8 +341,8 @@
 	            sortedBy = (sortedBy.length == 1) ? sortedBy[0] : null;
 	        }
 	        var direction = (sortedBy != null)
-	            ? ((sortedBy.direction == data_source_1.SortDirection.Ascending) ? data_source_1.SortDirection.Descending : null)
-	            : data_source_1.SortDirection.Ascending;
+	            ? ((sortedBy.direction == common_1.SortDirection.Ascending) ? common_1.SortDirection.Descending : null)
+	            : common_1.SortDirection.Ascending;
 	        if (direction) {
 	            dataSource.sort({ direction: direction, field: this.props.field });
 	        }
@@ -428,32 +429,63 @@
 
 /***/ },
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	"use strict";
-	var comparer_1 = __webpack_require__(9);
-	var DefaultFieldAccessor = (function () {
-	    function DefaultFieldAccessor() {
-	    }
-	    DefaultFieldAccessor.prototype.getValue = function (model, compositeField) {
-	        var result = model;
-	        var fields = compositeField.split(DefaultFieldAccessor.Separator);
-	        for (var i = 0; i < fields.length; i++) {
-	            result = result[fields[i]];
-	            if (!result)
-	                break;
-	        }
-	        return result;
-	    };
-	    DefaultFieldAccessor.Separator = '.';
-	    return DefaultFieldAccessor;
-	}());
-	exports.DefaultFieldAccessor = DefaultFieldAccessor;
+	(function (DataType) {
+	    DataType[DataType["Date"] = 0] = "Date";
+	    DataType[DataType["Enum"] = 1] = "Enum";
+	    DataType[DataType["String"] = 2] = "String";
+	    DataType[DataType["Number"] = 3] = "Number";
+	})(exports.DataType || (exports.DataType = {}));
+	var DataType = exports.DataType;
 	(function (SortDirection) {
 	    SortDirection[SortDirection["Ascending"] = 1] = "Ascending";
 	    SortDirection[SortDirection["Descending"] = 2] = "Descending";
 	})(exports.SortDirection || (exports.SortDirection = {}));
 	var SortDirection = exports.SortDirection;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var ClassNameSeparator = ' ';
+	var CssClassNameBuilder = (function () {
+	    function CssClassNameBuilder() {
+	        this._stack = [];
+	    }
+	    CssClassNameBuilder.prototype.add = function (className) {
+	        this._stack.push(function (x) { return x ? (x + ClassNameSeparator + className) : className; });
+	        return this;
+	    };
+	    CssClassNameBuilder.prototype.addIf = function (condition, classNameGetter) {
+	        if (condition) {
+	            this.add(classNameGetter());
+	        }
+	        return this;
+	    };
+	    CssClassNameBuilder.prototype.build = function () {
+	        var result = null;
+	        for (var i = 0; i < this._stack.length; i++) {
+	            result = this._stack[i](result);
+	        }
+	        return result;
+	    };
+	    return CssClassNameBuilder;
+	}());
+	exports.CssClassNameBuilder = CssClassNameBuilder;
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var common_1 = __webpack_require__(8);
+	var comparer_1 = __webpack_require__(11);
+	var field_accessor_1 = __webpack_require__(12);
 	(function (DataSourceState) {
 	    DataSourceState[DataSourceState["Empty"] = 0] = "Empty";
 	    DataSourceState[DataSourceState["Binding"] = 1] = "Binding";
@@ -486,7 +518,7 @@
 	                return function (x, y) {
 	                    var xValue = _this.fieldAccessor.getValue(x, field);
 	                    var yValue = _this.fieldAccessor.getValue(y, field);
-	                    return (direction == SortDirection.Ascending)
+	                    return (direction == common_1.SortDirection.Ascending)
 	                        ? comparer_1.Comparer.Instance.compare(xValue, yValue)
 	                        : comparer_1.Comparer.Instance.compare(yValue, xValue);
 	                };
@@ -545,6 +577,17 @@
 	        };
 	        return this;
 	    };
+	    ClientDataSource.prototype.filter = function () {
+	        var expressions = [];
+	        for (var _i = 0; _i < arguments.length; _i++) {
+	            expressions[_i - 0] = arguments[_i];
+	        }
+	        this._sort = function (x) {
+	            x.filteredBy = expressions;
+	            x.data = x.data.filter(expressions[0].expression);
+	        };
+	        return this;
+	    };
 	    ClientDataSource.prototype.sort = function () {
 	        var _this = this;
 	        var expressions = [];
@@ -559,7 +602,7 @@
 	    };
 	    Object.defineProperty(ClientDataSource.prototype, "fieldAccessor", {
 	        get: function () {
-	            return this._fieldAccessor = this._fieldAccessor || new DefaultFieldAccessor();
+	            return this._fieldAccessor = this._fieldAccessor || new field_accessor_1.DefaultFieldAccessor();
 	        },
 	        enumerable: true,
 	        configurable: true
@@ -612,7 +655,7 @@
 
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -641,39 +684,31 @@
 
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";
-	var ClassNameSeparator = ' ';
-	var CssClassNameBuilder = (function () {
-	    function CssClassNameBuilder() {
-	        this._stack = [];
+	var DefaultFieldAccessor = (function () {
+	    function DefaultFieldAccessor() {
 	    }
-	    CssClassNameBuilder.prototype.add = function (className) {
-	        this._stack.push(function (x) { return x ? (x + ClassNameSeparator + className) : className; });
-	        return this;
-	    };
-	    CssClassNameBuilder.prototype.addIf = function (condition, classNameGetter) {
-	        if (condition) {
-	            this.add(classNameGetter());
-	        }
-	        return this;
-	    };
-	    CssClassNameBuilder.prototype.build = function () {
-	        var result = null;
-	        for (var i = 0; i < this._stack.length; i++) {
-	            result = this._stack[i](result);
+	    DefaultFieldAccessor.prototype.getValue = function (model, compositeField) {
+	        var fields = compositeField.split(DefaultFieldAccessor.Separator);
+	        var result = model;
+	        for (var i = 0; i < fields.length; i++) {
+	            result = result[fields[i]];
+	            if (!result)
+	                break;
 	        }
 	        return result;
 	    };
-	    return CssClassNameBuilder;
+	    DefaultFieldAccessor.Separator = '.';
+	    return DefaultFieldAccessor;
 	}());
-	exports.CssClassNameBuilder = CssClassNameBuilder;
+	exports.DefaultFieldAccessor = DefaultFieldAccessor;
 
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports) {
 
 	"use strict";

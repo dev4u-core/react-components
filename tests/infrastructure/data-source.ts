@@ -1,7 +1,8 @@
 import { expect } from 'chai';
 import * as Mocha from 'mocha';
-import { DataType } from '../../src/infrastructure/common';
-import { ClientDataSource, FieldAccessor, SortDirection } from '../../src/infrastructure/data-source';
+import { DataType, SortDirection } from '../../src/infrastructure/common';
+import { ClientDataSource } from '../../src/infrastructure/data-source';
+import { FieldAccessor } from '../../src/infrastructure/field-accessor';
 import { TypeConverterProvider } from '../../src/infrastructure/type-converter';
 
 describe('ClientDataSource', () => {
@@ -18,7 +19,19 @@ describe('ClientDataSource', () => {
         expect(dataSource.view.data[2].field).to.equal('value2');
     });
 
-    describe('paging', () => {
+    it('filter', () => {
+        const data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
+        const dataSource = new ClientDataSource(data);
+
+        dataSource
+            .filter({ expression: x => x.field == 'value0', field: 'field' })
+            .dataBind();
+
+        expect(dataSource.view.data.length).to.equal(1);
+        expect(dataSource.view.data[0].field).to.equal('value0');
+    });
+
+    describe('setPageIndex', () => {
         const data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
 
         it('by default', () => {
@@ -45,7 +58,7 @@ describe('ClientDataSource', () => {
         });
     });
 
-    describe('sorting', () => {
+    describe('sort', () => {
         describe('view properties', () => {
             it ('ascending sorting by one field', () => {
                 const dataSource = new ClientDataSource([]);

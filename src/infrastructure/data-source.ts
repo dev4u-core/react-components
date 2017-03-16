@@ -1,38 +1,11 @@
 import { } from 'es6-shim';
+import { FilterExpression, SortDirection, SortExpression } from './common';
 import { Comparer } from './comparer';
-
-export interface FieldAccessor {
-    getValue(model: any, compositeField: string): any;
-}
-
-export class DefaultFieldAccessor {
-    private static readonly Separator: string = '.';
-
-    public getValue(model: any, compositeField: string): any {
-        const fields = compositeField.split(DefaultFieldAccessor.Separator);
-        let result = model;
-
-        for (let i = 0; i < fields.length; i++) {
-            result = result[fields[i]];
-            if (!result) break;
-        }
-
-        return result;
-    }
-}
-
-export enum SortDirection {
-    Ascending = 1 << 0,
-    Descending = 1 << 1
-}
-
-export interface SortExpression {
-    direction: SortDirection;
-    field: string;
-}
+import { DefaultFieldAccessor, FieldAccessor } from './field-accessor';
 
 export interface DataView<T> {
     data?: T[];
+    filteredBy?: FilterExpression[];
     pageIndex?: number;
     sortedBy?: SortExpression[];
 }
@@ -45,6 +18,7 @@ export enum DataSourceState {
 
 export interface DataSource<T> {
     dataBind();
+    filter(...expressions: FilterExpression[]): DataSource<T>;
     setPageIndex(value: number): DataSource<T>;
     sort(...expressions: SortExpression[]): DataSource<T>;
 
@@ -173,6 +147,15 @@ export class ClientDataSource<T> implements DataSource<T> {
         this._setPageIndex = x => {
             x.pageIndex = value;
             x.data = x.data.slice(this.pageSize * value, this.pageSize * (value + 1));
+        };
+
+        return this;
+    }
+
+    public filter(...expressions: FilterExpression[]): DataSource<T> {
+        this._sort = x => {
+            x.filteredBy = expressions;
+            x.data = x.data.filter(expressions[0].expression)
         };
 
         return this;
