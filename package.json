@@ -39,7 +39,7 @@
   "scripts": {
     "build:dev": "webpack --config webpack.config.dev.js --display-error-details --display-modules",
     "build:prod": "webpack --config webpack.config.prod.js",
-    "test:dev": "karma start karma.config.js --watch"
+    "run:tests": "karma start karma.config.js --watch"
   },
   "version": "1.0.5"
 }

@@ -37,12 +37,13 @@ export class DataSourcePager {
         return Math.ceil(this.dataSource.totalCount / this.dataSource.pageSize);
     }
     public getPageInfo(pageIndex: number): PageInfo {
-        let lastPageIndex = (pageIndex + 1) * this.dataSource.pageSize - 1;
+        const lastPageIndex = (pageIndex + 1) * this.dataSource.pageSize - 1;
+
         return {
             firstIndex: pageIndex * this.dataSource.pageSize,
             lastIndex: (lastPageIndex < this.dataSource.totalCount)
                 ? lastPageIndex
-                : (this.dataSource.totalCount - 1)
+                : (this.dataSource.totalCount) > 0 ? (this.dataSource.totalCount - 1) : 0
         };
     }
     public moveToPage(pageType: PageType) {

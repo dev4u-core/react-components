@@ -1,7 +1,5 @@
-'use strict';
-
-var path = require('path');
-var webpack = require('webpack');
+let path = require('path');
+let webpack = require('webpack');
 
 module.exports = {
     cache: true,

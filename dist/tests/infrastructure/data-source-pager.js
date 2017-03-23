@@ -354,6 +354,14 @@
 	            chai_1.expect(pageInfo.firstIndex).to.equal(0, 'firstIndex');
 	            chai_1.expect(pageInfo.lastIndex).to.equal(4, 'lastIndex');
 	        });
+	        it('if data source is empty', function () {
+	            var dataSource = new data_source_1.ClientDataSource([], { pageSize: 2, pageIndex: 0 });
+	            var pager = new data_source_pager_1.DataSourcePager(dataSource);
+	            dataSource.dataBind();
+	            var pageInfo = pager.getPageInfo(0);
+	            chai_1.expect(pageInfo.firstIndex).to.equal(0, 'firstIndex');
+	            chai_1.expect(pageInfo.lastIndex).to.equal(0, 'lastIndex');
+	        });
 	    });
 	    describe('moveToPage', function () {
 	        it('PageType.First', function () {
@@ -423,7 +431,7 @@
 	            firstIndex: pageIndex * this.dataSource.pageSize,
 	            lastIndex: (lastPageIndex < this.dataSource.totalCount)
 	                ? lastPageIndex
-	                : (this.dataSource.totalCount - 1)
+	                : (this.dataSource.totalCount) > 0 ? (this.dataSource.totalCount - 1) : 0
 	        };
 	    };
 	    DataSourcePager.prototype.moveToPage = function (pageType) {
