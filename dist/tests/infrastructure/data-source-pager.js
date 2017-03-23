@@ -40,57 +40,58 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(24);
+	module.exports = __webpack_require__(23);
 
 
 /***/ },
-
-/***/ 3:
+/* 1 */,
+/* 2 */,
+/* 3 */
 /***/ function(module, exports) {
 
 	module.exports = vendors;
 
 /***/ },
-
-/***/ 4:
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = (__webpack_require__(3))(1);
 
 /***/ },
-
-/***/ 8:
-/***/ function(module, exports, __webpack_require__) {
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */
+/***/ function(module, exports) {
 
 	"use strict";
-	var comparer_1 = __webpack_require__(9);
-	var DefaultFieldAccessor = (function () {
-	    function DefaultFieldAccessor() {
-	    }
-	    DefaultFieldAccessor.prototype.getValue = function (model, compositeField) {
-	        var result = model;
-	        var fields = compositeField.split(DefaultFieldAccessor.Separator);
-	        for (var i = 0; i < fields.length; i++) {
-	            result = result[fields[i]];
-	            if (!result)
-	                break;
-	        }
-	        return result;
-	    };
-	    DefaultFieldAccessor.Separator = '.';
-	    return DefaultFieldAccessor;
-	}());
-	exports.DefaultFieldAccessor = DefaultFieldAccessor;
+	(function (DataType) {
+	    DataType[DataType["Date"] = 0] = "Date";
+	    DataType[DataType["Enum"] = 1] = "Enum";
+	    DataType[DataType["String"] = 2] = "String";
+	    DataType[DataType["Number"] = 3] = "Number";
+	})(exports.DataType || (exports.DataType = {}));
+	var DataType = exports.DataType;
 	(function (SortDirection) {
 	    SortDirection[SortDirection["Ascending"] = 1] = "Ascending";
 	    SortDirection[SortDirection["Descending"] = 2] = "Descending";
 	})(exports.SortDirection || (exports.SortDirection = {}));
 	var SortDirection = exports.SortDirection;
+
+
+/***/ },
+/* 9 */,
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var common_1 = __webpack_require__(8);
+	var comparer_1 = __webpack_require__(11);
+	var field_accessor_1 = __webpack_require__(12);
 	(function (DataSourceState) {
 	    DataSourceState[DataSourceState["Empty"] = 0] = "Empty";
 	    DataSourceState[DataSourceState["Binding"] = 1] = "Binding";
@@ -123,7 +124,7 @@
 	                return function (x, y) {
 	                    var xValue = _this.fieldAccessor.getValue(x, field);
 	                    var yValue = _this.fieldAccessor.getValue(y, field);
-	                    return (direction == SortDirection.Ascending)
+	                    return (direction == common_1.SortDirection.Ascending)
 	                        ? comparer_1.Comparer.Instance.compare(xValue, yValue)
 	                        : comparer_1.Comparer.Instance.compare(yValue, xValue);
 	                };
@@ -182,6 +183,17 @@
 	        };
 	        return this;
 	    };
+	    ClientDataSource.prototype.filter = function () {
+	        var expressions = [];
+	        for (var _i = 0; _i < arguments.length; _i++) {
+	            expressions[_i - 0] = arguments[_i];
+	        }
+	        this._sort = function (x) {
+	            x.filteredBy = expressions;
+	            x.data = x.data.filter(expressions[0].expression);
+	        };
+	        return this;
+	    };
 	    ClientDataSource.prototype.sort = function () {
 	        var _this = this;
 	        var expressions = [];
@@ -196,7 +208,7 @@
 	    };
 	    Object.defineProperty(ClientDataSource.prototype, "fieldAccessor", {
 	        get: function () {
-	            return this._fieldAccessor = this._fieldAccessor || new DefaultFieldAccessor();
+	            return this._fieldAccessor = this._fieldAccessor || new field_accessor_1.DefaultFieldAccessor();
 	        },
 	        enumerable: true,
 	        configurable: true
@@ -249,8 +261,7 @@
 
 
 /***/ },
-
-/***/ 9:
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -279,14 +290,47 @@
 
 
 /***/ },
+/* 12 */
+/***/ function(module, exports) {
 
-/***/ 24:
+	"use strict";
+	var DefaultFieldAccessor = (function () {
+	    function DefaultFieldAccessor() {
+	    }
+	    DefaultFieldAccessor.prototype.getValue = function (model, compositeField) {
+	        var fields = compositeField.split(DefaultFieldAccessor.Separator);
+	        var result = model;
+	        for (var i = 0; i < fields.length; i++) {
+	            result = result[fields[i]];
+	            if (!result)
+	                break;
+	        }
+	        return result;
+	    };
+	    DefaultFieldAccessor.Separator = '.';
+	    return DefaultFieldAccessor;
+	}());
+	exports.DefaultFieldAccessor = DefaultFieldAccessor;
+
+
+/***/ },
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */,
+/* 22 */,
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var chai_1 = __webpack_require__(4);
-	var data_source_1 = __webpack_require__(8);
-	var data_source_pager_1 = __webpack_require__(25);
+	var data_source_1 = __webpack_require__(10);
+	var data_source_pager_1 = __webpack_require__(24);
 	describe('DataSourcePager', function () {
 	    function createPager(pageSize) {
 	        var dataSource = new data_source_1.ClientDataSource([{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }], { pageSize: pageSize || 2, pageIndex: 2 });
@@ -393,8 +437,7 @@
 
 
 /***/ },
-
-/***/ 25:
+/* 24 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -454,5 +497,4 @@
 
 
 /***/ }
-
-/******/ });
+/******/ ]);

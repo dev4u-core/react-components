@@ -66,32 +66,32 @@
 /* 6 */,
 /* 7 */,
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	"use strict";
-	var comparer_1 = __webpack_require__(9);
-	var DefaultFieldAccessor = (function () {
-	    function DefaultFieldAccessor() {
-	    }
-	    DefaultFieldAccessor.prototype.getValue = function (model, compositeField) {
-	        var result = model;
-	        var fields = compositeField.split(DefaultFieldAccessor.Separator);
-	        for (var i = 0; i < fields.length; i++) {
-	            result = result[fields[i]];
-	            if (!result)
-	                break;
-	        }
-	        return result;
-	    };
-	    DefaultFieldAccessor.Separator = '.';
-	    return DefaultFieldAccessor;
-	}());
-	exports.DefaultFieldAccessor = DefaultFieldAccessor;
+	(function (DataType) {
+	    DataType[DataType["Date"] = 0] = "Date";
+	    DataType[DataType["Enum"] = 1] = "Enum";
+	    DataType[DataType["String"] = 2] = "String";
+	    DataType[DataType["Number"] = 3] = "Number";
+	})(exports.DataType || (exports.DataType = {}));
+	var DataType = exports.DataType;
 	(function (SortDirection) {
 	    SortDirection[SortDirection["Ascending"] = 1] = "Ascending";
 	    SortDirection[SortDirection["Descending"] = 2] = "Descending";
 	})(exports.SortDirection || (exports.SortDirection = {}));
 	var SortDirection = exports.SortDirection;
+
+
+/***/ },
+/* 9 */,
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var common_1 = __webpack_require__(8);
+	var comparer_1 = __webpack_require__(11);
+	var field_accessor_1 = __webpack_require__(12);
 	(function (DataSourceState) {
 	    DataSourceState[DataSourceState["Empty"] = 0] = "Empty";
 	    DataSourceState[DataSourceState["Binding"] = 1] = "Binding";
@@ -124,7 +124,7 @@
 	                return function (x, y) {
 	                    var xValue = _this.fieldAccessor.getValue(x, field);
 	                    var yValue = _this.fieldAccessor.getValue(y, field);
-	                    return (direction == SortDirection.Ascending)
+	                    return (direction == common_1.SortDirection.Ascending)
 	                        ? comparer_1.Comparer.Instance.compare(xValue, yValue)
 	                        : comparer_1.Comparer.Instance.compare(yValue, xValue);
 	                };
@@ -183,6 +183,17 @@
 	        };
 	        return this;
 	    };
+	    ClientDataSource.prototype.filter = function () {
+	        var expressions = [];
+	        for (var _i = 0; _i < arguments.length; _i++) {
+	            expressions[_i - 0] = arguments[_i];
+	        }
+	        this._sort = function (x) {
+	            x.filteredBy = expressions;
+	            x.data = x.data.filter(expressions[0].expression);
+	        };
+	        return this;
+	    };
 	    ClientDataSource.prototype.sort = function () {
 	        var _this = this;
 	        var expressions = [];
@@ -197,7 +208,7 @@
 	    };
 	    Object.defineProperty(ClientDataSource.prototype, "fieldAccessor", {
 	        get: function () {
-	            return this._fieldAccessor = this._fieldAccessor || new DefaultFieldAccessor();
+	            return this._fieldAccessor = this._fieldAccessor || new field_accessor_1.DefaultFieldAccessor();
 	        },
 	        enumerable: true,
 	        configurable: true
@@ -250,7 +261,7 @@
 
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -279,9 +290,30 @@
 
 
 /***/ },
-/* 10 */,
-/* 11 */,
-/* 12 */,
+/* 12 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var DefaultFieldAccessor = (function () {
+	    function DefaultFieldAccessor() {
+	    }
+	    DefaultFieldAccessor.prototype.getValue = function (model, compositeField) {
+	        var fields = compositeField.split(DefaultFieldAccessor.Separator);
+	        var result = model;
+	        for (var i = 0; i < fields.length; i++) {
+	            result = result[fields[i]];
+	            if (!result)
+	                break;
+	        }
+	        return result;
+	    };
+	    DefaultFieldAccessor.Separator = '.';
+	    return DefaultFieldAccessor;
+	}());
+	exports.DefaultFieldAccessor = DefaultFieldAccessor;
+
+
+/***/ },
 /* 13 */,
 /* 14 */,
 /* 15 */,
@@ -295,9 +327,9 @@
 
 	"use strict";
 	var chai_1 = __webpack_require__(4);
-	var common_1 = __webpack_require__(22);
-	var data_source_1 = __webpack_require__(8);
-	var type_converter_1 = __webpack_require__(23);
+	var common_1 = __webpack_require__(8);
+	var data_source_1 = __webpack_require__(10);
+	var type_converter_1 = __webpack_require__(22);
 	describe('ClientDataSource', function () {
 	    it('dataBind', function () {
 	        var data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
@@ -308,7 +340,16 @@
 	        chai_1.expect(dataSource.view.data[1].field).to.equal('value1');
 	        chai_1.expect(dataSource.view.data[2].field).to.equal('value2');
 	    });
-	    describe('paging', function () {
+	    it('filter', function () {
+	        var data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
+	        var dataSource = new data_source_1.ClientDataSource(data);
+	        dataSource
+	            .filter({ expression: function (x) { return x.field == 'value0'; }, field: 'field' })
+	            .dataBind();
+	        chai_1.expect(dataSource.view.data.length).to.equal(1);
+	        chai_1.expect(dataSource.view.data[0].field).to.equal('value0');
+	    });
+	    describe('setPageIndex', function () {
 	        var data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
 	        it('by default', function () {
 	            var dataSource = new data_source_1.ClientDataSource(data, { pageSize: 1 });
@@ -328,24 +369,24 @@
 	            });
 	        });
 	    });
-	    describe('sorting', function () {
+	    describe('sort', function () {
 	        describe('view properties', function () {
 	            it('ascending sorting by one field', function () {
 	                var dataSource = new data_source_1.ClientDataSource([]);
 	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Ascending, field: 'field' })
+	                    .sort({ direction: common_1.SortDirection.Ascending, field: 'field' })
 	                    .dataBind();
 	                chai_1.expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
-	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(data_source_1.SortDirection.Ascending, 'sortedBy[0].direction');
+	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(common_1.SortDirection.Ascending, 'sortedBy[0].direction');
 	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('field', 'sortedBy[0].field');
 	            });
 	            it('descending sorting by one field', function () {
 	                var dataSource = new data_source_1.ClientDataSource([]);
 	                dataSource
-	                    .sort({ direction: data_source_1.SortDirection.Descending, field: 'field' })
+	                    .sort({ direction: common_1.SortDirection.Descending, field: 'field' })
 	                    .dataBind();
 	                chai_1.expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
-	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(data_source_1.SortDirection.Descending, 'sortedBy[0].direction');
+	                chai_1.expect(dataSource.view.sortedBy[0].direction).to.equal(common_1.SortDirection.Descending, 'sortedBy[0].direction');
 	                chai_1.expect(dataSource.view.sortedBy[0].field).to.equal('field', 'sortedBy[0].field');
 	            });
 	        });
@@ -359,7 +400,7 @@
 	                testCases.forEach(function (x) {
 	                    var dataSource = new data_source_1.ClientDataSource(x);
 	                    dataSource
-	                        .sort({ direction: data_source_1.SortDirection.Ascending, field: 'booleanField' })
+	                        .sort({ direction: common_1.SortDirection.Ascending, field: 'booleanField' })
 	                        .dataBind();
 	                    chai_1.expect(dataSource.view.data[0].booleanField).to.equal(null);
 	                    chai_1.expect(dataSource.view.data[1].booleanField).to.equal(false);
@@ -370,7 +411,7 @@
 	                testCases.forEach(function (x) {
 	                    var dataSource = new data_source_1.ClientDataSource(x);
 	                    dataSource
-	                        .sort({ direction: data_source_1.SortDirection.Descending, field: 'booleanField' })
+	                        .sort({ direction: common_1.SortDirection.Descending, field: 'booleanField' })
 	                        .dataBind();
 	                    chai_1.expect(dataSource.view.data[0].booleanField).to.equal(true);
 	                    chai_1.expect(dataSource.view.data[1].booleanField).to.equal(false);
@@ -388,7 +429,7 @@
 	                testCases.forEach(function (x) {
 	                    var dataSource = new data_source_1.ClientDataSource(x);
 	                    dataSource
-	                        .sort({ direction: data_source_1.SortDirection.Ascending, field: 'numberField' })
+	                        .sort({ direction: common_1.SortDirection.Ascending, field: 'numberField' })
 	                        .dataBind();
 	                    chai_1.expect(dataSource.view.data[0].numberField).to.equal(0);
 	                    chai_1.expect(dataSource.view.data[1].numberField).to.equal(1);
@@ -399,7 +440,7 @@
 	                testCases.forEach(function (x) {
 	                    var dataSource = new data_source_1.ClientDataSource(x);
 	                    dataSource
-	                        .sort({ direction: data_source_1.SortDirection.Descending, field: 'numberField' })
+	                        .sort({ direction: common_1.SortDirection.Descending, field: 'numberField' })
 	                        .dataBind();
 	                    chai_1.expect(dataSource.view.data[0].numberField).to.equal(2);
 	                    chai_1.expect(dataSource.view.data[1].numberField).to.equal(1);
@@ -417,7 +458,7 @@
 	                testCases.forEach(function (x) {
 	                    var dataSource = new data_source_1.ClientDataSource(x);
 	                    dataSource
-	                        .sort({ direction: data_source_1.SortDirection.Ascending, field: 'stringField' })
+	                        .sort({ direction: common_1.SortDirection.Ascending, field: 'stringField' })
 	                        .dataBind();
 	                    chai_1.expect(dataSource.view.data[0].stringField).to.equal('value0');
 	                    chai_1.expect(dataSource.view.data[1].stringField).to.equal('value1');
@@ -428,7 +469,7 @@
 	                testCases.forEach(function (x) {
 	                    var dataSource = new data_source_1.ClientDataSource(x);
 	                    dataSource
-	                        .sort({ direction: data_source_1.SortDirection.Descending, field: 'stringField' })
+	                        .sort({ direction: common_1.SortDirection.Descending, field: 'stringField' })
 	                        .dataBind();
 	                    chai_1.expect(dataSource.view.data[0].stringField).to.equal('value2');
 	                    chai_1.expect(dataSource.view.data[1].stringField).to.equal('value1');
@@ -452,7 +493,7 @@
 	                testCases.forEach(function (x) {
 	                    var dataSource = new data_source_1.ClientDataSource(x, { fieldAccessor: fieldAccessor });
 	                    dataSource
-	                        .sort({ direction: data_source_1.SortDirection.Ascending, field: 'dateField' })
+	                        .sort({ direction: common_1.SortDirection.Ascending, field: 'dateField' })
 	                        .dataBind();
 	                    chai_1.expect(dataSource.view.data[0].dateField).to.equal('3/1/2001');
 	                    chai_1.expect(dataSource.view.data[1].dateField).to.equal('2/1/2002');
@@ -463,7 +504,7 @@
 	                testCases.forEach(function (x) {
 	                    var dataSource = new data_source_1.ClientDataSource(x, { fieldAccessor: fieldAccessor });
 	                    dataSource
-	                        .sort({ direction: data_source_1.SortDirection.Descending, field: 'dateField' })
+	                        .sort({ direction: common_1.SortDirection.Descending, field: 'dateField' })
 	                        .dataBind();
 	                    chai_1.expect(dataSource.view.data[0].dateField).to.equal('1/1/2003');
 	                    chai_1.expect(dataSource.view.data[1].dateField).to.equal('2/1/2002');
@@ -475,7 +516,7 @@
 	            var data = [{ stringField: 'value0' }, { stringField: 'value1' }, { stringField: 'value2' }];
 	            var dataSource = new data_source_1.ClientDataSource(data);
 	            dataSource
-	                .sort({ direction: data_source_1.SortDirection.Descending, field: 'stringField' })
+	                .sort({ direction: common_1.SortDirection.Descending, field: 'stringField' })
 	                .dataBind();
 	            dataSource
 	                .sort()
@@ -490,24 +531,10 @@
 
 /***/ },
 /* 22 */
-/***/ function(module, exports) {
-
-	"use strict";
-	(function (DataType) {
-	    DataType[DataType["Date"] = 0] = "Date";
-	    DataType[DataType["Enum"] = 1] = "Enum";
-	    DataType[DataType["String"] = 2] = "String";
-	    DataType[DataType["Number"] = 3] = "Number";
-	})(exports.DataType || (exports.DataType = {}));
-	var DataType = exports.DataType;
-
-
-/***/ },
-/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var common_1 = __webpack_require__(22);
+	var common_1 = __webpack_require__(8);
 	var DefaultConverter = (function () {
 	    function DefaultConverter() {
 	    }

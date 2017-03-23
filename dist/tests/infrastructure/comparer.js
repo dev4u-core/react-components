@@ -45,7 +45,7 @@
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(16);
+	module.exports = __webpack_require__(17);
 
 
 /***/ },
@@ -64,7 +64,7 @@
 
 /***/ },
 
-/***/ 9:
+/***/ 11:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -94,12 +94,12 @@
 
 /***/ },
 
-/***/ 16:
+/***/ 17:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var chai_1 = __webpack_require__(4);
-	var comparer_1 = __webpack_require__(9);
+	var comparer_1 = __webpack_require__(11);
 	describe('Comparer', function () {
 	    it('compare boolean values', function () {
 	        [

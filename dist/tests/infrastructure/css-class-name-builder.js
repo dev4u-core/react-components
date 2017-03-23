@@ -45,7 +45,7 @@
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(17);
+	module.exports = __webpack_require__(18);
 
 
 /***/ },
@@ -64,7 +64,7 @@
 
 /***/ },
 
-/***/ 10:
+/***/ 9:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -97,12 +97,12 @@
 
 /***/ },
 
-/***/ 17:
+/***/ 18:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var chai_1 = __webpack_require__(4);
-	var css_class_name_builder_1 = __webpack_require__(10);
+	var css_class_name_builder_1 = __webpack_require__(9);
 	describe('ClassNameBuilder', function () {
 	    describe('add', function () {
 	        it('one class', function () {

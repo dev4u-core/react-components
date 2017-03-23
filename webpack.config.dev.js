@@ -8,7 +8,6 @@ module.exports = {
         'components/panel-container': ['./tests/components/panel-container'],
         'infrastructure/css-class-name-builder': ['./tests/infrastructure/css-class-name-builder'],
         'infrastructure/css-class-name-generator': ['./tests/infrastructure/css-class-name-generator'],
-        'infrastructure/css-class-serializer': ['./tests/infrastructure/css-class-serializer'],
         'infrastructure/comparer': ['./tests/infrastructure/comparer'],
         'infrastructure/data-source': ['./tests/infrastructure/data-source'],
         'infrastructure/data-source-pager': ['./tests/infrastructure/data-source-pager']

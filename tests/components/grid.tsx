@@ -3,7 +3,8 @@ import { expect } from 'chai';
 import * as React from 'react';
 import { Grid } from '../../src/components/grid';
 import { GridColumn } from '../../src/components/grid-column';
-import { ClientDataSource, DataSource, SortDirection } from '../../src/infrastructure/data-source';
+import { SortDirection } from '../../src/infrastructure/common';
+import { ClientDataSource, DataSource } from '../../src/infrastructure/data-source';
 
 describe('<Grid />', () => {
     describe('behaviour', () => {
@@ -93,17 +94,6 @@ describe('<Grid />', () => {
 
                 expect(grid.find(`tbody td.class0`).length).to.equal(1);
             });
-
-            it('classTemplate', () => {
-                let grid = Enzyme.mount(
-                    <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>
-                        <GridColumn body={{ classTemplate: () => cssClass }} field="title" title="Title" />
-                    </Grid>
-                );
-
-                expect(grid.find(`tbody td.class0`).length).to.equal(1);
-                expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\'; }</style>');
-            });
         });
 
         describe('header', () => {
@@ -115,17 +105,6 @@ describe('<Grid />', () => {
                 );
 
                 expect(grid.find(`th.class0`).length).to.equal(1);
-            });
-
-            it('classTemplate', () => {
-                let grid = Enzyme.mount(
-                    <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>
-                        <GridColumn header={{ classTemplate: () => cssClass }} field="title" title="Title" />
-                    </Grid>
-                );
-
-                expect(grid.find(`th.class0`).length).to.equal(1);
-                expect(grid.find('style').html()).to.equal('<style>.class0 { content: \'value0\'; }</style>');
             });
         });
     });

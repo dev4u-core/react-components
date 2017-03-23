@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { Grid, GridStyle } from './grid';
-import { CssClass } from '../../src/infrastructure/common';
-import { DataSource, SortDirection } from '../../src/infrastructure/data-source';
+import { SortDirection } from '../../src/infrastructure/common';
+import { DataSource } from '../../src/infrastructure/data-source';
 
 export interface GridCellProps {
     className?: string;
-    classTemplate?: (column: GridColumnBase<any>, model?: any) => CssClass;
     template?: (column: GridColumnBase<any>, model?: any) => JSX.Element;
 }
 

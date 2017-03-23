@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(13);
+	module.exports = __webpack_require__(14);
 
 
 /***/ },
@@ -80,15 +80,16 @@
 /* 10 */,
 /* 11 */,
 /* 12 */,
-/* 13 */
+/* 13 */,
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var chai_1 = __webpack_require__(4);
 	var Enzyme = __webpack_require__(2);
 	var React = __webpack_require__(5);
-	var panel_1 = __webpack_require__(14);
-	var panel_container_1 = __webpack_require__(15);
+	var panel_1 = __webpack_require__(15);
+	var panel_container_1 = __webpack_require__(16);
 	describe('<PanelContainer />', function () {
 	    describe('initialization', function () {
 	        it('"staticPanels" property should be initialized', function () {
@@ -203,7 +204,7 @@
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -249,7 +250,7 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -259,7 +260,7 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var React = __webpack_require__(5);
-	var panel_1 = __webpack_require__(14);
+	var panel_1 = __webpack_require__(15);
 	(function (PanelContainerMode) {
 	    PanelContainerMode[PanelContainerMode["DynamicAndStatic"] = 1] = "DynamicAndStatic";
 	    PanelContainerMode[PanelContainerMode["StaticAndDynamic"] = 2] = "StaticAndDynamic";
