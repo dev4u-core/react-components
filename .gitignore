@@ -1,6 +1,4 @@
-/dist/*.js
-/dist/*.json
-/dist/src/*.d.ts
+/dist/*.*
 /node_modules/
 /typings/
 *.log

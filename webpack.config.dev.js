@@ -1,16 +1,17 @@
-let path = require('path');
-let webpack = require('webpack');
+var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
     cache: true,
     entry: {
-        'components/grid': ['./tests/components/grid'],
-        'components/panel-container': ['./tests/components/panel-container'],
-        'infrastructure/css-class-name-builder': ['./tests/infrastructure/css-class-name-builder'],
-        'infrastructure/css-class-name-generator': ['./tests/infrastructure/css-class-name-generator'],
-        'infrastructure/comparer': ['./tests/infrastructure/comparer'],
-        'infrastructure/data-source': ['./tests/infrastructure/data-source'],
-        'infrastructure/data-source-pager': ['./tests/infrastructure/data-source-pager']
+        'examples/table': ['./examples/table'],
+        'tests/components/panel-container': ['./tests/components/panel-container'],
+        'tests/components/table': ['./tests/components/table'],
+        'tests/infrastructure/css-class-name-builder': ['./tests/infrastructure/css-class-name-builder'],
+        'tests/infrastructure/css-class-name-generator': ['./tests/infrastructure/css-class-name-generator'],
+        'tests/infrastructure/comparer': ['./tests/infrastructure/comparer'],
+        'tests/infrastructure/data-source': ['./tests/infrastructure/data-source'],
+        'tests/infrastructure/data-source-pager': ['./tests/infrastructure/data-source-pager']
     },
     module: {
         loaders: [
@@ -19,7 +20,7 @@ module.exports = {
     },
     output: {
         filename: '[name].js',
-        path: './dist/tests'
+        path: './dist'
     },
     plugins: [
         new webpack.NoErrorsPlugin(),

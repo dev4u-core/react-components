@@ -5,7 +5,7 @@ import { DataSourcePager, PageType } from '../../src/infrastructure/data-source-
 
 describe('DataSourcePager', () => {
     function createPager(pageSize?: number) {
-        let dataSource = new ClientDataSource(
+        const dataSource = new ClientDataSource(
             [{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }],
             { pageSize: pageSize || 2, pageIndex: 2 }
         );
@@ -16,7 +16,7 @@ describe('DataSourcePager', () => {
 
     describe('canMoveToPage', () => {
         it('PageType.First if true', () => {
-            let pager = createPager();
+            const pager = createPager();
 
             pager.moveToPage(PageType.Last);
 
@@ -24,7 +24,7 @@ describe('DataSourcePager', () => {
         });
 
         it('PageType.First if false', () => {
-            let pager = createPager();
+            const pager = createPager();
 
             pager.moveToPage(PageType.First);
 
@@ -32,7 +32,7 @@ describe('DataSourcePager', () => {
         });
 
         it('PageType.Last if true', () => {
-            let pager = createPager();
+            const pager = createPager();
 
             pager.moveToPage(PageType.First);
 
@@ -40,7 +40,7 @@ describe('DataSourcePager', () => {
         });
 
         it('PageType.Last if false', () => {
-            let pager = createPager();
+            const pager = createPager();
 
             pager.moveToPage(PageType.Last);
 
@@ -48,7 +48,7 @@ describe('DataSourcePager', () => {
         });
 
         it('PageType.Next if true', () => {
-            let pager = createPager();
+            const pager = createPager();
 
             pager.moveToPage(PageType.First);
 
@@ -56,7 +56,7 @@ describe('DataSourcePager', () => {
         });
 
         it('PageType.Next if false', () => {
-            let pager = createPager();
+            const pager = createPager();
 
             pager.moveToPage(PageType.Last);
 
@@ -64,7 +64,7 @@ describe('DataSourcePager', () => {
         });
 
         it('PageType.Last if true', () => {
-            let pager = createPager();
+            const pager = createPager();
 
             pager.moveToPage(PageType.Last);
 
@@ -72,7 +72,7 @@ describe('DataSourcePager', () => {
         });
 
         it('PageType.Last if false', () => {
-            let pager = createPager();
+            const pager = createPager();
 
             pager.moveToPage(PageType.First);
 
@@ -87,9 +87,9 @@ describe('DataSourcePager', () => {
                 { pageIndex: 1, pageInfo: { firstIndex: 2, lastIndex: 3 }},
                 { pageIndex: 2, pageInfo: { firstIndex: 4, lastIndex: 4 }}
             ].forEach(x => {
-                let pager = createPager();
+                const pager = createPager();
 
-                let pageInfo = pager.getPageInfo(x.pageIndex);
+                const pageInfo = pager.getPageInfo(x.pageIndex);
 
                 expect(pageInfo.firstIndex).to.equal(x.pageInfo.firstIndex, 'firstIndex');
                 expect(pageInfo.lastIndex).to.equal(x.pageInfo.lastIndex, 'lastIndex');
@@ -97,9 +97,9 @@ describe('DataSourcePager', () => {
         });
 
         it('if total count less then page size', () => {
-            let pager = createPager(10);
+            const pager = createPager(10);
 
-            let pageInfo = pager.getPageInfo(0);
+            const pageInfo = pager.getPageInfo(0);
 
             expect(pageInfo.firstIndex).to.equal(0, 'firstIndex');
             expect(pageInfo.lastIndex).to.equal(4, 'lastIndex');
@@ -120,7 +120,7 @@ describe('DataSourcePager', () => {
 
     describe('moveToPage', () => {
         it('PageType.First', () => {
-            let pager = createPager();
+            const pager = createPager();
 
             pager.moveToPage(PageType.Last);
             pager.moveToPage(PageType.First);
@@ -129,7 +129,7 @@ describe('DataSourcePager', () => {
         });
 
         it('PageType.Last', () => {
-            let pager = createPager();
+            const pager = createPager();
 
             pager.moveToPage(PageType.First);
             pager.moveToPage(PageType.Last);
@@ -138,7 +138,7 @@ describe('DataSourcePager', () => {
         });
 
         it('PageType.Next', () => {
-            let pager = createPager();
+            const pager = createPager();
 
             pager.moveToPage(PageType.First);
             pager.moveToPage(PageType.Next);
@@ -147,7 +147,7 @@ describe('DataSourcePager', () => {
         });
 
         it('PageType.Previous', () => {
-            let pager = createPager();
+            const pager = createPager();
 
             pager.moveToPage(PageType.Last);
             pager.moveToPage(PageType.Previous);

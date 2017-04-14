@@ -1,31 +1,31 @@
 import * as Enzyme from 'enzyme';
 import { expect } from 'chai';
 import * as React from 'react';
-import { Grid } from '../../src/components/grid';
-import { GridColumn } from '../../src/components/grid-column';
+import { Table } from '../../src/components/table/table';
+import { TableColumn } from '../../src/components/table/table-column';
 import { SortDirection } from '../../src/infrastructure/common';
 import { ClientDataSource, DataSource } from '../../src/infrastructure/data-source';
 
-describe('<Grid />', () => {
+describe('<Table />', () => {
     describe('behaviour', () => {
         describe('sorting', () => {
             let dataSource: DataSource<any>;
-            let grid;
+            let table;
 
             beforeEach(() => {
                 dataSource = new ClientDataSource([]);
                 dataSource.dataBind();
 
-                grid = Enzyme.mount(
-                    <Grid dataSource={dataSource}>
-                        <GridColumn field="title" title="Title" />
-                        <GridColumn field="description" title="Description" />
-                    </Grid>
+                table = Enzyme.mount(
+                    <Table dataSource={dataSource}>
+                        <TableColumn field="title" title="Title" />
+                        <TableColumn field="description" title="Description" />
+                    </Table>
                 );
             });
 
             it('one click on first column', () => {
-                grid.find('th a').first().simulate('click');
+                table.find('th a').first().simulate('click');
 
                 expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
                 expect(dataSource.view.sortedBy[0].direction).to.equal(SortDirection.Ascending, 'sortedBy[0].direction');
@@ -33,8 +33,8 @@ describe('<Grid />', () => {
             });
 
             it('one click on first column and one click by last column', () => {
-                grid.find('th a').first().simulate('click');
-                grid.find('th a').last().simulate('click');
+                table.find('th a').first().simulate('click');
+                table.find('th a').last().simulate('click');
 
                 expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
                 expect(dataSource.view.sortedBy[0].direction).to.equal(SortDirection.Ascending, 'sortedBy[0].direction');
@@ -42,7 +42,7 @@ describe('<Grid />', () => {
             });
 
             it('two click on first column', () => {
-                grid.find('th a')
+                table.find('th a')
                     .first()
                     .simulate('click')
                     .simulate('click');
@@ -53,7 +53,7 @@ describe('<Grid />', () => {
             });
 
             it('three click on first column', () => {
-                grid.find('th a')
+                table.find('th a')
                     .first()
                     .simulate('click')
                     .simulate('click')
@@ -63,11 +63,11 @@ describe('<Grid />', () => {
             });
 
             it('two click on first column and one click on last column', () => {
-                grid.find('th a')
+                table.find('th a')
                     .first()
                     .simulate('click')
                     .simulate('click');
-                grid.find('th a')
+                table.find('th a')
                     .last()
                     .simulate('click');
 
@@ -79,32 +79,32 @@ describe('<Grid />', () => {
     });
 
     describe('property', () => {
-        let cssClass = {
+        const cssClass = {
             name: 'class0',
             styles: 'content: \'value0\';'
         };
 
         describe('body', () => {
             it('className', () => {
-                let grid = Enzyme.mount(
-                    <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>
-                        <GridColumn body={{ className: 'class0' }} field="title" title="Title" />
-                    </Grid>
+                const table = Enzyme.mount(
+                    <Table autoBind={true} dataSource={new ClientDataSource([{}])}>
+                        <TableColumn body={{ className: 'class0' }} field="title" title="Title" />
+                    </Table>
                 );
 
-                expect(grid.find(`tbody td.class0`).length).to.equal(1);
+                expect(table.find(`tbody td.class0`).length).to.equal(1);
             });
         });
 
         describe('header', () => {
             it('className', () => {
-                let grid = Enzyme.mount(
-                    <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>
-                        <GridColumn header={{ className: 'class0' }} field="title" title="Title" />
-                    </Grid>
+                let table = Enzyme.mount(
+                    <Table autoBind={true} dataSource={new ClientDataSource([{}])}>
+                        <TableColumn header={{ className: 'class0' }} field="title" title="Title" />
+                    </Table>
                 );
 
-                expect(grid.find(`th.class0`).length).to.equal(1);
+                expect(table.find(`th.class0`).length).to.equal(1);
             });
         });
     });

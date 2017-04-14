@@ -1,5 +1,4 @@
-export * from './components/grid';
-export * from './components/panel';
 export * from './components/panel-container';
+export * from './components/table/table';
+export * from './components/style-provider';
 export * from './infrastructure/data-source';
-export * from './infrastructure/style-provider';
