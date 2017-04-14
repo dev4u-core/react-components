@@ -37,6 +37,7 @@
     "definition": "./dist/index.d.ts"
   },
   "scripts": {
+    "build:dev-vendors": "webpack --config webpack.config.dev-vendors.js",
     "build:dev": "webpack --config webpack.config.dev.js --display-error-details --display-modules",
     "build:prod": "webpack --config webpack.config.prod.js",
     "run:tests": "karma start karma.config.js --watch"
