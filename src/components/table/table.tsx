@@ -26,6 +26,7 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
         this.state = { expandedDetailRows: [] } as any;
 
         this._style = StyleProvider.instance.getGridStyle();
+        this.handleDataBound = this.handleDataBound.bind(this);
     }
 
     protected componentWillMount() {
@@ -39,7 +40,17 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
 
     protected componentWillReceiveProps(nextProps: P) {
         if ((this.props.dataSource != nextProps.dataSource) && (nextProps.dataSource != null)) {
+            if (this.props.dataSource) {
+                this.props.dataSource.onDataBound.off(this.handleDataBound);
+            }
+
             this.setDataSource(nextProps.dataSource);
+        }
+    }
+
+    protected handleDataBound(dataSource: DataSource<any>) {
+        if (dataSource == this.props.dataSource) {
+            this.forceUpdate();
         }
     }
 
@@ -49,11 +60,7 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
         }
 
         if (dataSource) {
-            dataSource.onDataBound = dataSource => {
-                if (dataSource == this.props.dataSource) {
-                    this.forceUpdate();
-                }
-            };
+            dataSource.onDataBound.on(this.handleDataBound);
         }
     }
 

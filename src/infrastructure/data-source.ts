@@ -1,6 +1,7 @@
 import { } from 'es6-shim';
 import { FilterExpression, SortDirection, SortExpression } from './common';
 import { Comparer } from './comparer';
+import { Event } from './event';
 import { DefaultFieldAccessor, FieldAccessor } from './field-accessor';
 
 export interface DataView<T> {
@@ -28,8 +29,8 @@ export interface DataSource<T> {
     readonly totalCount: number;
     readonly view: DataView<T>;
 
-    onDataBinding?: (sender: DataSource<T>) => void;
-    onDataBound?: (sender: DataSource<T>) => void;
+    onDataBinding: Event<any>;
+    onDataBound: Event<any>;
 }
 
 export interface ClientDataSourceProps {
@@ -42,8 +43,8 @@ export interface ClientDataSourceProps {
 export class ClientDataSource<T> implements DataSource<T> {
     private _data: (() => Promise<T[]>) | T[];
     private _fieldAccessor: FieldAccessor;
-    private _onDataBinging: ((sender: DataSource<T>) => void)[];
-    private _onDataBound: ((sender: DataSource<T>) => void)[];
+    private _onDataBinging: Event<any>;
+    private _onDataBound: Event<any>;
     private _pageSize: number;
     private _setPageIndex: ((view: DataView<T>) => void);
     private _sort: ((view: DataView<T>) => void);
@@ -65,8 +66,8 @@ export class ClientDataSource<T> implements DataSource<T> {
         }
 
         this._data = data;
-        this._onDataBinging = [];
-        this._onDataBound = [];
+        this._onDataBinging = new Event<any>();
+        this._onDataBound = new Event<any>();
         this._state = DataSourceState.Empty;
         this._view = null;
     }
@@ -96,17 +97,13 @@ export class ClientDataSource<T> implements DataSource<T> {
     protected handleDataBinding() {
         this._state = DataSourceState.Binding;
 
-        for (let i = 0; i < this._onDataBinging.length; i++) {
-            this._onDataBinging[i](this);
-        }
+        this.onDataBinding.trigger(this, {});
     }
 
     protected handleDataBound() {
         this._state = DataSourceState.Bound;
 
-        for (let i = 0; i < this._onDataBound.length; i++) {
-            this._onDataBound[i](this);
-        }
+        this.onDataBound.trigger(this, {});
     }
 
     protected internalDataBind(data: T[]) {
@@ -190,11 +187,11 @@ export class ClientDataSource<T> implements DataSource<T> {
         return this._view;
     }
 
-    public set onDataBinding(value: (sender: DataSource<T>) => void) {
-        this._onDataBinging.push(value);
+    public get onDataBinding(): Event<any> {
+        return this._onDataBinging;
     }
 
-    public set onDataBound(value: (sender: DataSource<T>) => void) {
-        this._onDataBound.push(value);
+    public get onDataBound(): Event<any> {
+        return this._onDataBound;
     }
 }
