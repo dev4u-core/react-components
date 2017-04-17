@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import * as Enzyme from 'enzyme';
 import * as React from 'react';
-import { Panel, PanelProps } from '../../src/components/panel';
-import { PanelContainer, PanelContainerState, PanelContainerMode, PanelContainerOrientation } from '../../src/components/panel-container';
+import { Panel, PanelProps } from '../../src/components/panel/panel';
+import { PanelContainer, PanelContainerState, PanelContainerMode, PanelContainerOrientation } from '../../src/components/panel/panel-container';
 
 describe('<PanelContainer />', () => {
     describe('initialization', () => {
