@@ -49,7 +49,8 @@ module.exports = {
     },
     ts: {
         'compilerOptions': {
-            'declaration': true
+            'declaration': true,
+            'outDir': 'types'
         }
     }
 }
