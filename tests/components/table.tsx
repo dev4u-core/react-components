@@ -1,8 +1,8 @@
 import * as Enzyme from 'enzyme';
 import { expect } from 'chai';
 import * as React from 'react';
+import { Column } from '../../src/components/table/column';
 import { Table } from '../../src/components/table/table';
-import { TableColumn } from '../../src/components/table/table-column';
 import { SortDirection } from '../../src/infrastructure/common';
 import { ClientDataSource, DataSource } from '../../src/infrastructure/data-source';
 
@@ -18,8 +18,8 @@ describe('<Table />', () => {
 
                 table = Enzyme.mount(
                     <Table dataSource={dataSource}>
-                        <TableColumn field="title" title="Title" />
-                        <TableColumn field="description" title="Description" />
+                        <Column field="title" title="Title" />
+                        <Column field="description" title="Description" />
                     </Table>
                 );
             });
@@ -88,7 +88,7 @@ describe('<Table />', () => {
             it('className', () => {
                 const table = Enzyme.mount(
                     <Table autoBind={true} dataSource={new ClientDataSource([{}])}>
-                        <TableColumn body={{ className: 'class0' }} field="title" title="Title" />
+                        <Column body={{ className: 'class0' }} field="title" title="Title" />
                     </Table>
                 );
 
@@ -100,7 +100,7 @@ describe('<Table />', () => {
             it('className', () => {
                 let table = Enzyme.mount(
                     <Table autoBind={true} dataSource={new ClientDataSource([{}])}>
-                        <TableColumn header={{ className: 'class0' }} field="title" title="Title" />
+                        <Column header={{ className: 'class0' }} field="title" title="Title" />
                     </Table>
                 );
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { DetailsTableColumn } from './details-table-column';
-import { TableColumn, TableColumnProps, TableCellProps } from './table-column';
-import { StyleProvider, TableStyle } from '../style-provider';
+import { Column, ColumnProps, CellProps } from './column';
+import { DetailsColumn } from './details-column';
+import { Style } from './style';
 import { SortDirection } from '../../../src/infrastructure/common';
 import { CssClassNameBuilder } from '../../../src/infrastructure/css-class-name-builder';
 import { DataSource, DataSourceState } from '../../../src/infrastructure/data-source';
@@ -16,16 +16,15 @@ export interface TableState {
 }
 
 export class Table<P extends TableProps, S extends TableState> extends React.Component<P, S> {
-    private _columns: TableColumn<any>[];
-    private _detailColumn: DetailsTableColumn;
-    private _style: TableStyle;
+    private _columns: Column<any>[];
+    private _detailColumn: DetailsColumn;
+    private _style: Style;
 
     public constructor(props: P) {
         super(props);
 
         this.state = { expandedDetailRows: [] } as any;
 
-        this._style = StyleProvider.instance.getGridStyle();
         this.handleDataBound = this.handleDataBound.bind(this);
     }
 
@@ -48,6 +47,26 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
         }
     }
 
+    protected createStyle(): Style {
+        return {
+            class: '',
+            bodyRow: {
+                class: '',
+                cell: {
+                    class: ''
+                }
+            },
+            headerRow: {
+                class: '',
+                cell: {
+                    class: '',
+                    classBySortDirection: { },
+                    classIfFilter: ''
+                }
+            }
+        };
+    }
+
     protected handleDataBound(dataSource: DataSource<any>) {
         if (dataSource == this.props.dataSource) {
             this.forceUpdate();
@@ -64,7 +83,7 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
         }
     }
 
-    protected getCellClassName(column: TableColumn<any>, cellProps: TableCellProps): string {
+    protected getCellClassName(column: Column<any>, cellProps: CellProps): string {
         return new CssClassNameBuilder()
             .addIf(column.props.cellProps, () => cellProps.className)
             .build();
@@ -83,7 +102,7 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
         );
     }
 
-    protected renderBodyCell(column: TableColumn<any>, model: any, columnIndex: number, rowIndex: number): JSX.Element {
+    protected renderBodyCell(column: Column<any>, model: any, columnIndex: number, rowIndex: number): JSX.Element {
         return (
             <td className={this.getCellClassName(column, column.props.body)} key={`${rowIndex}_${columnIndex}`}>
                 {column.renderBody(model, rowIndex)}
@@ -103,7 +122,7 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
         return (
             <tr>
                 <td colSpan={this.columns.length}>
-                    {this.detailColumn ? this.detailColumn.renderDetailsRow(model, rowIndex) : null}
+                    {this.detailsColumn ? this.detailsColumn.renderDetailsRow(model, rowIndex) : null}
                 </td>
             </tr>
         );
@@ -117,7 +136,7 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
         );
     }
 
-    protected renderHeaderCell(column: TableColumn<any>, columnIndex: number): JSX.Element {
+    protected renderHeaderCell(column: Column<any>, columnIndex: number): JSX.Element {
         return (
             <th className={this.getCellClassName(column, column.props.header)} key={columnIndex}>
                 {column.renderHeader()}
@@ -142,19 +161,19 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
         );
     }
 
-    protected get columns(): TableColumn<TableColumnProps>[] {
+    protected get columns(): Column<ColumnProps>[] {
         return this._columns = this._columns
             || React.Children.toArray(this.props.children)
                 .map(x => new (x as any).type((x as any).props, this))
-                .filter(x => x instanceof TableColumn) as any;
+                .filter(x => x instanceof Column) as any;
     }
 
-    protected get detailColumn(): DetailsTableColumn {
+    protected get detailsColumn(): DetailsColumn {
         return this._detailColumn = this._detailColumn
-            || (this.columns as any).find(x => x instanceof DetailsTableColumn);
+            || (this.columns as any).find(x => x instanceof DetailsColumn);
     }
 
-    protected get style(): TableStyle {
-        return this._style = this._style || StyleProvider.instance.getGridStyle();
+    protected get style(): Style {
+        return this._style = this._style || this.createStyle();
     }
 }

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Table } from './table';
-import { TableColumn, TableColumnProps } from './table-column';
+import { Column, ColumnProps } from './column';
 
-export interface DetailsTableColumnProps extends TableColumnProps {
-    detailsRowTemplate: (tableColumn: DetailsTableColumn, model: any, rowIndex: number) => JSX.Element;
+export interface DetailsColumnProps extends ColumnProps {
+    detailsRowTemplate: (column: DetailsColumn, model: any, rowIndex: number) => JSX.Element;
 }
 
-export class DetailsTableColumn extends TableColumn<DetailsTableColumnProps> {
-    public constructor(props: DetailsTableColumnProps, table: Table<any, any>) {
+export class DetailsColumn extends Column<DetailsColumnProps> {
+    public constructor(props: DetailsColumnProps, table: Table<any, any>) {
         super(props, table);
 
         this.handleExpandOrCollapse = this.handleExpandOrCollapse.bind(this);

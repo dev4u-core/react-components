@@ -3,22 +3,22 @@ import { Table } from './table';
 import { SortDirection } from '../../infrastructure/common';
 import { DataSource } from '../../infrastructure/data-source';
 
-export interface TableCellProps {
+export interface CellProps {
     className?: string;
-    template?: (column: TableColumn<any>, model?: any) => JSX.Element;
+    template?: (column: Column<any>, model?: any) => JSX.Element;
 }
 
-export interface TableColumnProps {
-    body?: TableCellProps;
+export interface ColumnProps {
+    body?: CellProps;
     className?: string;
     field?: string;
-    footer?: TableCellProps;
-    header?: TableCellProps;
+    footer?: CellProps;
+    header?: CellProps;
     isSortable?: boolean;
     title?: string;
 }
 
-export class TableColumn<P extends TableColumnProps> extends React.Component<P, any> {
+export class Column<P extends ColumnProps> extends React.Component<P, any> {
     private readonly _table: Table<any, any>;
 
     public constructor(props: P, table: Table<any, any>) {
