@@ -11,7 +11,8 @@ module.exports = {
         'tests/infrastructure/css-class-name-generator': ['./tests/infrastructure/css-class-name-generator'],
         'tests/infrastructure/comparer': ['./tests/infrastructure/comparer'],
         'tests/infrastructure/data-source': ['./tests/infrastructure/data-source'],
-        'tests/infrastructure/data-source-pager': ['./tests/infrastructure/data-source-pager']
+        'tests/infrastructure/data-source-pager': ['./tests/infrastructure/data-source-pager'],
+        'tests/infrastructure/uri': ['./tests/infrastructure/uri']
     },
     module: {
         loaders: [

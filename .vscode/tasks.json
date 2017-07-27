@@ -19,9 +19,9 @@
             "taskName": "build"
         },
         {   
-            "args": ["test:dev"],
+            "args": ["run:tests"],
             "isTestCommand": true,
-            "isWatching": false,
+            "isBackground": false,
             "suppressTaskName": true,
             "taskName": "test"
         }
