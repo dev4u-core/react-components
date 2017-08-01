@@ -28,16 +28,16 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
         this.handleDataBound = this.handleDataBound.bind(this);
     }
 
-    protected componentWillMount() {
+    public componentWillMount() {
         this.setDataSource(this.props.dataSource);
     }
 
-    protected componentWillUpdate() {
+    public componentWillUpdate() {
         this._columns = null;
         this._detailColumn = null;
     }
 
-    protected componentWillReceiveProps(nextProps: P) {
+    public componentWillReceiveProps(nextProps: P) {
         if ((this.props.dataSource != nextProps.dataSource) && (nextProps.dataSource != null)) {
             if (this.props.dataSource) {
                 this.props.dataSource.onDataBound.off(this.handleDataBound);

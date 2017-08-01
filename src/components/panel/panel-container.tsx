@@ -6,8 +6,7 @@ export enum PanelContainerMode {
     StaticAndDynamic = 1 << 1
 }
 
-export enum PanelContainerOrientation
-{
+export enum PanelContainerOrientation {
     Horizontal = 1 << 0,
     Vertical = 1 << 1
 }
@@ -50,7 +49,7 @@ export class PanelContainer extends React.Component<PanelContainerProps, PanelCo
     }
 
     protected handleDynamicPanelClosed(panel: Panel) {
-        let dynamicPanelIndex = this.state.dynamicPanels.indexOf(panel);
+        let dynamicPanelIndex = this.state.dynamicPanels.indexOf(panel as any);
         this.state.dynamicPanels.splice(dynamicPanelIndex, 1);
 
         this.forceUpdate();
@@ -61,14 +60,15 @@ export class PanelContainer extends React.Component<PanelContainerProps, PanelCo
     }
 
     protected handleStaticPanelClosed(panel: Panel) {
-        let staticPanelIndex = this.state.staticPanels.indexOf(panel);
+        let staticPanelIndex = this.state.staticPanels.indexOf(panel as any);
         this.state.staticPanels.splice(staticPanelIndex, 1);
 
         this.forceUpdate();
     }
 
     protected renderDynamicPanel(renderContext: PanelContainerRenderContext, panel: PanelProps, index: number): JSX.Element {
-        let columnCount = panel.columnCount || renderContext.defaultColumnCount;
+        const columnCount = panel.columnCount || renderContext.defaultColumnCount;
+
         return <Panel columnCount={columnCount}
             key={`dynamic_panel_${index}`}
             title={panel.title}

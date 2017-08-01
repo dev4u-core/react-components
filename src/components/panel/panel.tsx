@@ -9,8 +9,9 @@ export interface PanelProps {
 }
 
 export class Panel extends React.Component<PanelProps, any> {
-    constructor(props: PanelProps) {
-        super();
+    public constructor(props: PanelProps) {
+        super(props);
+
         this.handleClose = this.handleClose.bind(this);
     }
 
