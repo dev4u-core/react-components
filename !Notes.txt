@@ -1,2 +1,0 @@
-ts-loader
-    https://github.com/s-panferov/awesome-typescript-loader/blob/e71f15551c0c5bfff9188d796a6655c1c263812a/src/instance.ts#L390

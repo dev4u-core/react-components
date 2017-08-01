@@ -17,7 +17,8 @@ describe('Comparer', () => {
         ].forEach(testCase => {
             expect(Comparer.Instance.compare(testCase.x, testCase.y)).to.equal(testCase.result, `x: ${testCase.x}, y: ${testCase.y}`);
         });
-    })
+    });
+
     it('compare string values', () => {
         [
             { x: 'value0', y: 'value0', result: 0 },
