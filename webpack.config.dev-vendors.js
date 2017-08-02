@@ -12,19 +12,19 @@ module.exports = {
         'react/lib/ExecutionEnvironment': true,
         'react/lib/ReactContext': true
     },
-    frameworks: ['chai', 'mocha'],
     output: {
         filename: 'vendors.js',
         library: 'vendors',
-        path: './dist'
+        path: path.join(__dirname, './dist')
     },
     plugins: [
-        new webpack.NoErrorsPlugin(),
         new webpack.DllPlugin({
             context: '.',
             path: path.join(__dirname, 'dist', '[name]-manifest.json'),
             name: 'vendors'
-        })],
+        }),
+        new webpack.NoEmitOnErrorsPlugin()
+    ],
     resolve: {
         alias: {
             'react$': path.resolve(__dirname, './node_modules/react/dist/react-with-addons'),
@@ -32,9 +32,6 @@ module.exports = {
             'react-addons-test-utils$': path.resolve(__dirname, './node_modules/react-addons-test-utils/index'),
             'sinon': 'sinon/pkg/sinon'
         },
-        extensions: ['', '.js', '.json']
-    },
-    resolveLoader: {
-        modulesDirectories: ['./node_modules']
+        extensions: ['.js', '.json']
     }
 }
