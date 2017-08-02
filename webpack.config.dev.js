@@ -4,9 +4,9 @@ var webpack = require('webpack');
 module.exports = {
     cache: true,
     entry: {
-        'examples/table': ['./examples/table'],
+        'examples/grid': ['./examples/grid'],
         'tests/components/panel-container': ['./tests/components/panel-container'],
-        'tests/components/table': ['./tests/components/table'],
+        'tests/components/grid': ['./tests/components/grid'],
         'tests/infrastructure/css-class-name-builder': ['./tests/infrastructure/css-class-name-builder'],
         'tests/infrastructure/css-class-name-generator': ['./tests/infrastructure/css-class-name-generator'],
         'tests/infrastructure/comparer': ['./tests/infrastructure/comparer'],

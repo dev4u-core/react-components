@@ -7,14 +7,14 @@ import { PanelContainer, PanelContainerState, PanelContainerMode, PanelContainer
 describe('<PanelContainer />', () => {
     describe('initialization', () => {
         it('"staticPanels" property should be initialized', () => {
-            let panelContainer = Enzyme.mount<any, PanelContainerState>(
+            const panelContainer = Enzyme.mount<any, PanelContainerState>(
                 <PanelContainer>
                     <Panel title="panel0" />
                     <Panel title="panel1" />
                     <Panel title="panel2" />
                 </PanelContainer>
             );
-            let staticPanels = panelContainer.state().staticPanels;
+            const staticPanels = panelContainer.state().staticPanels;
 
             expect(staticPanels.length).to.equal(3);
             expect(staticPanels[0].title).to.equal('panel0');

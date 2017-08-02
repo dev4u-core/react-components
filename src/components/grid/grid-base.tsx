@@ -6,17 +6,17 @@ import { SortDirection } from '../../../src/infrastructure/common';
 import { CssClassNameBuilder } from '../../../src/infrastructure/css-class-name-builder';
 import { DataSource, DataSourceState } from '../../../src/infrastructure/data-source';
 
-export interface TableProps {
+export interface GridProps {
     autoBind?: boolean;
     dataSource: DataSource<any>;
 }
 
-export interface TableState {
+export interface GridState {
     expandedDetailRows: any[];
 }
 
-export class Table<P extends TableProps, S extends TableState> extends React.Component<P, S> {
-    private _columns: Column<any>[];
+export class Grid<P extends GridProps, S extends GridState> extends React.Component<P, S> {
+    private _columns: Column[];
     private _detailColumn: DetailsColumn;
     private _style: Style;
 
@@ -83,9 +83,9 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
         }
     }
 
-    protected getCellClassName(column: Column<any>, cellProps: CellProps): string {
+    protected getCellClassName(column: Column, cellProps: CellProps): string {
         return new CssClassNameBuilder()
-            .addIf(column.props.cellProps, () => cellProps.className)
+            .addIf(cellProps != null, () => cellProps.className)
             .build();
     }
 
@@ -102,7 +102,7 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
         );
     }
 
-    protected renderBodyCell(column: Column<any>, model: any, columnIndex: number, rowIndex: number): JSX.Element {
+    protected renderBodyCell(column: Column, model: any, columnIndex: number, rowIndex: number): JSX.Element {
         return (
             <td className={this.getCellClassName(column, column.props.body)} key={`${rowIndex}_${columnIndex}`}>
                 {column.renderBody(model, rowIndex)}
@@ -136,7 +136,7 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
         );
     }
 
-    protected renderHeaderCell(column: Column<any>, columnIndex: number): JSX.Element {
+    protected renderHeaderCell(column: Column, columnIndex: number): JSX.Element {
         return (
             <th className={this.getCellClassName(column, column.props.header)} key={columnIndex}>
                 {column.renderHeader()}
@@ -161,7 +161,7 @@ export class Table<P extends TableProps, S extends TableState> extends React.Com
         );
     }
 
-    protected get columns(): Column<ColumnProps>[] {
+    protected get columns(): Column[] {
         return this._columns = this._columns
             || React.Children.toArray(this.props.children)
                 .map(x => new (x as any).type((x as any).props, this))

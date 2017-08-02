@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table } from './table';
+import { Grid } from './grid';
 import { SortDirection } from '../../infrastructure/common';
 import { DataSource } from '../../infrastructure/data-source';
 
@@ -19,19 +19,19 @@ export interface ColumnProps {
 }
 
 export class Column<P extends ColumnProps> extends React.Component<P, any> {
-    private readonly _table: Table<any, any>;
+    private readonly _grid: Grid;
 
-    public constructor(props: P, table: Table<any, any>) {
+    public constructor(props: P, grid: Grid) {
         super(props);
 
-        this._table = table;
+        this._grid = grid;
 
         this.handleSort = this.handleSort.bind(this);
     }
 
     protected getSortDirection(): SortDirection {
-        const sortedBy = (this.table.props.dataSource.view && this.table.props.dataSource.view.sortedBy)
-            ? this.table.props.dataSource.view.sortedBy.filter(x => x.field == this.props.field)
+        const sortedBy = (this.grid.props.dataSource.view && this.grid.props.dataSource.view.sortedBy)
+            ? this.grid.props.dataSource.view.sortedBy.filter(x => x.field == this.props.field)
             : null;
 
         return (sortedBy != null)
@@ -42,7 +42,7 @@ export class Column<P extends ColumnProps> extends React.Component<P, any> {
     }
 
     public handleSort() {
-        const dataSource = this.table.props.dataSource;
+        const dataSource = this.grid.props.dataSource;
         let sortedBy = null;
 
         if (dataSource.view && dataSource.view.sortedBy) {
@@ -86,7 +86,7 @@ export class Column<P extends ColumnProps> extends React.Component<P, any> {
                 : <span>{this.props.title}</span>);
     }
 
-    protected get table() {
-        return this._table;
+    protected get grid() {
+        return this._grid;
     }
 }

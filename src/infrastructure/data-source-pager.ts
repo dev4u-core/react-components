@@ -19,6 +19,10 @@ export class DataSourcePager {
         this._dataSource = dataSource;
     }
 
+    public getPageCount(): number {
+        return Math.ceil(this.dataSource.totalCount / this.dataSource.pageSize);
+    }
+
     protected getPageIndex(pageType: PageType) {
         switch (pageType) {
             case PageType.First: return 0;
@@ -29,13 +33,12 @@ export class DataSourcePager {
     }
 
     public canMoveToPage(pageType: PageType): boolean {
-        let nextPageIndex = this.getPageIndex(pageType);
-        let pageCount = this.getPageCount();
+        const nextPageIndex = this.getPageIndex(pageType);
+        const pageCount = this.getPageCount();
+
         return (nextPageIndex >= 0) && (nextPageIndex < pageCount) && (nextPageIndex != this.dataSource.view.pageIndex);
     }
-    public getPageCount(): number {
-        return Math.ceil(this.dataSource.totalCount / this.dataSource.pageSize);
-    }
+
     public getPageInfo(pageIndex: number): PageInfo {
         const lastPageIndex = (pageIndex + 1) * this.dataSource.pageSize - 1;
 
@@ -43,13 +46,15 @@ export class DataSourcePager {
             firstIndex: pageIndex * this.dataSource.pageSize,
             lastIndex: (lastPageIndex < this.dataSource.totalCount)
                 ? lastPageIndex
-                : (this.dataSource.totalCount) > 0 ? (this.dataSource.totalCount - 1) : 0
+                : (this.dataSource.totalCount > 0) ? (this.dataSource.totalCount - 1) : 0
         };
     }
+
     public moveToPage(pageType: PageType) {
         if (!this.canMoveToPage(pageType)) return;
 
-        let pageIndex = this.getPageIndex(pageType);
+        const pageIndex = this.getPageIndex(pageType);
+
         this.dataSource.setPageIndex(pageIndex);
         this.dataSource.dataBind();
     }
