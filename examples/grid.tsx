@@ -4,7 +4,7 @@ import { Column } from '../src/components/grid/column';
 import { DetailsColumn } from '../src/components/grid/details-column';
 import { InfiniteScrollPager } from '../src/components/pager/infinite-scroll-pager';
 import { Grid } from '../src/components/grid/grid';
-import { ClientDataSource } from '../src/infrastructure/data-source';
+import { ClientDataSource, DataViewMode } from '../src/infrastructure/data-source';
 
 function getData(count: number): any[] {
     const result = [];
@@ -16,7 +16,7 @@ function getData(count: number): any[] {
     return result;
 }
 
-const dataSource = new ClientDataSource(getData(1000), { pageSize: 50 });
+const dataSource = new ClientDataSource(getData(1000), { pageSize: 50, viewMode: DataViewMode.FromFirstToCurrentPage });
 
 ReactDom.render(
     <InfiniteScrollPager dataSource={dataSource}>

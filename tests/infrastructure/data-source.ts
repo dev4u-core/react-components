@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as Mocha from 'mocha';
 import { DataType, SortDirection } from '../../src/infrastructure/common';
-import { ClientDataSource } from '../../src/infrastructure/data-source';
+import { ClientDataSource, DataViewMode } from '../../src/infrastructure/data-source';
 import { FieldAccessor } from '../../src/infrastructure/field-accessor';
 import { TypeConverterProvider } from '../../src/infrastructure/type-converter';
 
@@ -31,7 +31,7 @@ describe('ClientDataSource', () => {
         expect(dataSource.view.data[0].field).to.equal('value0');
     });
 
-    describe('setPageIndex', () => {
+    describe('setPageIndex if "DataViewMode" is "CurrentPage")', () => {
         const data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
 
         it('by default', () => {
@@ -46,7 +46,7 @@ describe('ClientDataSource', () => {
 
         it('setPageIndex', () => {
             [{ pageIndex: 0 }, { pageIndex: 1 }, { pageIndex: 2 }]
-                .forEach((x, i) => {
+                .forEach(x => {
                     const dataSource = new ClientDataSource(data, { pageSize: 1 });
 
                     dataSource.setPageIndex(x.pageIndex).dataBind();
@@ -54,6 +54,38 @@ describe('ClientDataSource', () => {
                     expect(dataSource.view.pageIndex).to.equal(x.pageIndex, 'pageIndex');
                     expect(dataSource.view.data.length).to.equal(1, 'data.length');
                     expect(dataSource.view.data[0].field).to.equal('value' + x.pageIndex, 'data[0].field');
+                });
+        });
+    });
+
+    describe('setPageIndex if "DataViewMode" is "FromFirstToCurrentPage"', () => {
+        const data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
+
+        it('by default', () => {
+            const dataSource = new ClientDataSource(data, { pageSize: 1, viewMode: DataViewMode.FromFirstToCurrentPage });
+
+            dataSource.dataBind();
+
+            expect(dataSource.view.pageIndex).to.equal(0, 'pageIndex');
+            expect(dataSource.view.data.length).to.equal(1, 'data.length');
+            expect(dataSource.view.data[0].field).to.equal('value0', 'data[0].field');
+        });
+
+        it('setPageIndex', () => {
+            [{ pageIndex: 0 }, { pageIndex: 1 }, { pageIndex: 2 }]
+                .forEach(x => {
+                    const dataSource = new ClientDataSource(data, { pageSize: 1, viewMode: DataViewMode.FromFirstToCurrentPage });
+
+                    dataSource
+                        .setPageIndex(x.pageIndex)
+                        .dataBind();
+
+                    expect(dataSource.view.pageIndex).to.equal(x.pageIndex, 'pageIndex');
+                    expect(dataSource.view.data.length).to.equal(x.pageIndex + 1, `pageIndex: ${x.pageIndex}, data.length`);
+
+                    for (let i = 0; i < x.pageIndex; i++) {
+                        expect(dataSource.view.data[i].field).to.equal(`value${i}`, `pageIndex: ${x.pageIndex}, data[${i}].field`);
+                    }
                 });
         });
     });

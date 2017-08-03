@@ -4,9 +4,15 @@ import { Comparer } from './comparer';
 import { Event } from './event';
 import { DefaultFieldAccessor, FieldAccessor } from './field-accessor';
 
+export enum DataViewMode {
+    CurrentPage,
+    FromFirstToCurrentPage
+}
+
 export interface DataView<T> {
     data?: T[];
     filteredBy?: FilterExpression[];
+    mode?: DataViewMode;
     pageIndex?: number;
     sortedBy?: SortExpression[];
 }
@@ -38,6 +44,7 @@ export interface ClientDataSourceProps {
     pageSize?: number;
     pageIndex?: number;
     sortedBy?: SortExpression[];
+    viewMode?: DataViewMode;
 }
 
 export class ClientDataSource<T> implements DataSource<T> {
@@ -50,6 +57,7 @@ export class ClientDataSource<T> implements DataSource<T> {
     private _sort: ((view: DataView<T>) => void);
     private _state: DataSourceState;
     private _view: DataView<T>;
+    private _viewMode: DataViewMode;
 
     public constructor(data: T[], props?: ClientDataSourceProps) {
         if (props) {
@@ -63,6 +71,7 @@ export class ClientDataSource<T> implements DataSource<T> {
             }
 
             this._fieldAccessor = props.fieldAccessor;
+            this._viewMode = props.viewMode
         }
 
         this._data = data;
@@ -142,8 +151,11 @@ export class ClientDataSource<T> implements DataSource<T> {
 
     public setPageIndex(value: number): DataSource<T> {
         this._setPageIndex = x => {
+            debugger;
             x.pageIndex = value;
-            x.data = x.data.slice(this.pageSize * value, this.pageSize * (value + 1));
+            x.data = (this.viewMode == DataViewMode.FromFirstToCurrentPage)
+                ? x.data.slice(0, this.pageSize * (value + 1))
+                : x.data.slice(this.pageSize * value, this.pageSize * (value + 1));
         };
 
         return this;
@@ -161,7 +173,9 @@ export class ClientDataSource<T> implements DataSource<T> {
     public sort(...expressions: SortExpression[]): DataSource<T> {
         this._sort = x => {
             x.sortedBy = expressions;
-            x.data = (expressions && (expressions.length > 0)) ? x.data.concat().sort(this.getComparer(expressions)) : x.data;
+            x.data = (expressions && (expressions.length > 0))
+                ? x.data.concat().sort(this.getComparer(expressions))
+                : x.data;
         };
 
         return this;
@@ -185,6 +199,10 @@ export class ClientDataSource<T> implements DataSource<T> {
 
     public get view(): DataView<T> {
         return this._view;
+    }
+
+    public get viewMode(): DataViewMode {
+        return this._viewMode;
     }
 
     public get onDataBinding(): Event<any> {
