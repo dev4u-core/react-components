@@ -72,7 +72,7 @@ export class UriBuilder {
                 : `${UriScheme[this._scheme].toLowerCase()}://${this._host}:${this._port}`;
 
             return pathAndQuery
-                ? (pathAndQuery.startsWith('/') ? (schemeAndHostAndPort + pathAndQuery) : (schemeAndHostAndPort + '/' + pathAndQuery))
+                ? ((pathAndQuery.indexOf('/') == 0) ? (schemeAndHostAndPort + pathAndQuery) : (schemeAndHostAndPort + '/' + pathAndQuery))
                 : schemeAndHostAndPort;
         } else {
             return pathAndQuery;

@@ -153,7 +153,7 @@ export class ClientDataSource<T> implements DataSource<T> {
         this._setPageIndex = x => {
             debugger;
             x.pageIndex = value;
-            x.data = (this.viewMode == DataViewMode.FromFirstToCurrentPage)
+            x.data = (this._viewMode == DataViewMode.FromFirstToCurrentPage)
                 ? x.data.slice(0, this.pageSize * (value + 1))
                 : x.data.slice(this.pageSize * value, this.pageSize * (value + 1));
         };
@@ -199,10 +199,6 @@ export class ClientDataSource<T> implements DataSource<T> {
 
     public get view(): DataView<T> {
         return this._view;
-    }
-
-    public get viewMode(): DataViewMode {
-        return this._viewMode;
     }
 
     public get onDataBinding(): Event<any> {
