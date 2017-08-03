@@ -63,7 +63,7 @@ export class Column<P extends ColumnProps> extends React.Component<P, any> {
         dataSource.dataBind();
     }
 
-    public renderBody(model: any, index: number): JSX.Element {
+    public renderBody(model: any, rowIndex: number): JSX.Element {
         return this.props.children
             ? React.Children.only(this.props.children)
             : (this.props.body && this.props.body.template

@@ -14,12 +14,12 @@ export class DetailsColumn extends Column<DetailsColumnProps> {
     }
 
     protected handleExpandOrCollapse(model: any) {
-        const index = this.grid.state.expandedDetailRows.indexOf(model);
+        const index = this.grid.state.expandedDetails.indexOf(model);
 
         if (index != -1) {
-            this.grid.state.expandedDetailRows.splice(index, 1);
+            this.grid.state.expandedDetails.splice(index, 1);
         } else {
-            this.grid.state.expandedDetailRows.push(model);
+            this.grid.state.expandedDetails.push(model);
         }
 
         this.grid.forceUpdate();
@@ -28,7 +28,7 @@ export class DetailsColumn extends Column<DetailsColumnProps> {
     public renderBody(model: any, rowIndex: number): JSX.Element {
         return (
             <a href="javascript:" onClick={() => this.handleExpandOrCollapse(model)}>
-                {(this.grid.state.expandedDetailRows.indexOf(model) != -1) ? '-' : '+'}
+                {(this.grid.state.expandedDetails.indexOf(model) != -1) ? '-' : '+'}
             </a>
         );
     }
