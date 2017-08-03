@@ -3,22 +3,22 @@ import { Grid } from './grid';
 import { SortDirection } from '../../infrastructure/common';
 import { DataSource } from '../../infrastructure/data-source';
 
-export interface CellProps {
+export interface GridCellProps {
     className?: string;
-    template?: (column: Column<any>, model?: any) => JSX.Element;
+    template?: (column: GridColumn<any>, model?: any) => JSX.Element;
 }
 
-export interface ColumnProps {
-    body?: CellProps;
+export interface GridColumnProps {
+    body?: GridCellProps;
     className?: string;
     field?: string;
-    footer?: CellProps;
-    header?: CellProps;
+    footer?: GridCellProps;
+    header?: GridCellProps;
     isSortable?: boolean;
     title?: string;
 }
 
-export class Column<P extends ColumnProps> extends React.Component<P, any> {
+export class GridColumn<P extends GridColumnProps> extends React.Component<P, any> {
     private readonly _grid: Grid;
 
     public constructor(props: P, grid: Grid) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { Column } from '../src/components/grid/column';
-import { DetailsColumn } from '../src/components/grid/details-column';
+import { GridColumn } from '../src/components/grid/grid-column';
+import { GridDetailsColumn } from '../src/components/grid/grid-details-column';
 import { InfiniteScrollPager } from '../src/components/pager/infinite-scroll-pager';
 import { Grid } from '../src/components/grid/grid';
 import { ClientDataSource, DataViewMode } from '../src/infrastructure/data-source';
@@ -16,19 +16,20 @@ function getData(count: number): any[] {
     return result;
 }
 
-const dataSource = new ClientDataSource(getData(1000), { pageSize: 50, viewMode: DataViewMode.FromFirstToCurrentPage });
+const data = getData(1000);
+const dataSource = new ClientDataSource(data, { pageSize: 50, viewMode: DataViewMode.FromFirstToCurrentPage });
 
 ReactDom.render(
     <InfiniteScrollPager dataSource={dataSource}>
         <Grid autoBind={true} dataSource={dataSource}>
-            <DetailsColumn detailsRowTemplate={(column, model, rowIndex) =>
-                <Grid autoBind={true} dataSource={new ClientDataSource(model.items)}>
-                    <Column field="title" title="Title" />
+            <GridDetailsColumn detailsRowTemplate={(column, model, rowIndex) =>
+                <Grid autoBind={true} dataSource={new ClientDataSource(data)}>
+                    <GridColumn field="title" title="Title" />
                 </Grid>
             } />
-            <Column field="title" title="Title" />
-            <Column field="description" title="Description" />
-            <Column
+            <GridColumn field="title" title="Title" />
+            <GridColumn field="description" title="Description" />
+            <GridColumn
                 isSortable={false}
                 body={{ template: (sender, x) => (<a href="javascript:">{x.title}</a>)}}
                 title="Link" />

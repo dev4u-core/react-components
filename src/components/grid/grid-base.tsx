@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Column, ColumnProps, CellProps } from './column';
-import { DetailsColumn } from './details-column';
+import { GridColumn, GridColumnProps, GridCellProps } from './grid-column';
+import { GridDetailsColumn } from './grid-details-column';
 import { GridStyle, GridRowStyle } from './grid-style';
 import { Style } from '../common';
 import { SortDirection } from '../../../src/infrastructure/common';
@@ -24,8 +24,8 @@ export interface GridState {
 }
 
 export abstract class Grid<P extends GridProps, S extends GridState> extends React.Component<P, S> {
-    private _columns: Column[];
-    private _detailColumn: DetailsColumn;
+    private _columns: GridColumn[];
+    private _detailColumn: GridDetailsColumn;
     private _style: GridStyle;
 
     public constructor(props: P) {
@@ -98,7 +98,7 @@ export abstract class Grid<P extends GridProps, S extends GridState> extends Rea
         );
     }
 
-    protected renderCell(rowType: GridRowType, column: Column, model: any, columnIndex: number, rowIndex: number): JSX.Element {
+    protected renderCell(rowType: GridRowType, column: GridColumn, model: any, columnIndex: number, rowIndex: number): JSX.Element {
         const rowStyle = this.getBodyRowStyle(rowType);
         const className = ((rowStyle != null) && (rowStyle.cell != null)) ? rowStyle.cell.className : '';
         const key = `${rowIndex}_${columnIndex}`;
@@ -117,7 +117,7 @@ export abstract class Grid<P extends GridProps, S extends GridState> extends Rea
                     </td>
                 );
             case GridRowType.Details:
-                return (column instanceof DetailsColumn)
+                return (column instanceof GridDetailsColumn)
                     ? (
                         <td className={className} colSpan={this.columns.length} key={key}>
                             {column.renderBody(model, rowIndex)}
@@ -173,11 +173,11 @@ export abstract class Grid<P extends GridProps, S extends GridState> extends Rea
         );
     }
 
-    protected get columns(): Column[] {
+    protected get columns(): GridColumn[] {
         return this._columns = this._columns
             || React.Children.toArray(this.props.children)
                 .map(x => new (x as any).type((x as any).props, this))
-                .filter(x => x instanceof Column) as any;
+                .filter(x => x instanceof GridColumn) as any;
     }
 
     protected get style(): GridStyle {

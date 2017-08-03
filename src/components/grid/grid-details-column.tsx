@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Grid } from './grid';
-import { Column, ColumnProps } from './column-base';
+import { GridColumn, GridColumnProps } from './grid-column-base';
 
-export interface DetailsColumnProps extends ColumnProps {
-    detailsRowTemplate: (column: DetailsColumn, model: any, rowIndex: number) => JSX.Element;
+export interface DetailsColumnProps extends GridColumnProps {
+    detailsRowTemplate: (column: GridDetailsColumn, model: any, rowIndex: number) => JSX.Element;
 }
 
-export class DetailsColumn extends Column<DetailsColumnProps> {
+export class GridDetailsColumn extends GridColumn<DetailsColumnProps> {
     public constructor(props: DetailsColumnProps, grid: Grid) {
         super(props, grid);
 

@@ -1,7 +1,7 @@
 import * as Enzyme from 'enzyme';
 import { expect } from 'chai';
 import * as React from 'react';
-import { Column } from '../../src/components/grid/column';
+import { GridColumn } from '../../src/components/grid/grid-column';
 import { Grid } from '../../src/components/grid/grid';
 import { SortDirection } from '../../src/infrastructure/common';
 import { ClientDataSource, DataSource } from '../../src/infrastructure/data-source';
@@ -18,8 +18,8 @@ describe('<Grid />', () => {
 
                 grid = Enzyme.mount(
                     <Grid dataSource={dataSource}>
-                        <Column field="title" title="Title" />
-                        <Column field="description" title="Description" />
+                        <GridColumn field="title" title="Title" />
+                        <GridColumn field="description" title="Description" />
                     </Grid>
                 );
             });
@@ -88,7 +88,7 @@ describe('<Grid />', () => {
             it('className', () => {
                 const grid = Enzyme.mount(
                     <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>
-                        <Column body={{ className: 'class0' }} field="title" title="Title" />
+                        <GridColumn body={{ className: 'class0' }} field="title" title="Title" />
                     </Grid>
                 );
 
@@ -100,11 +100,11 @@ describe('<Grid />', () => {
             it('className', () => {
                 let grid = Enzyme.mount(
                     <Grid autoBind={true} dataSource={new ClientDataSource([{}])}>
-                        <Column header={{ className: 'class0' }} field="title" title="Title" />
+                        <GridColumn header={{ className: 'class0' }} field="title" title="Title" />
                     </Grid>
                 );
 
-                expect(grid.find(`th.class0`).length).to.equal(1);
+                expect(grid.find('th.class0').length).to.equal(1);
             });
         });
     });
