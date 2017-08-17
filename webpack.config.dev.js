@@ -9,6 +9,7 @@ module.exports = {
         'examples/grid': ['./examples/grid'],
         'tests/components/panel-container': ['./tests/components/panel-container'],
         'tests/components/grid': ['./tests/components/grid'],
+        'tests/infrastructure/expressions/expression-converter': ['./tests/infrastructure/expressions/expression-converter'],
         'tests/infrastructure/css-class-name-builder': ['./tests/infrastructure/css-class-name-builder'],
         'tests/infrastructure/css-class-name-generator': ['./tests/infrastructure/css-class-name-generator'],
         'tests/infrastructure/comparer': ['./tests/infrastructure/comparer'],
