@@ -21,6 +21,7 @@ function isElementVisible(element) {
 }
 
 export interface InfiniteScrollPagerProps {
+    isEnabled?: boolean;
     dataSource: DataSource<any>;
 }
 
@@ -35,14 +36,14 @@ export class InfiniteScrollPager extends React.Component<InfiniteScrollPagerProp
         this.handleScroll = this.handleScroll.bind(this);
     }
 
-    public componentDidMount() {
-        document.addEventListener('scroll', this.handleScroll);
-        document.addEventListener('resize', this.handleScroll);
+    protected attachEvents() {
+        window.addEventListener('scroll', this.handleScroll);
+        window.addEventListener('resize', this.handleScroll);
     }
 
-    public componentWillUnmount() {
-        document.removeEventListener('scroll', this.handleScroll);
-        document.removeEventListener('resize', this.handleScroll);
+    protected detachEvents() {
+        window.removeEventListener('scroll', this.handleScroll);
+        window.removeEventListener('resize', this.handleScroll);
     }
 
     protected handleScroll() {
@@ -50,6 +51,30 @@ export class InfiniteScrollPager extends React.Component<InfiniteScrollPagerProp
             const dataSourcePager = new DataSourcePager(this.props.dataSource);
 
             dataSourcePager.moveToPage(PageType.Next);
+        }
+    }
+
+    public componentDidMount() {
+        if (this.props.isEnabled) {
+            document.addEventListener('scroll', this.handleScroll);
+            document.addEventListener('resize', this.handleScroll);
+        }
+    }
+
+    public componentWillReceiveProps(nextProps: InfiniteScrollPagerProps) {
+        if (this.props.isEnabled != nextProps.isEnabled) {
+            if (nextProps.isEnabled) {
+                this.attachEvents();
+            } else {
+                this.detachEvents();
+            }
+        }
+    }
+
+    public componentWillUnmount() {
+        if (this.props.isEnabled) {
+            document.removeEventListener('scroll', this.handleScroll);
+            document.removeEventListener('resize', this.handleScroll);
         }
     }
 
