@@ -151,7 +151,6 @@ export class ClientDataSource<T> implements DataSource<T> {
 
     public setPageIndex(value: number): DataSource<T> {
         this._setPageIndex = x => {
-            debugger;
             x.pageIndex = value;
             x.data = (this._viewMode == DataViewMode.FromFirstToCurrentPage)
                 ? x.data.slice(0, this.pageSize * (value + 1))

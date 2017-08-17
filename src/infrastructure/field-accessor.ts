@@ -1,16 +1,23 @@
+const FieldSeparator = '.';
+
 export interface FieldAccessor {
     getValue(model: any, compositeField: string): any;
 }
 
 export class DefaultFieldAccessor {
-    private static readonly Separator: string = '.';
-
     public getValue(model: any, compositeField: string): any {
-        const fields = compositeField.split(DefaultFieldAccessor.Separator);
+        const fields = compositeField.split(FieldSeparator);
         let result = model;
 
         for (let i = 0; i < fields.length; i++) {
-            result = result[fields[i]];
+            const field = fields[i];
+
+            if (result instanceof Array) {
+                result = result.map(x => x[field]);
+            } else {
+                result = result[field];
+            }
+
             if (!result) break;
         }
 

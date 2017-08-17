@@ -9,12 +9,16 @@ describe('ExpressionConverter', () => {
             const expressionConverter = new ExpressionConverter();
             const model = { field0: 'xxxyyyzzz' };
 
-            it ('if result is true and value is start part', () => {
-                const filterExpression = {
+            function createFilterExpression(value: any): FilterExpression {
+                return {
                     field: 'field0',
                     operator: ComparisonOperator.Contain,
-                    value: 'xxx'
+                    value: value
                 };
+            }
+
+            it ('if result is true and value is start part', () => {
+                const filterExpression = createFilterExpression('xxx');
 
                 const comparisonExpression = expressionConverter.toComparison(filterExpression);
 
@@ -22,23 +26,15 @@ describe('ExpressionConverter', () => {
             });
 
             it ('if result is true and value is middle part', () => {
-                const filterExpression = {
-                    field: 'field0',
-                    operator: ComparisonOperator.Contain,
-                    value: 'yyy'
-                };
+                const filterExpression = createFilterExpression('yyy');
 
                 const comparisonExpression = expressionConverter.toComparison(filterExpression);
 
                 expect(comparisonExpression(model)).equal(true);
             });
 
-            it ('if result is true and value is in part', () => {
-                const filterExpression = {
-                    field: 'field0',
-                    operator: ComparisonOperator.Contain,
-                    value: 'zzz'
-                };
+            it ('if result is true and value is end part', () => {
+                const filterExpression = createFilterExpression('zzz');
 
                 const comparisonExpression = expressionConverter.toComparison(filterExpression);
 
@@ -46,11 +42,7 @@ describe('ExpressionConverter', () => {
             });
 
             it ('if result is false', () => {
-                const filterExpression = {
-                    field: 'field0',
-                    operator: ComparisonOperator.Contain,
-                    value: 'xxxxxxxxx'
-                };
+                const filterExpression = createFilterExpression('xxxxxxxxx');
 
                 const comparisonExpression = expressionConverter.toComparison(filterExpression);
 
@@ -58,15 +50,48 @@ describe('ExpressionConverter', () => {
             });
 
             it ('if result is false and value is null', () => {
-                const filterExpression = {
-                    field: 'field0',
-                    operator: ComparisonOperator.Contain,
-                    value: null
-                };
+                const filterExpression = createFilterExpression(null);
 
                 const comparisonExpression = expressionConverter.toComparison(filterExpression);
 
                 expect(comparisonExpression(model)).equal(false);
+            });
+        });
+
+        describe('if operator is "contain" and filed is array', () => {
+            const expressionConverter = new ExpressionConverter();
+            const model = { fields: [{ field0: 'xxxyyyzzz' }] };
+
+            function createFilterExpression(value: any): FilterExpression {
+                return {
+                    field: 'fields.field0',
+                    operator: ComparisonOperator.Contain,
+                    value: value
+                };
+            }
+
+            it ('if result is true and value is start part', () => {
+                const filterExpression = createFilterExpression('xxx');
+
+                const comparisonExpression = expressionConverter.toComparison(filterExpression);
+
+                expect(comparisonExpression(model)).equal(true);
+            });
+
+            it ('if result is true and value is middle part', () => {
+                const filterExpression = createFilterExpression('yyy');
+
+                const comparisonExpression = expressionConverter.toComparison(filterExpression);
+
+                expect(comparisonExpression(model)).equal(true);
+            });
+
+            it ('if result is true and value is end part', () => {
+                const filterExpression = createFilterExpression('zzz');
+
+                const comparisonExpression = expressionConverter.toComparison(filterExpression);
+
+                expect(comparisonExpression(model)).equal(true);
             });
         });
 
