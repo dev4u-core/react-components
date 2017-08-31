@@ -33,6 +33,14 @@ describe('ExpressionConverter', () => {
                 expect(comparisonExpression(model)).equal(true);
             });
 
+            it ('if result is true and value is middle part (upper case)', () => {
+                const filterExpression = createFilterExpression('YYY');
+
+                const comparisonExpression = expressionConverter.toComparison(filterExpression);
+
+                expect(comparisonExpression(model)).equal(true);
+            });
+
             it ('if result is true and value is end part', () => {
                 const filterExpression = createFilterExpression('zzz');
 
@@ -58,7 +66,7 @@ describe('ExpressionConverter', () => {
             });
         });
 
-        describe('if operator is "contain" and filed is array', () => {
+        describe('if operator is "contain" and field is array', () => {
             const expressionConverter = new ExpressionConverter();
             const model = { fields: [{ field0: 'xxxyyyzzz' }] };
 
