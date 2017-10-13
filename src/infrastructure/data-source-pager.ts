@@ -20,7 +20,11 @@ export class DataSourcePager {
     }
 
     public getPageCount(): number {
-        return Math.ceil(this.dataSource.totalCount / this.dataSource.pageSize);
+        return this.dataSource.pageSize
+            ? Math.ceil(this.dataSource.firstPageSize
+                ? ((this.dataSource.totalCount - this.dataSource.firstPageSize) / this.dataSource.pageSize + 1)
+                : (this.dataSource.totalCount / this.dataSource.pageSize))
+            : 1;
     }
 
     protected getPageIndex(pageType: PageType) {

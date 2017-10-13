@@ -32,7 +32,14 @@ describe('ClientDataSource', () => {
     });
 
     describe('setPageIndex if "DataViewMode" is "CurrentPage")', () => {
-        const data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
+        const data = [
+            { field: 'value0' },
+            { field: 'value1' },
+            { field: 'value2' },
+            { field: 'value3' },
+            { field: 'value4' },
+            { field: 'value5' }
+        ];
 
         it('by default', () => {
             const dataSource = new ClientDataSource(data, { pageSize: 1 });
@@ -44,7 +51,7 @@ describe('ClientDataSource', () => {
             expect(dataSource.view.data[0].field).to.equal('value0', 'data[0].field');
         });
 
-        it('setPageIndex', () => {
+        it('if page size is 1', () => {
             [{ pageIndex: 0 }, { pageIndex: 1 }, { pageIndex: 2 }]
                 .forEach(x => {
                     const dataSource = new ClientDataSource(data, { pageSize: 1 });
@@ -56,10 +63,33 @@ describe('ClientDataSource', () => {
                     expect(dataSource.view.data[0].field).to.equal('value' + x.pageIndex, 'data[0].field');
                 });
         });
+
+        it('if first page size is 1 and page size is 2', () => {
+            const dataSource = new ClientDataSource(data, { firstPageSize: 1, pageSize: 2, viewMode: DataViewMode.CurrentPage });
+
+            dataSource
+                .setPageIndex(0)
+                .dataBind();
+
+            expect(dataSource.view.data.length).to.equal(1);
+
+            dataSource
+                .setPageIndex(1)
+                .dataBind();
+
+            expect(dataSource.view.data.length).to.equal(2);
+        });
     });
 
     describe('setPageIndex if "DataViewMode" is "FromFirstToCurrentPage"', () => {
-        const data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
+        const data = [
+            { field: 'value0' },
+            { field: 'value1' },
+            { field: 'value2' },
+            { field: 'value3' },
+            { field: 'value4' },
+            { field: 'value5' }
+        ];
 
         it('by default', () => {
             const dataSource = new ClientDataSource(data, { pageSize: 1, viewMode: DataViewMode.FromFirstToCurrentPage });
@@ -71,7 +101,7 @@ describe('ClientDataSource', () => {
             expect(dataSource.view.data[0].field).to.equal('value0', 'data[0].field');
         });
 
-        it('setPageIndex', () => {
+        it('if page size is 1', () => {
             [{ pageIndex: 0 }, { pageIndex: 1 }, { pageIndex: 2 }]
                 .forEach(x => {
                     const dataSource = new ClientDataSource(data, { pageSize: 1, viewMode: DataViewMode.FromFirstToCurrentPage });
@@ -87,6 +117,22 @@ describe('ClientDataSource', () => {
                         expect(dataSource.view.data[i].field).to.equal(`value${i}`, `pageIndex: ${x.pageIndex}, data[${i}].field`);
                     }
                 });
+        });
+
+        it('if first page size is 1 and page size is 2', () => {
+            const dataSource = new ClientDataSource(data, { firstPageSize: 1, pageSize: 2, viewMode: DataViewMode.FromFirstToCurrentPage });
+
+            dataSource
+                .setPageIndex(0)
+                .dataBind();
+
+            expect(dataSource.view.data.length).to.equal(1);
+
+            dataSource
+                .setPageIndex(1)
+                .dataBind();
+
+            expect(dataSource.view.data.length).to.equal(3);
         });
     });
 

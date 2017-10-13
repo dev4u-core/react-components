@@ -15,68 +15,88 @@ describe('DataSourcePager', () => {
     }
 
     describe('canMoveToPage', () => {
-        it('PageType.First if true', () => {
-            const pager = createPager();
-
-            pager.moveToPage(PageType.Last);
-
-            expect(pager.canMoveToPage(PageType.First)).equal(true);
+        describe('can move to first page', () => {
+            it('if current page is last', () => {
+                const pager = createPager();
+    
+                pager.moveToPage(PageType.Last);
+    
+                expect(pager.canMoveToPage(PageType.First)).equal(true);
+            });
+    
+            it('if current page is first', () => {
+                const pager = createPager();
+    
+                pager.moveToPage(PageType.First);
+    
+                expect(pager.canMoveToPage(PageType.First)).equal(false);
+            });
         });
 
-        it('PageType.First if false', () => {
-            const pager = createPager();
-
-            pager.moveToPage(PageType.First);
-
-            expect(pager.canMoveToPage(PageType.First)).equal(false);
+        describe('can move to last page', () => {
+            it('if current page is first', () => {
+                const pager = createPager();
+    
+                pager.moveToPage(PageType.First);
+    
+                expect(pager.canMoveToPage(PageType.Last)).equal(true);
+            });
+    
+            it('if current page is last', () => {
+                const pager = createPager();
+    
+                pager.moveToPage(PageType.Last);
+    
+                expect(pager.canMoveToPage(PageType.Last)).equal(false);
+            });
         });
 
-        it('PageType.Last if true', () => {
-            const pager = createPager();
-
-            pager.moveToPage(PageType.First);
-
-            expect(pager.canMoveToPage(PageType.Last)).equal(true);
+        describe('can move to next page', () => {
+            it('if current page is first', () => {
+                const pager = createPager();
+    
+                pager.moveToPage(PageType.First);
+    
+                expect(pager.canMoveToPage(PageType.Next)).equal(true);
+            });
+    
+            it('if current page is last', () => {
+                const pager = createPager();
+    
+                pager.moveToPage(PageType.Last);
+    
+                expect(pager.canMoveToPage(PageType.Next)).equal(false);
+            });
         });
 
-        it('PageType.Last if false', () => {
-            const pager = createPager();
-
-            pager.moveToPage(PageType.Last);
-
-            expect(pager.canMoveToPage(PageType.Last)).equal(false);
+        describe('can move to previous page', () => {
+            it('if current page is last', () => {
+                const pager = createPager();
+    
+                pager.moveToPage(PageType.Last);
+    
+                expect(pager.canMoveToPage(PageType.Previous)).equal(true);
+            });
+    
+            it('if current page is first', () => {
+                const pager = createPager();
+    
+                pager.moveToPage(PageType.First);
+    
+                expect(pager.canMoveToPage(PageType.Previous)).equal(false);
+            });
         });
 
-        it('PageType.Next if true', () => {
-            const pager = createPager();
+        it('if first page size is 1 and page size is 2', () => {
+            const dataSource = new ClientDataSource(
+                [{ value: 0 }, { value: 1 }, { value: 2 }, { value: 3 }],
+                { firstPageSize: 1, pageSize: 2, pageIndex: 1 }
+            );    
+            const pager = new DataSourcePager(dataSource);
 
-            pager.moveToPage(PageType.First);
+            dataSource.dataBind();
 
             expect(pager.canMoveToPage(PageType.Next)).equal(true);
-        });
-
-        it('PageType.Next if false', () => {
-            const pager = createPager();
-
-            pager.moveToPage(PageType.Last);
-
-            expect(pager.canMoveToPage(PageType.Next)).equal(false);
-        });
-
-        it('PageType.Last if true', () => {
-            const pager = createPager();
-
-            pager.moveToPage(PageType.Last);
-
-            expect(pager.canMoveToPage(PageType.Previous)).equal(true);
-        });
-
-        it('PageType.Last if false', () => {
-            const pager = createPager();
-
-            pager.moveToPage(PageType.First);
-
-            expect(pager.canMoveToPage(PageType.Previous)).equal(false);
         });
     });
 
@@ -119,7 +139,7 @@ describe('DataSourcePager', () => {
     });
 
     describe('moveToPage', () => {
-        it('PageType.First', () => {
+        it('to first page', () => {
             const pager = createPager();
 
             pager.moveToPage(PageType.Last);
@@ -128,7 +148,7 @@ describe('DataSourcePager', () => {
             expect(pager.dataSource.view.pageIndex).to.equal(0);
         });
 
-        it('PageType.Last', () => {
+        it('to last page', () => {
             const pager = createPager();
 
             pager.moveToPage(PageType.First);
@@ -137,7 +157,7 @@ describe('DataSourcePager', () => {
             expect(pager.dataSource.view.pageIndex).to.equal(2);
         });
 
-        it('PageType.Next', () => {
+        it('to next page', () => {
             const pager = createPager();
 
             pager.moveToPage(PageType.First);
@@ -146,7 +166,7 @@ describe('DataSourcePager', () => {
             expect(pager.dataSource.view.pageIndex).to.equal(1);
         });
 
-        it('PageType.Previous', () => {
+        it('to previous page', () => {
             const pager = createPager();
 
             pager.moveToPage(PageType.Last);
