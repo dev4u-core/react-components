@@ -2,6 +2,7 @@ const FieldSeparator = '.';
 
 export interface FieldAccessor {
     getValue(model: any, compositeField: string): any;
+    setValue(model: any, compositeField: string, value: any);
 }
 
 export class DefaultFieldAccessor {
@@ -22,5 +23,17 @@ export class DefaultFieldAccessor {
         }
 
         return result;
+    }
+
+    public setValue(model: any, compositeField: string, value: any) {
+        const fields = compositeField.split(FieldSeparator);
+
+        for (let i = 0; i < (fields.length - 1); i++) {
+            const field = fields[i];
+            
+            model = model[field];
+        }
+
+        model[fields[fields.length - 1]] = value;
     }
 }
