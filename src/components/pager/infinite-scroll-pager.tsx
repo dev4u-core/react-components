@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { DataSource, DataSourceState } from '../../infrastructure/data-source';
-import { DataSourcePager, PageType } from '../../infrastructure/data-source-pager';
+import { DataSource, DataSourceState } from '../../infrastructure/data/data-source';
+import { DataSourcePager, PageType } from '../../infrastructure/data/data-source-pager';
 
 function isElementVisible(element) {
     let top = element.offsetTop;

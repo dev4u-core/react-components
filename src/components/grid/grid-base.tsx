@@ -3,9 +3,9 @@ import { GridColumn, GridColumnProps, GridCellProps } from './grid-column';
 import { GridDetailsColumn } from './grid-details-column';
 import { GridStyle, GridRowStyle } from './grid-style';
 import { Style } from '../common';
-import { SortDirection } from '../../../src/infrastructure/common';
+import { SortDirection } from '../../../src/infrastructure/data/common';
 import { CssClassNameBuilder } from '../../../src/infrastructure/css-class-name-builder';
-import { DataSource, DataSourceState } from '../../../src/infrastructure/data-source';
+import { DataSource, DataSourceState } from '../../../src/infrastructure/data/data-source';
 
 export interface GridProps {
     autoBind?: boolean;

@@ -4,7 +4,8 @@ import { GridColumn } from '../src/components/grid/grid-column';
 import { GridDetailsColumn } from '../src/components/grid/grid-details-column';
 import { InfiniteScrollPager } from '../src/components/pager/infinite-scroll-pager';
 import { Grid } from '../src/components/grid/grid';
-import { ClientDataSource, DataViewMode } from '../src/infrastructure/data-source';
+import { ClientDataSource } from '../src/infrastructure/data/client-data-source';
+import { DataViewMode } from '../src/infrastructure/data/data-source';
 
 function getData(count: number): any[] {
     const result = [];

@@ -3,8 +3,9 @@ import { expect } from 'chai';
 import * as React from 'react';
 import { GridColumn } from '../../src/components/grid/grid-column';
 import { Grid } from '../../src/components/grid/grid';
-import { SortDirection } from '../../src/infrastructure/common';
-import { ClientDataSource, DataSource } from '../../src/infrastructure/data-source';
+import { SortDirection } from '../../src/infrastructure/data/common';
+import { ClientDataSource } from '../../src/infrastructure/data/client-data-source';
+import { DataSource } from '../../src/infrastructure/data/data-source';
 
 describe('<Grid />', () => {
     describe('behaviour', () => {

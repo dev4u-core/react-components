@@ -3,6 +3,8 @@
         "jsx": "react",
         "module": "commonjs",
         "noImplicitAny": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
         "sourceMap": false,
         "target": "es5"
     },

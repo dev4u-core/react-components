@@ -1,9 +1,10 @@
 import { expect } from 'chai';
 import * as Mocha from 'mocha';
-import { DataType, SortDirection } from '../../src/infrastructure/common';
-import { ClientDataSource, DataViewMode } from '../../src/infrastructure/data-source';
-import { FieldAccessor } from '../../src/infrastructure/field-accessor';
-import { TypeConverterProvider } from '../../src/infrastructure/type-converter';
+import { DataType, SortDirection } from '../../../src/infrastructure/data/common';
+import { ClientDataSource } from '../../../src/infrastructure/data/client-data-source';
+import { DataViewMode } from '../../../src/infrastructure/data/data-source';
+import { FieldAccessor } from '../../../src/infrastructure/data/field-accessor';
+import { TypeConverterProvider } from '../../../src/infrastructure/type-converter';
 
 describe('ClientDataSource', () => {
     it('dataBind', () => {
@@ -23,9 +24,8 @@ describe('ClientDataSource', () => {
         const data = [{ field: 'value0' }, { field: 'value1' }, { field: 'value2' }];
         const dataSource = new ClientDataSource(data);
 
-        dataSource
-            .filter({ expression: x => x.field == 'value0', field: 'field' })
-            .dataBind();
+        dataSource.filter({ expression: x => x.field == 'value0', field: 'field' });
+        dataSource.dataBind();
 
         expect(dataSource.view.data.length).to.equal(1);
         expect(dataSource.view.data[0].field).to.equal('value0');
@@ -49,7 +49,8 @@ describe('ClientDataSource', () => {
                 .forEach(x => {
                     const dataSource = new ClientDataSource(data, { pageSize: 1 });
 
-                    dataSource.setPageIndex(x.pageIndex).dataBind();
+                    dataSource.setPageIndex(x.pageIndex);
+                    dataSource.dataBind();
 
                     expect(dataSource.view.pageIndex).to.equal(x.pageIndex, 'pageIndex');
                     expect(dataSource.view.data.length).to.equal(1, 'data.length');
@@ -76,9 +77,8 @@ describe('ClientDataSource', () => {
                 .forEach(x => {
                     const dataSource = new ClientDataSource(data, { pageSize: 1, viewMode: DataViewMode.FromFirstToCurrentPage });
 
-                    dataSource
-                        .setPageIndex(x.pageIndex)
-                        .dataBind();
+                    dataSource.setPageIndex(x.pageIndex);
+                    dataSource.dataBind();
 
                     expect(dataSource.view.pageIndex).to.equal(x.pageIndex, 'pageIndex');
                     expect(dataSource.view.data.length).to.equal(x.pageIndex + 1, `pageIndex: ${x.pageIndex}, data.length`);
@@ -95,9 +95,8 @@ describe('ClientDataSource', () => {
             it ('ascending sorting by one field', () => {
                 const dataSource = new ClientDataSource([]);
 
-                dataSource
-                    .sort({ direction: SortDirection.Ascending, field: 'field' })
-                    .dataBind();
+                dataSource.sort({ direction: SortDirection.Ascending, field: 'field' });
+                dataSource.dataBind();
 
                 expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
                 expect(dataSource.view.sortedBy[0].direction).to.equal(SortDirection.Ascending, 'sortedBy[0].direction');
@@ -107,9 +106,8 @@ describe('ClientDataSource', () => {
             it ('descending sorting by one field', () => {
                 const dataSource = new ClientDataSource([]);
 
-                dataSource
-                    .sort({ direction: SortDirection.Descending, field: 'field' })
-                    .dataBind();
+                dataSource.sort({ direction: SortDirection.Descending, field: 'field' });
+                dataSource.dataBind();
 
                 expect(dataSource.view.sortedBy.length).to.equal(1, 'sortedBy.length');
                 expect(dataSource.view.sortedBy[0].direction).to.equal(SortDirection.Descending, 'sortedBy[0].direction');
@@ -128,9 +126,8 @@ describe('ClientDataSource', () => {
                 testCases.forEach(x => {
                     const dataSource = new ClientDataSource(x);
 
-                    dataSource
-                        .sort({ direction: SortDirection.Ascending, field: 'booleanField' })
-                        .dataBind();
+                    dataSource.sort({ direction: SortDirection.Ascending, field: 'booleanField' });
+                    dataSource.dataBind();
 
                     expect(dataSource.view.data[0].booleanField).to.equal(null);
                     expect(dataSource.view.data[1].booleanField).to.equal(false);
@@ -142,9 +139,8 @@ describe('ClientDataSource', () => {
                 testCases.forEach(x => {
                     const dataSource = new ClientDataSource(x);
 
-                    dataSource
-                        .sort({ direction: SortDirection.Descending, field: 'booleanField' })
-                        .dataBind();
+                    dataSource.sort({ direction: SortDirection.Descending, field: 'booleanField' })
+                    dataSource.dataBind();
 
                     expect(dataSource.view.data[0].booleanField).to.equal(true);
                     expect(dataSource.view.data[1].booleanField).to.equal(false);
@@ -164,9 +160,8 @@ describe('ClientDataSource', () => {
                 testCases.forEach(x => {
                     const dataSource = new ClientDataSource(x);
 
-                    dataSource
-                        .sort({ direction: SortDirection.Ascending, field: 'numberField' })
-                        .dataBind();
+                    dataSource.sort({ direction: SortDirection.Ascending, field: 'numberField' })
+                    dataSource.dataBind();
 
                     expect(dataSource.view.data[0].numberField).to.equal(0);
                     expect(dataSource.view.data[1].numberField).to.equal(1);
@@ -178,9 +173,8 @@ describe('ClientDataSource', () => {
                 testCases.forEach(x => {
                     const dataSource = new ClientDataSource(x);
 
-                    dataSource
-                        .sort({ direction: SortDirection.Descending, field: 'numberField'})
-                        .dataBind();
+                    dataSource.sort({ direction: SortDirection.Descending, field: 'numberField'})
+                    dataSource.dataBind();
 
                     expect(dataSource.view.data[0].numberField).to.equal(2);
                     expect(dataSource.view.data[1].numberField).to.equal(1);
@@ -200,9 +194,8 @@ describe('ClientDataSource', () => {
                 testCases.forEach(x => {
                     const dataSource = new ClientDataSource(x);
 
-                    dataSource
-                        .sort({ direction: SortDirection.Ascending, field: 'stringField' })
-                        .dataBind();
+                    dataSource.sort({ direction: SortDirection.Ascending, field: 'stringField' });
+                    dataSource.dataBind();
 
                     expect(dataSource.view.data[0].stringField).to.equal('value0');
                     expect(dataSource.view.data[1].stringField).to.equal('value1');
@@ -214,9 +207,8 @@ describe('ClientDataSource', () => {
                 testCases.forEach(x => {
                     const dataSource = new ClientDataSource(x);
 
-                    dataSource
-                        .sort({ direction: SortDirection.Descending, field: 'stringField'})
-                        .dataBind();
+                    dataSource.sort({ direction: SortDirection.Descending, field: 'stringField'});
+                    dataSource.dataBind();
 
                     expect(dataSource.view.data[0].stringField).to.equal('value2');
                     expect(dataSource.view.data[1].stringField).to.equal('value1');
@@ -230,7 +222,8 @@ describe('ClientDataSource', () => {
             const fieldAccessor = {
                 getValue(model: any, compositeField: string): any {
                     return typeConverter.convert(model.dateField);
-                }
+                },
+                setValue: () => null
             };
             const testCases = [
                 [{ dateField: '3/1/2001' }, { dateField: '2/1/2002' }, { dateField: '1/1/2003' }],
@@ -242,9 +235,8 @@ describe('ClientDataSource', () => {
                 testCases.forEach(x => {
                     const dataSource = new ClientDataSource(x, { fieldAccessor: fieldAccessor });
 
-                    dataSource
-                        .sort({ direction: SortDirection.Ascending, field: 'dateField' })
-                        .dataBind();
+                    dataSource.sort({ direction: SortDirection.Ascending, field: 'dateField' });
+                    dataSource.dataBind();
 
                     expect(dataSource.view.data[0].dateField).to.equal('3/1/2001');
                     expect(dataSource.view.data[1].dateField).to.equal('2/1/2002');
@@ -256,9 +248,8 @@ describe('ClientDataSource', () => {
                 testCases.forEach(x => {
                     const dataSource = new ClientDataSource(x, { fieldAccessor: fieldAccessor });
 
-                    dataSource
-                        .sort({ direction: SortDirection.Descending, field: 'dateField'})
-                        .dataBind();
+                    dataSource.sort({ direction: SortDirection.Descending, field: 'dateField'});
+                    dataSource.dataBind();
 
                     expect(dataSource.view.data[0].dateField).to.equal('1/1/2003');
                     expect(dataSource.view.data[1].dateField).to.equal('2/1/2002');
@@ -271,13 +262,11 @@ describe('ClientDataSource', () => {
             const data = [{ stringField: 'value0' }, { stringField: 'value1' }, { stringField: 'value2' }];
             const dataSource = new ClientDataSource(data);
 
-            dataSource
-                .sort({ direction: SortDirection.Descending, field: 'stringField'})
-                .dataBind();
+            dataSource.sort({ direction: SortDirection.Descending, field: 'stringField'});
+            dataSource.dataBind();
 
-            dataSource
-                .sort()
-                .dataBind();
+            dataSource.sort();
+            dataSource.dataBind();
 
             expect(dataSource.view.data[0].stringField).to.equal('value0');
             expect(dataSource.view.data[1].stringField).to.equal('value1');

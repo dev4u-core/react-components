@@ -1,4 +1,4 @@
-import { DataType } from './common';
+import { DataType } from './data/common';
 
 export interface TypeConverter<T> {
     convert(value: any): T;

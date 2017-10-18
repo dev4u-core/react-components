@@ -1,5 +1,5 @@
 import { ComparisonExpression, ComparisonOperator, FilterExpression } from './expression';
-import { DefaultFieldAccessor, FieldAccessor } from '../field-accessor';
+import { DefaultFieldAccessor, FieldAccessor } from '../data/field-accessor';
 
 export class ExpressionConverter {
     private _fieldAccessor: FieldAccessor = new DefaultFieldAccessor();

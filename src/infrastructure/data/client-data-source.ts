@@ -1,69 +1,10 @@
-import { } from 'es6-shim';
+import { ClientDataSourceChangeTracker } from './client-data-source-change-tracker';
 import { FilterExpression, SortDirection, SortExpression } from './common';
-import { Comparer } from './comparer';
-import { Event } from './event';
+import { DataSource, DataSourceState, DataView, DataViewMode } from './data-source';
+import { DataSourceChange, DataSourceChangeType, DataSourceChangeTracker } from './data-source-change-tracker';
 import { DefaultFieldAccessor, FieldAccessor } from './field-accessor';
-
-export enum DataViewMode {
-    CurrentPage,
-    FromFirstToCurrentPage
-}
-
-export interface DataView<T> {
-    data?: T[];
-    filteredBy?: FilterExpression[];
-    mode?: DataViewMode;
-    pageIndex?: number;
-    sortedBy?: SortExpression[];
-}
-
-export enum DataSourceState {
-    Empty,
-    Binding,
-    Bound
-}
-
-export interface DataSourceChange<T> {
-    model: T;
-    type: DataSourceChangeType;
-}
-
-export interface DataSourceChangeManager<T> {
-    apply();
-    rollback();
-    update(model: T, field: string, value: any);
-
-    readonly changes: DataSourceChange<T>[];
-}
-
-export interface DataSourceUpdate<T> extends DataSourceChange<T> {
-    field: string;
-    prevValue: any;
-    value: any;
-}
-
-export enum DataSourceChangeType {
-    Create,
-    Update,
-    Delete
-}
-
-export interface DataSource<T> {
-    dataBind();
-    filter(...expressions: FilterExpression[]): DataSource<T>;
-    setPageIndex(value: number): DataSource<T>;
-    sort(...expressions: SortExpression[]): DataSource<T>;
-
-    readonly changeManager: DataSourceChangeManager<T>;
-    readonly fieldAccessor: FieldAccessor;
-    readonly pageSize?: number;
-    readonly state: DataSourceState;
-    readonly totalCount: number;
-    readonly view: DataView<T>;
-
-    onDataBinding: Event<any>;
-    onDataBound: Event<any>;
-}
+import { Comparer } from '../comparer';
+import { Event } from '../event';
 
 export interface ClientDataSourceProps {
     fieldAccessor?: FieldAccessor;
@@ -73,63 +14,8 @@ export interface ClientDataSourceProps {
     viewMode?: DataViewMode;
 }
 
-export class ClientDataSourceChangeManager<T> implements DataSourceChangeManager<T> {
-    private _changes: DataSourceChange<T>[];
-    private _dataSource: DataSource<T>;
-
-    public constructor(dataSource: DataSource<T>) {
-        this._changes = [];
-        this._dataSource = dataSource;
-    }
-
-    public apply() {
-        this._changes = [];
-    }
-
-    public rollback() {
-        const fieldAccessor = this.dataSource.fieldAccessor;
-
-        while (this.changes.length > 0) {
-            const change = this.changes.pop();
-
-            switch (change.type) {
-                case DataSourceChangeType.Update:
-                    const update = change as DataSourceUpdate<T>;
-
-                    fieldAccessor.setValue(update.model, update.field, update.prevValue);
-                break;
-            }
-        }
-
-        this.dataSource.dataBind();
-    }
-
-    public update(model: T, field: string, value: any) {
-        const fieldAccessor = this.dataSource.fieldAccessor;
-        const currentValue = fieldAccessor.getValue(model, field);
-
-        fieldAccessor.setValue(model, field, value);
-
-        this.changes.push({
-            field: field,
-            model: model,
-            prevValue: currentValue,
-            type: DataSourceChangeType.Update,
-            value: value
-        } as DataSourceChange<T>);
-    }
-
-    protected get dataSource(): DataSource<T> {
-        return this._dataSource;
-    }
-
-    public get changes(): DataSourceChange<T>[] {
-        return this._changes;
-    }
-}
-
 export class ClientDataSource<T> implements DataSource<T> {
-    private _changeManager: DataSourceChangeManager<T>;
+    private _changeTracker: DataSourceChangeTracker<T>;
     private _data: (() => Promise<T[]>) | T[];
     private _fieldAccessor: FieldAccessor;
     private _onDataBinging: Event<any>;
@@ -156,7 +42,7 @@ export class ClientDataSource<T> implements DataSource<T> {
             this._viewMode = props.viewMode
         }
 
-        this._changeManager = new ClientDataSourceChangeManager<T>(this);
+        this._changeTracker = new ClientDataSourceChangeTracker<T>(this);
         this._data = data;
         this._onDataBinging = new Event<any>();
         this._onDataBound = new Event<any>();
@@ -232,39 +118,47 @@ export class ClientDataSource<T> implements DataSource<T> {
         }
     }
 
-    public setPageIndex(value: number): DataSource<T> {
+    public setPageIndex(value: number) {
         this._setPageIndex = x => {
             x.pageIndex = value;
             x.data = (this._viewMode == DataViewMode.FromFirstToCurrentPage)
                 ? x.data.slice(0, this.pageSize * (value + 1))
                 : x.data.slice(this.pageSize * value, this.pageSize * (value + 1));
         };
-
-        return this;
     }
 
-    public filter(...expressions: FilterExpression[]): DataSource<T> {
+    public filter(...expressions: FilterExpression[]) {
         this._sort = x => {
             x.filteredBy = expressions;
             x.data = x.data.filter(expressions[0].expression)
         };
-
-        return this;
     }
 
-    public sort(...expressions: SortExpression[]): DataSource<T> {
+    public sort(...expressions: SortExpression[]) {
         this._sort = x => {
             x.sortedBy = expressions;
             x.data = (expressions && (expressions.length > 0))
                 ? x.data.concat().sort(this.getComparer(expressions))
                 : x.data;
         };
-
-        return this;
     }
 
-    public get changeManager(): DataSourceChangeManager<T> {
-        return this._changeManager;
+    public update(model: T, field: string, value: any) {
+        const currentValue = this.fieldAccessor.getValue(model, field);
+
+        this.fieldAccessor.setValue(model, field, value);
+
+        this.changeTracker.changes.push({
+            field: field,
+            model: model,
+            prevValue: currentValue,
+            type: DataSourceChangeType.Update,
+            value: value
+        } as DataSourceChange<T>);
+    }
+
+    public get changeTracker(): DataSourceChangeTracker<T> {
+        return this._changeTracker;
     }
 
     public get fieldAccessor(): FieldAccessor {
