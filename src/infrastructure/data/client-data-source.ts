@@ -18,6 +18,7 @@ export class ClientDataSource<T> implements DataSource<T> {
     private _changeTracker: DataSourceChangeTracker<T>;
     private _data: (() => Promise<T[]>) | T[];
     private _fieldAccessor: FieldAccessor;
+    private _firstPageSize: number;
     private _onDataBinging: Event<any>;
     private _onDataBound: Event<any>;
     private _pageSize: number;
@@ -29,6 +30,9 @@ export class ClientDataSource<T> implements DataSource<T> {
 
     public constructor(data: T[], props?: ClientDataSourceProps) {
         if (props) {
+            this._fieldAccessor = props.fieldAccessor;
+            this._firstPageSize = props.firstPageSize || 0;
+            this._viewMode = props.viewMode
             if (props.pageSize) {
                 this._pageSize = props.pageSize;
                 this.setPageIndex(props.pageIndex || 0);
@@ -38,8 +42,6 @@ export class ClientDataSource<T> implements DataSource<T> {
                 this.sort(...props.sortedBy);
             }
 
-            this._fieldAccessor = props.fieldAccessor;
-            this._viewMode = props.viewMode
         }
 
         this._changeTracker = new ClientDataSourceChangeTracker<T>(this);
@@ -59,9 +61,7 @@ export class ClientDataSource<T> implements DataSource<T> {
                     const xValue = this.fieldAccessor.getValue(x, field);
                     const yValue = this.fieldAccessor.getValue(y, field);
 
-                    return (direction == SortDirection.Ascending)
-                        ? Comparer.Instance.compare(xValue, yValue)
-                        : Comparer.Instance.compare(yValue, xValue);
+                    return Comparer.instance.compare(xValue, yValue, direction);
                 })(expressions[i].direction, expressions[i].field);
 
             result = (result != null)
@@ -118,16 +118,24 @@ export class ClientDataSource<T> implements DataSource<T> {
         }
     }
 
-    public setPageIndex(value: number) {
+    public setPageIndex(value: number): DataSource<T> {
+        const firstIndex = this.firstPageSize
+            ? (value ? this.firstPageSize + this.pageSize * (value - 1) : 0)
+            : this.pageSize * value
+        const lastIndex = this.firstPageSize
+            ? (value ? this.firstPageSize + this.pageSize * value : this.firstPageSize)
+            : this.pageSize * (value + 1);
+
         this._setPageIndex = x => {
             x.pageIndex = value;
             x.data = (this._viewMode == DataViewMode.FromFirstToCurrentPage)
-                ? x.data.slice(0, this.pageSize * (value + 1))
-                : x.data.slice(this.pageSize * value, this.pageSize * (value + 1));
+                ? x.data.slice(0, lastIndex)
+                : x.data.slice(firstIndex, lastIndex);
         };
-    }
 
-    public filter(...expressions: FilterExpression[]) {
+        return this;
+    }
+    public filter(...expressions: FilterExpression[]): DataSource<T> {
         this._sort = x => {
             x.filteredBy = expressions;
             x.data = x.data.filter(expressions[0].expression)
@@ -163,6 +171,10 @@ export class ClientDataSource<T> implements DataSource<T> {
 
     public get fieldAccessor(): FieldAccessor {
         return this._fieldAccessor = this._fieldAccessor || new DefaultFieldAccessor();
+    }
+
+    public get firstPageSize(): number {
+        return this._firstPageSize;
     }
 
     public get pageSize(): number {
