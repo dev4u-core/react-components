@@ -32,6 +32,7 @@ export interface DataSource<T> {
 
     readonly changeTracker: DataSourceChangeTracker<T>;
     readonly fieldAccessor: FieldAccessor;
+    readonly firstPageSize: number;
     readonly pageSize?: number;
     readonly state: DataSourceState;
     readonly totalCount: number;

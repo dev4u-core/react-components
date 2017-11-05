@@ -8,6 +8,7 @@ import { Event } from '../event';
 
 export interface ClientDataSourceProps {
     fieldAccessor?: FieldAccessor;
+    firstPageSize?: number;
     pageSize?: number;
     pageIndex?: number;
     sortedBy?: SortExpression[];
@@ -118,7 +119,7 @@ export class ClientDataSource<T> implements DataSource<T> {
         }
     }
 
-    public setPageIndex(value: number): DataSource<T> {
+    public setPageIndex(value: number) {
         const firstIndex = this.firstPageSize
             ? (value ? this.firstPageSize + this.pageSize * (value - 1) : 0)
             : this.pageSize * value
@@ -132,10 +133,8 @@ export class ClientDataSource<T> implements DataSource<T> {
                 ? x.data.slice(0, lastIndex)
                 : x.data.slice(firstIndex, lastIndex);
         };
-
-        return this;
     }
-    public filter(...expressions: FilterExpression[]): DataSource<T> {
+    public filter(...expressions: FilterExpression[]) {
         this._sort = x => {
             x.filteredBy = expressions;
             x.data = x.data.filter(expressions[0].expression)
