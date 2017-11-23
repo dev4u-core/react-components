@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { GridCell, GridCellProps } from './grid-cell';
 import { SortDirection } from '../../infrastructure/data/common';
 import { DataSource } from '../../infrastructure/data/data-source';
@@ -49,14 +48,5 @@ export abstract class GridHeaderCell<P extends GridHeaderCellProps, S> extends G
                 && (sortedBy[0].field == field)
             ? sortedBy[0].direction
             : null;
-    }
-
-    public render(): JSX.Element {
-        const columnProps = this.props.column.props;
-        const title = columnProps.title;
-
-        return columnProps.isSortable
-            ? <a href="#" onClick={this.handleSortClicked}>{title}</a>
-            : title;
     }
 }

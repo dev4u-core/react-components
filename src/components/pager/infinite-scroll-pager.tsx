@@ -55,7 +55,7 @@ export class InfiniteScrollPager extends React.Component<InfiniteScrollPagerProp
     }
 
     public componentDidMount() {
-        if (this.props.isEnabled) {
+        if (this.props.isEnabled != false) {
             document.addEventListener('scroll', this.handleScroll);
             document.addEventListener('resize', this.handleScroll);
         }

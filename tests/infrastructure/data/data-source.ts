@@ -68,15 +68,13 @@ describe('ClientDataSource', () => {
         it('if first page size is 1 and page size is 2', () => {
             const dataSource = new ClientDataSource(data, { firstPageSize: 1, pageSize: 2, viewMode: DataViewMode.CurrentPage });
 
-            dataSource
-                .setPageIndex(0)
-                .dataBind();
+            dataSource.setPageIndex(0);
+            dataSource.dataBind();
 
             expect(dataSource.view.data.length).to.equal(1);
 
-            dataSource
-                .setPageIndex(1)
-                .dataBind();
+            dataSource.setPageIndex(1);
+            dataSource.dataBind();
 
             expect(dataSource.view.data.length).to.equal(2);
         });
@@ -122,15 +120,13 @@ describe('ClientDataSource', () => {
         it('if first page size is 1 and page size is 2', () => {
             const dataSource = new ClientDataSource(data, { firstPageSize: 1, pageSize: 2, viewMode: DataViewMode.FromFirstToCurrentPage });
 
-            dataSource
-                .setPageIndex(0)
-                .dataBind();
+            dataSource.setPageIndex(0)
+            dataSource.dataBind();
 
             expect(dataSource.view.data.length).to.equal(1);
 
-            dataSource
-                .setPageIndex(1)
-                .dataBind();
+            dataSource.setPageIndex(1)
+            dataSource.dataBind();
 
             expect(dataSource.view.data.length).to.equal(3);
         });
