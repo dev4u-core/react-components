@@ -1,5 +1,5 @@
 import { ClientDataSourceChangeTracker } from './client-data-source-change-tracker';
-import { FilterExpression, SortDirection, SortExpression } from './common';
+import { FilterExpression, SortExpression } from './common';
 import { DataSource, DataSourceState, DataView, DataViewMode } from './data-source';
 import { DataSourceChange, DataSourceChangeType, DataSourceChangeTracker } from './data-source-change-tracker';
 import { DefaultFieldAccessor, FieldAccessor } from './field-accessor';

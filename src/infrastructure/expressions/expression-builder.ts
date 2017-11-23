@@ -20,6 +20,6 @@ export class ExpressionBuilder<T> {
     }
 
     public build(): ComparisonExpression<T> {
-        return this._expression || function(x: T) { return true; };
+        return this._expression || function () { return true; };
     }
 }

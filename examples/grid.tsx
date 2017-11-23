@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { GridColumn } from '../src/components/grid/grid-column';
-import { GridDetailsColumn } from '../src/components/grid/grid-details-column';
+// import { GridDetailsColumn } from '../src/components/grid/grid-details-column';
 import { InfiniteScrollPager } from '../src/components/pager/infinite-scroll-pager';
 import { Grid } from '../src/components/grid/grid';
 import { ClientDataSource } from '../src/infrastructure/data/client-data-source';
@@ -23,16 +23,16 @@ const dataSource = new ClientDataSource(data, { pageSize: 50, viewMode: DataView
 ReactDom.render(
     <InfiniteScrollPager dataSource={dataSource}>
         <Grid autoBind={true} dataSource={dataSource}>
-            <GridDetailsColumn detailsRowTemplate={(column, model, rowIndex) =>
+            {/* <GridDetailsColumn detailsRowTemplate={(column, model, rowIndex) =>
                 <Grid autoBind={true} dataSource={new ClientDataSource(data)}>
                     <GridColumn field="title" title="Title" />
                 </Grid>
-            } />
+            } /> */}
             <GridColumn field="title" title="Title" />
             <GridColumn field="description" title="Description" />
             <GridColumn
                 isSortable={false}
-                body={{ template: (sender, x) => (<a href="javascript:">{x.title}</a>)}}
+                /*body={{ template: (sender, x) => (<a href="#">{x.title}</a>)}}*/
                 title="Link" />
         </Grid>
     </InfiniteScrollPager>,

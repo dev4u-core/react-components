@@ -1,7 +1,6 @@
-import { FilterExpression, SortDirection, SortExpression } from './common';
+import { FilterExpression, SortExpression } from './common';
 import { DataSourceChangeTracker } from './data-source-change-tracker';
-import { DefaultFieldAccessor, FieldAccessor } from './field-accessor';
-import { Comparer } from '../comparer';
+import { FieldAccessor } from './field-accessor';
 import { Event } from '../event';
 
 export enum DataViewMode {
